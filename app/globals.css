@@ -21,7 +21,7 @@ body {
 }
 .dark .icon-subject {
   filter: grayscale(1) invert(1);
-}
+}Ø
 countdown li {
   display: inline-block;
   font-size: 1em;

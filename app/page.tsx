@@ -1,6 +1,6 @@
-import React from "react";
-import Navbar from "./components/Navbar";
+import Link from "next/link";
 import Bottombar from "./components/Bottombar";
+import Navbar from "./components/Navbar";
 export default function Home() {  
   return (
     <div>
@@ -27,15 +27,15 @@ export default function Home() {
               </ul>
             </div>
         <div className="mt-5 flex flex-col space-y-2 sm:flex-row sm:justify-center sm:space-y-0">
-              <a href="#" className="inline-flex justify-center items-center py-3 px-5 text-base font-medium text-center text-white rounded-lg bg-[#f45455] hover:bg-[#d13f3f]">
+              <Link href="/select" className="inline-flex justify-center items-center py-3 px-5 text-base font-medium text-center text-white rounded-lg bg-[#f45455] hover:bg-[#d13f3f]">
             โหลดชีทสรุป
-              <svg className="w-3.5 h-3.5 ms-2 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
-                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9" />
+              <svg className="w-4 h-4 ms-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 13V4M7 14H5a1 1 0 0 0-1 1v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4a1 1 0 0 0-1-1h-2m-1-5-4 5-4-5m9 8h.01" />
               </svg>
-              </a>
-              <a href="#" className="inline-flex justify-center items-center py-3 px-5 ml-0 md:ml-2 text-base font-medium text-center text-white rounded-lg bg-[#2e2b2b] hover:bg-[#221e1e">
+              </Link>
+              <Link href="#" className="inline-flex justify-center items-center py-3 px-5 ml-0 md:ml-2 text-base font-medium text-center text-white rounded-lg bg-[#2e2b2b] hover:bg-[#221e1e">
                 ติดตามพวกเรา
-             </a>
+             </Link>
         </div>
       </div>
     </section>
@@ -54,7 +54,7 @@ export default function Home() {
             <tbody className="bg-white divide-y0">
               <tr className="text-gray-700">
                   <td className="px-4 py-3">
-                    <a href="./pdf/m4/final1/math_2.pdf" className="flex items-center text-sm">
+                    <Link href="./pdf/m4/final1/math_2.pdf" className="flex items-center text-sm">
                       <div className="inline-block relative w-8 h-8 mr-3 rounded-full">
                         <img
                           className="icon-subject object-cover w-full h-auto"
@@ -68,20 +68,20 @@ export default function Home() {
                           คณิตศาสตร์ <small className="text-red-600">(พื้นฐาน)</small>
                         </p>
                         <p className="text-xs text-gray-600">
-                          สอบปลายภาค (by : <a className="text-purple-800" href="https://www.instagram.com/d3w4r_zz/">d3w4r_zz</a>)
+                          สอบปลายภาค (by : <Link className="text-purple-800" href="https://www.instagram.com/d3w4r_zz/">d3w4r_zz</Link>)
                         </p>
                       </div>
-                    </a>
+                    </Link>
                   </td>
                 <td className="px-4 py-3 text-sm whitespace-nowrap">
                   ม.4 เทอม 1
                 </td>
                 <td className="px-4 py-3 text-xs">
-                  <a href="./pdf/m4/final1/math_2.pdf">
+                  <Link href="./pdf/m4/final1/math_2.pdf">
                     <span className="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-full">
                       ดาวน์โหลด
                     </span>
-                  </a>
+                  </Link>
                 </td>
                 <td className="px-2 py-3 text-sm">
                   26/10/2024
