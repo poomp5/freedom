@@ -1,8 +1,8 @@
 export default function Bottombar() {
     return( 
-    <div
-        className="block md:hidden fixed bottom-0 left-0 z-50 w-full h-16 bg-white border-t border-gray-200">
-        <div className="grid h-full max-w-lg grid-cols-5 mx-auto font-medium">
+        <div
+            className="block md:hidden fixed bottom-0 left-0 z-50 w-full h-20 my-auto pt-2 pb-6 bg-white border-t border-gray-200">
+            <div className="grid h-12 max-w-lg grid-cols-5 mx-auto font-medium">
             <button type="button"
                 className="inline-flex flex-col items-center justify-center px-5 hover:bg-gray-50 group">
                 <svg className="w-5 h-5 mb-2 text-gray-500 group-hover:text-red-600"
@@ -25,7 +25,7 @@ export default function Bottombar() {
                     className="text-sm text-gray-500 group-hover:text-red-600">ติดต่อ</span>
             </button>
             <button type="button"
-                className="inline-flex flex-col items-center justify-center px-5 bg-red-700 hover:bg-red-800 rounded-lg group">
+                className="inline-flex flex-col items-center justify-center px-5 py-1.5 bg-red-700 hover:bg-red-800 rounded-lg group">
                 <svg className="w-5 h-5 mb-2 text-white"
                     aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd"
