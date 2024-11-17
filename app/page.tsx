@@ -6,6 +6,7 @@ export default function Home() {
     <div>
       <Navbar />
       <Bottombar  />
+      <link rel="shortcut icon" href="../public/assets/img/poomicon.png" />
     <main className="mt-8 h-full overflow-y-auto">
     <section>
       <div className="py-8 px-4 mx-auto max-w-screen-xl text-center lg:py-16">
@@ -33,7 +34,7 @@ export default function Home() {
                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 13V4M7 14H5a1 1 0 0 0-1 1v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4a1 1 0 0 0-1-1h-2m-1-5-4 5-4-5m9 8h.01" />
               </svg>
               </Link>
-              <Link href="#" className="inline-flex justify-center items-center py-3 px-5 ml-0 md:ml-2 text-base font-medium text-center text-white rounded-lg bg-[#2e2b2b] hover:bg-[#221e1e">
+              <Link href="https://www.instagram.com/act.freedom" className="inline-flex justify-center items-center py-3 px-5 ml-0 md:ml-2 text-base font-medium text-center text-white rounded-lg bg-[#2e2b2b] hover:bg-[#221e1e">
                 ติดตามพวกเรา
              </Link>
         </div>
@@ -53,38 +54,38 @@ export default function Home() {
             </thead>
             <tbody className="bg-white divide-y0">
               <tr className="text-gray-700">
-                  <td className="px-4 py-3">
-                    <Link href="./pdf/m4/final1/math_2.pdf" className="flex items-center text-sm">
-                      <div className="inline-block relative w-8 h-8 mr-3 rounded-full">
-                        <img
-                          className="icon-subject object-cover w-full h-auto"
-                          src="/assets/img/icon/math.png"
-                          alt="math"
-                        />
-                        <div className="absolute inset-0 rounded-full shadow-inner" aria-hidden="true"></div>
-                      </div>
-                      <div className="inline-block">
-                        <p className="font-semibold whitespace-nowrap">
-                          คณิตศาสตร์ <small className="text-red-600">(พื้นฐาน)</small>
-                        </p>
-                        <p className="text-xs text-gray-600">
-                          สอบปลายภาค (by : <Link className="text-purple-800" href="https://www.instagram.com/d3w4r_zz/">d3w4r_zz</Link>)
-                        </p>
-                      </div>
-                    </Link>
-                  </td>
+                <td className="px-4 py-3">
+                  <Link href={'/m3/midterm2/math.pdf'} className="flex items-center text-sm">
+                    <div className="inline-block relative w-8 h-8 mr-3 rounded-full">
+                      <img
+                        className="icon-subject object-cover w-full h-auto"
+                        src="/assets/img/icon/math.png"
+                        alt="math"
+                      />
+                      <div className="absolute inset-0 rounded-full shadow-inner" aria-hidden="true"></div>
+                    </div>
+                    <div className="inline-block">
+                      <p className="font-semibold whitespace-nowrap">
+                        คณิตศาสตร์
+                      </p>
+                      <p className="text-xs text-gray-600">
+                        สอบกลางภาค
+                      </p>
+                    </div>
+                  </Link>
+                </td>
                 <td className="px-4 py-3 text-sm whitespace-nowrap">
-                  ม.4 เทอม 1
+                  ม.3 เทอม 2
                 </td>
                 <td className="px-4 py-3 text-xs">
-                  <Link href="./pdf/m4/final1/math_2.pdf">
+                  <Link href={'/m3/midterm2/math.pdf'}>
                     <span className="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-full">
                       ดาวน์โหลด
                     </span>
                   </Link>
                 </td>
                 <td className="px-2 py-3 text-sm">
-                  26/10/2024
+                  17/11/2024
                 </td>
               </tr>
             </tbody>

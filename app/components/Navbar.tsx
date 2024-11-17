@@ -1,61 +1,91 @@
+"use client"
+import Link from "next/link";
+import { useState } from "react";
+
 export default function Navbar() {
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+    const toggleDropdown = () => {
+        setIsDropdownOpen(!isDropdownOpen);
+    };
+
+    const closeDropdown = () => {
+        setIsDropdownOpen(false);
+    };
+
     return (
         <nav className="bg-white border-gray-200">
             <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
-                <a href="/" className="flex items-center space-x-3">
+                <Link href="/" className="flex items-center space-x-3">
                     <img src="/assets/img/freedom.svg" className="h-12" alt="Freedom Logo" />
-                </a>
+                </Link>
                 <div className="hidden w-full md:block md:w-auto" id="navbar-dropdown">
-                    <ul
-                        className="flex flex-col font-medium p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:space-x-8 md:flex-row md:mt-0 md:border-0 md:bg-white">
+                    <ul className="flex flex-col font-medium p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:space-x-8 md:flex-row md:mt-0 md:border-0 md:bg-white">
                         <li>
-                            <a href="/"
+                            <Link href="/"
                                 className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-rose-700 md:p-0"
-                                aria-current="page">หน้าหลัก</a>
+                                aria-current="page">หน้าหลัก</Link>
                         </li>
                         <li>
-                            <a href="https://www.instagram.com/act.freedom"
-                                className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-rose-700 md:p-0">ติดต่อ</a>
+                            <Link href="https://www.instagram.com/act.freedom"
+                                className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-rose-700 md:p-0">ติดต่อ</Link>
                         </li>
-                        <li>
-                            <button id="dropdownNavbarLink" data-dropdown-toggle="dropdownNavbar"
-                                className="flex items-center justify-between w-full py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-rose-700 md:p-0 md:w-auto">ชีทสรุป
-                                <svg className="w-2.5 h-2.5 ms-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
-                                    fill="none" viewBox="0 0 10 6">
-                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                        stroke-width="2" d="m1 1 4 4 4-4" />
-                                </svg></button>
-                            <div id="dropdownNavbar"
-                                className="z-10 hidden font-normal bg-white divide-y divide-gray-100 rounded-lg shadow w-44">
-                                <ul className="py-2 text-sm text-gray-700" aria-labelledby="dropdownLargeButton">
+                        <li className="relative">
+                            <button
+                                onClick={toggleDropdown}
+                                onBlur={(e) => {
+                                    setTimeout(closeDropdown, 100);
+                                }}
+                                className="flex items-center justify-between w-full py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-rose-700 md:p-0 md:w-auto"
+                                aria-expanded={isDropdownOpen}
+                            >
+                                ชีทสรุป
+                                <svg
+                                    className={`w-2.5 h-2.5 ms-2.5 transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''}`}
+                                    aria-hidden="true"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 10 6"
+                                >
+                                    <path
+                                        stroke="currentColor"
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth="2"
+                                        d="m1 1 4 4 4-4"
+                                    />
+                                </svg>
+                            </button>
+                            <div
+                                className={`absolute z-10 font-normal bg-white divide-y divide-gray-100 rounded-lg shadow w-44 ${isDropdownOpen ? 'block' : 'hidden'
+                                    }`}
+                            >
+                                <ul className="py-2 text-sm text-gray-700">
                                     <li>
-                                        <a href="#" className="block px-4 py-2 hover:bg-gray-100">ม.1</a>
+                                        <Link href="/m2" className="block px-4 py-2 hover:bg-gray-100">ม.2</Link>
                                     </li>
                                     <li>
-                                        <a href="#" className="block px-4 py-2 hover:bg-gray-100">ม.2</a>
+                                        <Link href="/m3" className="block px-4 py-2 hover:bg-gray-100">ม.3</Link>
                                     </li>
                                     <li>
-                                        <a href="#" className="block px-4 py-2 hover:bg-gray-100">ม.3</a>
+                                        <Link href="/m4" className="block px-4 py-2 hover:bg-gray-100">ม.4</Link>
                                     </li>
                                     <li>
-                                        <a href="#" className="block px-4 py-2 hover:bg-gray-100">ม.4</a>
-                                    </li>
-                                    <li>
-                                        <a href="#" className="block px-4 py-2 hover:bg-gray-100">ม.5</a>
+                                        <Link href="/m5" className="block px-4 py-2 hover:bg-gray-100">ม.5</Link>
                                     </li>
                                 </ul>
                                 <div className="py-1">
-                                    <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">ทั้งหมด</a>
+                                    <Link href="/select" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">ทั้งหมด</Link>
                                 </div>
                             </div>
                         </li>
                         <li>
-                            <a href="#"
-                                className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-rose-700 md:p-0">ยันต์</a>
+                            <Link href="/freedom"
+                                className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-rose-700 md:p-0">ยันต์</Link>
                         </li>
                         <li>
-                            <a href="#"
-                                className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-rose-700 md:p-0">โดเนท</a>
+                            <Link href="/donate"
+                                className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-rose-700 md:p-0">โดเนท</Link>
                         </li>
                     </ul>
                 </div>
