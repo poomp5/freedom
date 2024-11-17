@@ -1,6 +1,7 @@
 "use client"
 import Link from "next/link";
 import { useState } from "react";
+import Image from "next/image";
 
 export default function Navbar() {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -9,15 +10,11 @@ export default function Navbar() {
         setIsDropdownOpen(!isDropdownOpen);
     };
 
-    const closeDropdown = () => {
-        setIsDropdownOpen(false);
-    };
-
     return (
         <nav className="bg-white border-gray-200">
             <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
                 <Link href="/" className="flex items-center space-x-3">
-                    <img src="/assets/img/freedom.svg" className="h-12" alt="Freedom Logo" />
+                    <Image src="/assets/img/freedom.svg" className="h-12 w-full" width={0} height={0} alt="Freedom Logo" />
                 </Link>
                 <div className="hidden w-full md:block md:w-auto" id="navbar-dropdown">
                     <ul className="flex flex-col font-medium p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:space-x-8 md:flex-row md:mt-0 md:border-0 md:bg-white">
@@ -33,9 +30,6 @@ export default function Navbar() {
                         <li className="relative">
                             <button
                                 onClick={toggleDropdown}
-                                onBlur={(e) => {
-                                    setTimeout(closeDropdown, 100);
-                                }}
                                 className="flex items-center justify-between w-full py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-rose-700 md:p-0 md:w-auto"
                                 aria-expanded={isDropdownOpen}
                             >

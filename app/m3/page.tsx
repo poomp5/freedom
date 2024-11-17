@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import Bottombar from "../components/Bottombar";
 import Navbar from "../components/Navbar";
 export default function Home() {
@@ -27,10 +28,12 @@ export default function Home() {
                                         <td className="px-4 py-3">
                                             <Link href={'/m3/midterm2/math.pdf'} className="flex items-center text-sm">
                                                 <div className="inline-block relative w-8 h-8 mr-3 rounded-full">
-                                                    <img
+                                                    <Image
                                                         className="icon-subject object-cover w-full h-auto"
                                                         src="/assets/img/icon/math.png"
                                                         alt="math"
+                                                        width={12}
+                                                        height={12}
                                                     />
                                                     <div className="absolute inset-0 rounded-full shadow-inner" aria-hidden="true"></div>
                                                 </div>
@@ -48,7 +51,7 @@ export default function Home() {
                                             ม.3 เทอม 2
                                         </td>
                                         <td className="px-4 py-3 text-xs">
-                                            <Link href={'/m3/midterm2/math.pdf'}>
+                                            <Link href="./pdf/m4/final1/math_2.pdf">
                                                 <span className="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-full">
                                                     ดาวน์โหลด
                                                 </span>

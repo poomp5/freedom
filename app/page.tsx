@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import Bottombar from "./components/Bottombar";
 import Navbar from "./components/Navbar";
 export default function Home() {  
@@ -31,7 +32,7 @@ export default function Home() {
               <Link href="/select" className="inline-flex justify-center items-center py-3 px-5 text-base font-medium text-center text-white rounded-lg bg-[#f45455] hover:bg-[#d13f3f]">
             โหลดชีทสรุป
               <svg className="w-4 h-4 ms-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 13V4M7 14H5a1 1 0 0 0-1 1v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4a1 1 0 0 0-1-1h-2m-1-5-4 5-4-5m9 8h.01" />
+                <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 13V4M7 14H5a1 1 0 0 0-1 1v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4a1 1 0 0 0-1-1h-2m-1-5-4 5-4-5m9 8h.01" />
               </svg>
               </Link>
               <Link href="https://www.instagram.com/act.freedom" className="inline-flex justify-center items-center py-3 px-5 ml-0 md:ml-2 text-base font-medium text-center text-white rounded-lg bg-[#2e2b2b] hover:bg-[#221e1e">
@@ -57,11 +58,13 @@ export default function Home() {
                 <td className="px-4 py-3">
                   <Link href={'/m3/midterm2/math.pdf'} className="flex items-center text-sm">
                     <div className="inline-block relative w-8 h-8 mr-3 rounded-full">
-                      <img
-                        className="icon-subject object-cover w-full h-auto"
-                        src="/assets/img/icon/math.png"
-                        alt="math"
-                      />
+                        <Image
+                          className="icon-subject object-cover w-full h-auto"
+                          src="/assets/img/icon/math.png"
+                          alt="math"
+                          width={12}
+                          height={12}
+                        />
                       <div className="absolute inset-0 rounded-full shadow-inner" aria-hidden="true"></div>
                     </div>
                     <div className="inline-block">
@@ -78,7 +81,7 @@ export default function Home() {
                   ม.3 เทอม 2
                 </td>
                 <td className="px-4 py-3 text-xs">
-                  <Link href={'/m3/midterm2/math.pdf'}>
+                  <Link href="./pdf/m4/final1/math_2.pdf">
                     <span className="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-full">
                       ดาวน์โหลด
                     </span>

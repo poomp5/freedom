@@ -2,12 +2,12 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import Script from "next/script";
 import "./globals.css";
+import { Kanit } from 'next/font/google'
 
-const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
-  variable: "--font-geist-sans",
-  weight: "100 900",
-});
+const kanit = Kanit({
+  weight: ['100','200','300','400','500','600','700','800','900'],
+  subsets: ['latin'],
+})
 const geistMono = localFont({
   src: "./fonts/GeistMonoVF.woff",
   variable: "--font-geist-mono",
@@ -15,7 +15,7 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "FREEEDOM NEXT GEN",
+  title: "FREEDOM NEXT GEN",
   description: "เว็บไซต์แจกชีทสรุปโรงเรียนอัสสัมชัญธนบุรี",
 };
 
@@ -27,21 +27,6 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <link rel="icon" href="./public/assets/img/poomicon.png" sizes="any" />
-        <link
-          rel="icon"
-          href="./public/assets/img/poomicon.png"
-          type="image/<generated>"
-          sizes="<generated>"
-        />
-        <link
-          rel="apple-touch-icon"
-          href="./public/assets/img/poomicon.png"
-          type="image/<generated>"
-          sizes="<generated>"
-        />
-
-        <link href="https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet"></link>
         <Script id="countdown-exam" strategy="afterInteractive">
           {`
             (function () {
@@ -80,12 +65,12 @@ export default function RootLayout({
           `}
         </Script>
       </head>
-      <script src="../path/to/flowbite/dist/flowbite.min.js"></script>
+
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${kanit.className} ${geistMono.variable} antialiased`}
       >
         {children}
       </body>
     </html>
   );
-}
+};
