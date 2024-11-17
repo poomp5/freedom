@@ -11,20 +11,20 @@ export default function Home() {
     <main className="mt-8 h-full overflow-y-auto">
     <section>
       <div className="py-8 px-4 mx-auto max-w-screen-xl text-center lg:py-16">
-            <h1 className="mb-4 text-4xl font-extrabold tracking-tight leading-none md:text-5xl lg:text-6xl text-gray-700">สอบกลางภาค</h1>
+            <h1 className="mb-4 text-5xl font-extrabold tracking-tight leading-none md:text-5xl lg:text-6xl text-gray-600">สอบกลางภาค</h1>
             <div id="countdown" className="mt-0 kanit text-gray-600 font-bold text-center max-w-screen-sm md:max-w-screen-xl">
-              <ul className="inline-flex space-x-0.5 md:space-x-6">
-                <li className="inline-block">
-                  <span id="days"></span> DAY
+              <ul className="inline-flex space-x-1.5 md:space-x-6">
+                <li className="inline-block rounded-lg p-2.5">
+                  <span id="days" className="countdown-span"></span> <span className="font-semibold text-gray-500">DAYS</span>
                 </li>
-                <li className="inline-block">
-                  <span id="hours"></span> HOURS
+                <li className="inline-block rounded-lg p-2.5">
+                  <span id="hours" className="countdown-span"></span> <span className="font-semibold text-gray-500">HOURS</span>
                 </li>
-                <li className="inline-block">
-                  <span id="minutes"></span> MINUTES
+                <li className="inline-block rounded-lg p-2.5">
+                  <span id="minutes" className="countdown-span"></span> <span className="font-semibold text-gray-500">MINUTIES</span>
                 </li>
-                <li className="inline-block">
-                  <span id="seconds"></span> SECONDS
+                <li className="inline-block rounded-lg p-2.5">
+                  <span id="seconds" className="countdown-span"></span> <span className="font-semibold text-gray-500">SECONDS</span>
                 </li>
               </ul>
             </div>
