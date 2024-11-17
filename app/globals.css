@@ -22,7 +22,8 @@ body {
 }
 .dark .icon-subject {
   filter: grayscale(1) invert(1);
-}Ø
+}
+
 countdown li {
   display: inline-block;
   font-size: 1em;
@@ -37,16 +38,6 @@ countdown li {
   font-size: 3.5rem;
   margin: 0.25em;
   text-transform: uppercase;
-}
-
-.rainbow-text {
-  background: linear-gradient(90deg,
-    #f45455
-    ,#0000);
-  background-size: 400%;
-  -webkit-background-clip: text;
-  color: transparent;
-  animation: rainbow-move 4s linear infinite;
 }
 
 @keyframes rainbow-move {

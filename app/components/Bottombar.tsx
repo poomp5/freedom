@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default function Bottombar() {
     return (
-        <div className="block md:hidden fixed bottom-0 left-0 z-50 w-full h-20 bg-white border-t border-gray-200">
+        <div className="block md:hidden fixed bottom-0 left-0 z-50 w-full h-16 bg-white border-t border-gray-200">
             <div className="relative grid h-full grid-cols-5 mx-auto">
                 <Link href="/" className="w-full">
                     <button type="button"
@@ -28,13 +28,8 @@ export default function Bottombar() {
                 </Link>
                 <Link href="select" className="w-full">
                     <button type="button"
-                        className="absolute left-1/2 -translate-x-1/2 -translate-y-5 w-20 h-20 inline-flex flex-col items-center justify-center bg-red-700 hover:bg-red-800 group rounded-full shadow-lg">
-                        <svg className="w-8 h-8 mb-1 text-white"
-                            aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-                            <path fillRule="evenodd"
-                                d="M11 4.717c-2.286-.58-4.16-.756-7.045-.71A1.99 1.99 0 0 0 2 6v11c0 1.133.934 2.022 2.044 2.007 2.759-.038 4.5.16 6.956.791V4.717Zm2 15.081c2.456-.631 4.198-.829 6.956-.791A2.013 2.013 0 0 0 22 16.999V6a1.99 1.99 0 0 0-1.955-1.993c-2.885-.046-4.76.13-7.045.71v15.081Z"
-                                clipRule="evenodd" />
-                        </svg>
+                        className="absolute left-1/2 -translate-x-1/2 -translate-y-3 w-16 h-16 inline-flex flex-col items-center justify-center bg-red-700 hover:bg-red-800 group rounded-full shadow-lg">
+                        <svg className="h-full w-full p-3 mb-1 text-white hover:text-white"  xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M3 19a9 9 0 0 1 9 0a9 9 0 0 1 9 0" /><path d="M3 6a9 9 0 0 1 9 0a9 9 0 0 1 9 0" /><path d="M3 6l0 13" /><path d="M12 6l0 13" /><path d="M21 6l0 13" /></svg>
                     </button>
                 </Link>
                 <Link href="/freedom" className="w-full">

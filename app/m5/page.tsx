@@ -11,7 +11,7 @@ export default function Home() {
             <main className="mt-8 h-full overflow-y-auto">
                 <div className="container px-4 lg:px-8 mx-auto grid">
                     <h1 className="mx-auto mb-2 text-4xl font-extrabold tracking-tight leading-none md:text-5xl lg:text-4xl text-gray-700">สอบกลางภาค 2/2567</h1>
-                    <p className="mx-auto mb-4 text-xl text-gray-500">ชีทสรุป (ม.3) ที่จัดทำในปีการศึกษา 2566</p>
+                    <p className="mx-auto mb-4 text-xl text-gray-500">ชีทสรุป (ม.4) ที่จัดทำในปีการศึกษา 2567</p>
                     <div className="w-full overflow-hidden rounded-lg shadow-xs">
                         <div className="w-full overflow-x-auto">
                             <table className="w-full whitespace-no-wrap">
@@ -24,7 +24,7 @@ export default function Home() {
                                     </tr>
                                 </thead>
                                 <tbody className="bg-white divide-y0">
-                                    <tr className="text-gray-700">
+                                    {/* <tr className="text-gray-700">
                                         <td className="px-4 py-3">
                                             <Link href={'/m3/midterm2/math.pdf'} className="flex items-center text-sm">
                                                 <div className="inline-block relative w-8 h-8 mr-3 rounded-full">
@@ -60,7 +60,7 @@ export default function Home() {
                                         <td className="px-2 py-3 text-sm">
                                             17/11/2024
                                         </td>
-                                    </tr>
+                                    </tr> */}
                                 </tbody>
                             </table>
                         </div>

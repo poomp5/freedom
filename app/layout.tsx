@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import localFont from "next/font/local";
 import Script from "next/script";
 import "./globals.css";
@@ -14,10 +13,14 @@ const geistMono = localFont({
   weight: "100 900",
 });
 
-export const metadata: Metadata = {
-  title: "FREEDOM NEXT GEN",
-  description: "เว็บไซต์แจกชีทสรุปโรงเรียนอัสสัมชัญธนบุรี",
+export const metadata = {
+  title: "FREEDOM | NEXT GEN",
+  description: "ASSUMPTION COLLEGE THONBURI",
+  icons: {
+    icon: "/assets/img/poomicon.png",
+  },
 };
+
 
 export default function RootLayout({
   children,
@@ -65,7 +68,6 @@ export default function RootLayout({
           `}
         </Script>
       </head>
-
       <body
         className={`${kanit.className} ${geistMono.variable} antialiased`}
       >
