@@ -12,8 +12,8 @@ export default function Home() {
     <section>
       <div className="py-8 px-4 mx-auto max-w-screen-xl text-center lg:py-16">
             <h1 className="mb-4 text-5xl font-extrabold tracking-tight leading-none md:text-5xl lg:text-6xl text-gray-600">สอบกลางภาค</h1>
-            <div id="countdown" className="mt-0 kanit text-gray-600 font-bold text-center max-w-screen-sm md:max-w-screen-xl">
-              <ul className="inline-flex space-x-1.5 md:space-x-6">
+            <div id="countdown" className="mt-0 kanit text-gray-600 font- text-center max-w-screen-sm md:max-w-screen-xl">
+              <ul className="inline-flex space-x-1.5 md:space-x-6 font-bold">
                 <li className="inline-block rounded-lg p-2.5">
                   <span id="days" className="countdown-span"></span> <span className="font-semibold text-gray-500">DAYS</span>
                 </li>
