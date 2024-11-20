@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default function Bottombar() {
     return (
-        <div className="block md:hidden fixed bottom-0 left-0 z-50 w-full h-16 bg-white border-t border-gray-200">
+        <div className="mt-6 block md:hidden fixed bottom-0 left-0 z-50 w-full h-16 bg-white border-t border-gray-200">
             <div className="relative grid h-full grid-cols-5 mx-auto">
                 <Link href="/" className="w-full">
                     <button type="button"

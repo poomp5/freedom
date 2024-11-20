@@ -2,7 +2,8 @@ import Link from "next/link";
 import Image from "next/image";
 import Bottombar from "./components/Bottombar";
 import Navbar from "./components/Navbar";
-export default function Home() {  
+
+export default function Home() { 
   return (
     <div>
       <Navbar />
@@ -12,22 +13,7 @@ export default function Home() {
     <section>
       <div className="py-8 px-4 mx-auto max-w-screen-xl text-center lg:py-16">
             <h1 className="mb-4 text-5xl font-extrabold tracking-tight leading-none md:text-5xl lg:text-6xl text-gray-600">สอบกลางภาค</h1>
-            <div id="countdown" className="mt-0 kanit text-gray-600 font- text-center max-w-screen-sm md:max-w-screen-xl">
-              <ul className="inline-flex space-x-1.5 md:space-x-6 font-bold">
-                <li className="inline-block rounded-lg p-2.5">
-                  <span id="days" className="countdown-span"></span> <span className="font-semibold text-gray-500">DAYS</span>
-                </li>
-                <li className="inline-block rounded-lg p-2.5">
-                  <span id="hours" className="countdown-span"></span> <span className="font-semibold text-gray-500">HOURS</span>
-                </li>
-                <li className="inline-block rounded-lg p-2.5">
-                  <span id="minutes" className="countdown-span"></span> <span className="font-semibold text-gray-500">MINUTIES</span>
-                </li>
-                <li className="inline-block rounded-lg p-2.5">
-                  <span id="seconds" className="countdown-span"></span> <span className="font-semibold text-gray-500">SECONDS</span>
-                </li>
-              </ul>
-            </div>
+            
         <div className="mt-5 flex flex-col space-y-2 sm:flex-row sm:justify-center sm:space-y-0">
               <Link href="/select" className="inline-flex justify-center items-center py-3 px-5 text-base font-medium text-center text-white rounded-lg bg-[#f45455] hover:bg-[#d13f3f]">
             โหลดชีทสรุป
@@ -128,6 +114,6 @@ export default function Home() {
       </div>
     </div>
     </main>
-    </div>
+    </div>  
   );
 }
