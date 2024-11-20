@@ -8,7 +8,7 @@ export default function Home() {
     <div>
       <Navbar />
       <Bottombar  />
-      <link rel="shortcut icon" href="../public/assets/img/poomicon.png" />
+    <link rel="shortcut icon" href="../public/assets/img/poomicon.png" />
     <main className="mt-8 h-full overflow-y-auto">
     <section>
       <div className="py-8 px-4 mx-auto max-w-screen-xl text-center lg:py-16">
