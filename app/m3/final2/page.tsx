@@ -2,7 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import Navbar from "@/app/components/Navbar";
 import Bottombar from "@/app/components/Bottombar";
-export  default function Home() {
+export default function Home() {
     return (
         <div>
             <Navbar />
@@ -10,7 +10,7 @@ export  default function Home() {
             <link rel="shortcut icon" href="../public/assets/img/poomicon.png" />
             <main className="mt-8 h-full overflow-y-auto">
                 <div className="container px-4 lg:px-8 mx-auto grid">
-                    <h1 className="mx-auto mb-2 text-4xl font-extrabold tracking-tight leading-none md:text-5xl lg:text-4xl text-gray-700">สอบกลางภาค 2/2567</h1>
+                    <h1 className="mx-auto mb-2 text-4xl font-extrabold tracking-tight leading-none md:text-5xl lg:text-4xl text-gray-700">สอบปลายภาค 2/2567</h1>
                     <p className="mx-auto mb-4 text-xl text-gray-500">ชีทสรุป (ม.3) ที่จัดทำในปีการศึกษา 2566</p>
                     <div className="w-full overflow-hidden rounded-lg shadow-xs">
                         <div className="w-full overflow-x-auto">
@@ -251,7 +251,7 @@ export  default function Home() {
                         </div>
                         <div className="grid px-4 py-3 text-xs font-semibold tracking-wide text-gray-500 uppercase border-t bg-gray-50 sm:grid-cols-9">
                             <span className="flex items-center col-span-3">
-                                กำลังแสดง หน้า 1 จาก 1
+                                กำลังแสดง หน้า 2 จาก 2
                             </span>
                             <span className="col-span-2"></span>
                             <span className="flex col-span-4 mt-2 sm:mt-auto sm:justify-end">
@@ -265,12 +265,16 @@ export  default function Home() {
                                             </button>
                                         </li>
                                         <li>
-                                            <button className="px-3 mx-1 py-1 text-white transition-colors duration-150 bg-red-600 border border-r-0 border-red-600 rounded-md focus:outline-none focus:shadow-outline-red">
-                                                กลางภาค
-                                            </button>
-                                            <button className="px-3 py-1 text-gray-800 transition-colors duration-150 rounded-md focus:outline-none focus:shadow-outline-red">
-                                                ปลายภาค
-                                            </button>
+                                            <Link href="/m3">
+                                                <button className="px-3 mx-1 py-1 text-gray-800 transition-colors duration-150  rounded-md focus:outline-none focus:shadow-outline-red">
+                                                    กลางภาค
+                                                </button>
+                                            </Link>
+                                            <Link href="/m3/final">
+                                                <button className="px-3 py-1 text-white transition-colors duration-150 rounded-md bg-red-600 border border-r-0 border-red-600 focus:outline-none focus:shadow-outline-red">
+                                                    ปลายภาค
+                                                </button>
+                                            </Link>
                                         </li>
                                         <li>
                                             <button className="px-3 py-1 rounded-md rounded-r-lg focus:outline-none focus:shadow-outline-red" aria-label="Next">
