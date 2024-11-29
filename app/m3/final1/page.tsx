@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import Navbar from "@/app/components/Navbar";
 import Bottombar from "@/app/components/Bottombar";
+import PaginationFooter from "@/app/components/PaginationFooter";
 export  default function Home() {
     return (
         <div>
@@ -26,7 +27,7 @@ export  default function Home() {
                                 <tbody className="bg-white divide-y0">
                                     <tr className="text-gray-700">
                                         <td className="px-4 py-3">
-                                            <Link href={'/m3/midterm2/math.pdf'} className="flex items-center text-sm">
+                                            <Link href={'/m3/final1/math.pdf'} className="flex items-center text-sm">
                                                 <div className="inline-block relative w-8 h-8 mr-3 rounded-full">
                                                     <Image
                                                         className="icon-subject object-cover w-full h-auto"
@@ -42,28 +43,28 @@ export  default function Home() {
                                                         คณิตศาสตร์
                                                     </p>
                                                     <p className="text-xs text-gray-600">
-                                                        สอบกลางภาค
+                                                        สอบปลายภาค
                                                     </p>
                                                 </div>
                                             </Link>
                                         </td>
                                         <td className="px-4 py-3 text-sm whitespace-nowrap">
-                                            ม.3 เทอม 2
+                                            ม.3 เทอม 1
                                         </td>
                                         <td className="px-4 py-3 text-xs">
-                                            <Link href={'/m3/midterm2/math.pdf'}>
+                                            <Link href={'/m3/final1/math.pdf'}>
                                                 <span className="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-full">
                                                     ดาวน์โหลด
                                                 </span>
                                             </Link>
                                         </td>
                                         <td className="px-2 py-3 text-sm">
-                                            17/11/2024
+                                            29/11/2024
                                         </td>
                                     </tr>
                                     <tr className="text-gray-700">
                                         <td className="px-4 py-3">
-                                            <Link href={'/m3/midterm2/sci.pdf'} className="flex items-center text-sm">
+                                            <Link href={'/m3/final1/sci.pdf'} className="flex items-center text-sm">
                                                 <div className="inline-block relative w-8 h-8 mr-3 rounded-full">
                                                     <Image
                                                         className="icon-subject object-cover w-full h-auto"
@@ -79,28 +80,28 @@ export  default function Home() {
                                                         วิทยาศาสตร์
                                                     </p>
                                                     <p className="text-xs text-gray-600">
-                                                        สอบกลางภาค
+                                                        สอบปลายภาค
                                                     </p>
                                                 </div>
                                             </Link>
                                         </td>
                                         <td className="px-4 py-3 text-sm whitespace-nowrap">
-                                            ม.3 เทอม 2
+                                            ม.3 เทอม 1
                                         </td>
                                         <td className="px-4 py-3 text-xs">
-                                            <Link href={'/m3/midterm2/sci.pdf'}>
+                                            <Link href={'/m3/final1/sci.pdf'}>
                                                 <span className="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-full">
                                                     ดาวน์โหลด
                                                 </span>
                                             </Link>
                                         </td>
                                         <td className="px-2 py-3 text-sm">
-                                            17/11/2024
+                                            29/11/2024
                                         </td>
                                     </tr>
                                     <tr className="text-gray-700">
                                         <td className="px-4 py-3">
-                                            <Link href={'/m3/midterm2/thai.pdf'} className="flex items-center text-sm">
+                                            <Link href={'/m3/final1/thai.pdf'} className="flex items-center text-sm">
                                                 <div className="inline-block relative w-8 h-8 mr-3 rounded-full">
                                                     <Image
                                                         className="icon-subject object-cover w-full h-auto"
@@ -116,28 +117,28 @@ export  default function Home() {
                                                         ภาษาไทย
                                                     </p>
                                                     <p className="text-xs text-gray-600">
-                                                        สอบกลางภาค
+                                                        สอบปลายภาค
                                                     </p>
                                                 </div>
                                             </Link>
                                         </td>
                                         <td className="px-4 py-3 text-sm whitespace-nowrap">
-                                            ม.3 เทอม 2
+                                            ม.3 เทอม 1
                                         </td>
                                         <td className="px-4 py-3 text-xs">
-                                            <Link href={'/m3/midterm2/thai.pdf'}>
+                                            <Link href={'/m3/final1/thai.pdf'}>
                                                 <span className="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-full">
                                                     ดาวน์โหลด
                                                 </span>
                                             </Link>
                                         </td>
                                         <td className="px-2 py-3 text-sm">
-                                            17/11/2024
+                                            29/11/2024
                                         </td>
                                     </tr>
                                     <tr className="text-gray-700">
                                         <td className="px-4 py-3">
-                                            <Link href={'/m3/midterm2/social.pdf'} className="flex items-center text-sm">
+                                            <Link href={'/m3/final1/social.pdf'} className="flex items-center text-sm">
                                                 <div className="inline-block relative w-8 h-8 mr-3 rounded-full">
                                                     <Image
                                                         className="icon-subject object-cover w-full h-auto"
@@ -153,28 +154,28 @@ export  default function Home() {
                                                         สังคมศึกษา
                                                     </p>
                                                     <p className="text-xs text-gray-600">
-                                                        สอบกลางภาค
+                                                        สอบปลายภาค
                                                     </p>
                                                 </div>
                                             </Link>
                                         </td>
                                         <td className="px-4 py-3 text-sm whitespace-nowrap">
-                                            ม.3 เทอม 2
+                                            ม.3 เทอม 1
                                         </td>
                                         <td className="px-4 py-3 text-xs">
-                                            <Link href={'/m3/midterm2/social.pdf'}>
+                                            <Link href={'/m3/final1/social.pdf'}>
                                                 <span className="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-full">
                                                     ดาวน์โหลด
                                                 </span>
                                             </Link>
                                         </td>
                                         <td className="px-2 py-3 text-sm">
-                                            17/11/2024
+                                            29/11/2024
                                         </td>
                                     </tr>
                                     <tr className="text-gray-700">
                                         <td className="px-4 py-3">
-                                            <Link href={'/m3/midterm2/history.pdf'} className="flex items-center text-sm">
+                                            <Link href={'/m3/final1/history.pdf'} className="flex items-center text-sm">
                                                 <div className="inline-block relative w-8 h-8 mr-3 rounded-full">
                                                     <Image
                                                         className="icon-subject object-cover w-full h-auto"
@@ -190,28 +191,28 @@ export  default function Home() {
                                                         ประวัติศาสตร์
                                                     </p>
                                                     <p className="text-xs text-gray-600">
-                                                        สอบกลางภาค
+                                                        สอบปลายภาค
                                                     </p>
                                                 </div>
                                             </Link>
                                         </td>
                                         <td className="px-4 py-3 text-sm whitespace-nowrap">
-                                            ม.3 เทอม 2
+                                            ม.3 เทอม 1
                                         </td>
                                         <td className="px-4 py-3 text-xs">
-                                            <Link href={'/m3/midterm2/history.pdf'}>
+                                            <Link href={'/m3/final1/history.pdf'}>
                                                 <span className="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-full">
                                                     ดาวน์โหลด
                                                 </span>
                                             </Link>
                                         </td>
                                         <td className="px-2 py-3 text-sm">
-                                            17/11/2024
+                                            29/11/2024
                                         </td>
                                     </tr>
                                     <tr className="text-gray-700">
                                         <td className="px-4 py-3">
-                                            <Link href={'/m3/midterm2/eng.pdf'} className="flex items-center text-sm">
+                                            <Link href={'/m3/final1/eng.pdf'} className="flex items-center text-sm">
                                                 <div className="inline-block relative w-8 h-8 mr-3 rounded-full">
                                                     <Image
                                                         className="icon-subject object-cover w-full h-auto"
@@ -227,66 +228,36 @@ export  default function Home() {
                                                         ภาษาอังกฤษ
                                                     </p>
                                                     <p className="text-xs text-gray-600">
-                                                        สอบกลางภาค
+                                                        สอบปลายภาค
                                                     </p>
                                                 </div>
                                             </Link>
                                         </td>
                                         <td className="px-4 py-3 text-sm whitespace-nowrap">
-                                            ม.3 เทอม 2
+                                            ม.3 เทอม 1
                                         </td>
                                         <td className="px-4 py-3 text-xs">
-                                            <Link href={'/m3/midterm2/eng.pdf'}>
+                                            <Link href={'/m3/final1/eng.pdf'}>
                                                 <span className="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-full">
                                                     ดาวน์โหลด
                                                 </span>
                                             </Link>
                                         </td>
                                         <td className="px-2 py-3 text-sm">
-                                            17/11/2024
+                                            29/11/2024
                                         </td>
                                     </tr>
                                 </tbody>
                             </table>
                         </div>
-                        <div className="grid px-4 py-3 text-xs font-semibold tracking-wide text-gray-500 uppercase border-t bg-gray-50 sm:grid-cols-9">
-                            <span className="flex items-center col-span-3">
-                                กำลังแสดง หน้า 2 จาก 2
-                            </span>
-                            <span className="col-span-2"></span>
-                            <span className="flex col-span-4 mt-2 sm:mt-auto sm:justify-end">
-                                <nav aria-label="Table navigation">
-                                    <ul className="inline-flex items-center">
-                                        <li>
-                                            <button className="px-3 py-1 rounded-md rounded-l-lg focus:outline-none focus:shadow-outline-red" aria-label="Previous">
-                                                <svg aria-hidden="true" className="w-4 h-4 fill-current" viewBox="0 0 20 20">
-                                                    <path d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clipRule="evenodd" fillRule="evenodd"></path>
-                                                </svg>
-                                            </button>
-                                        </li>
-                                        <li>
-                                            <Link href="/m3">
-                                                <button className="px-3 mx-1 py-1 text-gray-800 transition-colors duration-150  rounded-md focus:outline-none focus:shadow-outline-red">
-                                                    กลางภาค
-                                                </button>
-                                            </Link>
-                                            <Link href="/m3/final2">
-                                                <button className="px-3 py-1 text-white transition-colors duration-150 rounded-md bg-red-600 border border-r-0 border-red-600 focus:outline-none focus:shadow-outline-red">
-                                                    ปลายภาค
-                                                </button>
-                                            </Link>
-                                        </li>
-                                        <li>
-                                            <button className="px-3 py-1 rounded-md rounded-r-lg focus:outline-none focus:shadow-outline-red" aria-label="Next">
-                                                <svg className="w-4 h-4 fill-current" aria-hidden="true" viewBox="0 0 20 20">
-                                                    <path d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" fillRule="evenodd"></path>
-                                                </svg>
-                                            </button>
-                                        </li>
-                                    </ul>
-                                </nav>
-                            </span>
-                        </div>
+                        <PaginationFooter
+                            leftArrow={{ label: "เทอม 1", href: "/m3/midterm1" }}
+                            rightArrow={{ label: "เทอม 2", href: "/m3" }}
+                            links={[
+                                { label: "กลางภาค", href: "/m3/midterm1", isActive: false },
+                                { label: "ปลายภาค", href: "/m3/final1", isActive: true },
+                            ]}
+                        />
                     </div>
                 </div>
             </main>

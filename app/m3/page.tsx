@@ -251,8 +251,8 @@ export default function Home() {
                             </table>
                         </div>
                         <PaginationFooter
-                            leftArrow={{ label: "Midterm 1", href: "/m3/midterm1" }}
-                            rightArrow={{ label: "Final 2", href: "/m3/final2" }}
+                            leftArrow={{ label: "เทอม 1", href: "/m3/midterm1" }}
+                            rightArrow={{ label: "เทอม 2", href: "/m3" }}
                             links={[
                                 { label: "กลางภาค", href: "/m3", isActive: true },
                                 { label: "ปลายภาค", href: "/m3/final2", isActive: false },
