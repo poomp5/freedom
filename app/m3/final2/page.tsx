@@ -3,7 +3,7 @@ import Image from "next/image";
 import Navbar from "@/app/components/Navbar";
 import Bottombar from "@/app/components/Bottombar";
 import PaginationFooter from "@/app/components/PaginationFooter";
-import { year } from "@/app/layout";
+import { year } from "@/app/components/var";
 export default function Home() {
     return (
         <div>

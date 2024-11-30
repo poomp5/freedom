@@ -1,9 +1,9 @@
-import Link from "next/link";
-import Image from "next/image";
+// import Link from "next/link";
+// import Image from "next/image";
 import Bottombar from "@/app/components/Bottombar";
 import Navbar from "@/app/components/Navbar";
 import PaginationFooter from "@/app/components/PaginationFooter";
-import { year } from "@/app/layout";
+import { year } from "@/app/components/var";
 export default function Home() {
     return (
         <div>
