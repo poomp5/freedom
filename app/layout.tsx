@@ -2,6 +2,8 @@ import localFont from "next/font/local";
 import "./globals.css";
 import {Kanit} from 'next/font/google'
 
+export const year = "2567";
+
 const kanit = Kanit({
     weight: [
         '100',

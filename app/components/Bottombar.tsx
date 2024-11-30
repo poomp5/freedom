@@ -26,7 +26,7 @@ export default function Bottombar() {
                         <span className="text-xs text-gray-500 group-hover:text-red-600">ติดต่อ</span>
                     </button>
                 </Link>
-                <Link href="select" className="w-full">
+                <Link href="/select" className="w-full">
                     <button type="button"
                         className="absolute left-1/2 -translate-x-1/2 -translate-y-3 w-16 h-16 inline-flex flex-col items-center justify-center bg-red-600 hover:bg-red-800 group rounded-full shadow-lg">
                         <svg className="h-full w-full p-3 mb-1 text-white hover:text-white"  xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M3 19a9 9 0 0 1 9 0a9 9 0 0 1 9 0" /><path d="M3 6a9 9 0 0 1 9 0a9 9 0 0 1 9 0" /><path d="M3 6l0 13" /><path d="M12 6l0 13" /><path d="M21 6l0 13" /></svg>

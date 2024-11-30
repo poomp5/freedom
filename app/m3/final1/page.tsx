@@ -3,6 +3,7 @@ import Image from "next/image";
 import Navbar from "@/app/components/Navbar";
 import Bottombar from "@/app/components/Bottombar";
 import PaginationFooter from "@/app/components/PaginationFooter";
+import { year } from "@/app/layout";
 export  default function Home() {
     return (
         <div>
@@ -10,8 +11,8 @@ export  default function Home() {
             <Bottombar />
             <link rel="shortcut icon" href="../public/assets/img/poomicon.png" />
             <main className="mt-8 h-full overflow-y-auto">
-                <div className="container px-4 lg:px-8 mx-auto grid">
-                    <h1 className="mx-auto mb-2 text-4xl font-extrabold tracking-tight leading-none md:text-5xl lg:text-4xl text-gray-700">สอบปลายภาค 1/2567</h1>
+                <div className="container px-4 lg:px-8 mx-auto grid md:mb-[4vh] mb-[12vh]">
+                    <h1 className="mx-auto mb-2 text-4xl font-extrabold tracking-tight leading-none md:text-5xl lg:text-4xl text-gray-700">สอบปลายภาค 1/{year}</h1>
                     <p className="mx-auto mb-4 text-xl text-gray-500">ชีทสรุป (ม.3) ที่จัดทำในปีการศึกษา 2566</p>
                     <div className="w-full overflow-hidden rounded-lg shadow-xs">
                         <div className="w-full overflow-x-auto">
@@ -252,7 +253,7 @@ export  default function Home() {
                         </div>
                         <PaginationFooter
                             leftArrow={{ label: "เทอม 1", href: "/m3/midterm1" }}
-                            rightArrow={{ label: "เทอม 2", href: "/m3" }}
+                            rightArrow={{ label: "เทอม 2", href: "/m3/midterm2" }}
                             links={[
                                 { label: "กลางภาค", href: "/m3/midterm1", isActive: false },
                                 { label: "ปลายภาค", href: "/m3/final1", isActive: true },
