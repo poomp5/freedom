@@ -1,5 +1,5 @@
-import Link from "next/link";
-import Image from "next/image";
+// import Link from "next/link";
+// import Image from "next/image";
 import Navbar from "@/app/components/Navbar";
 import Bottombar from "@/app/components/Bottombar";
 import PaginationFooter from "@/app/components/PaginationFooter";
@@ -26,7 +26,7 @@ export default function Home() {
                                     </tr>
                                 </thead>
                                 <tbody className="bg-white divide-y0">
-                                    <tr className="text-gray-700">
+                                    {/* <tr className="text-gray-700">
                                         <td className="px-4 py-3">
                                             <Link href={'/m5/final2/math.pdf'} className="flex items-center text-sm">
                                                 <div className="inline-block relative w-8 h-8 mr-3 rounded-full">
@@ -62,192 +62,7 @@ export default function Home() {
                                         <td className="px-2 py-3 text-sm">
                                             17/11/2024
                                         </td>
-                                    </tr>
-                                    <tr className="text-gray-700">
-                                        <td className="px-4 py-3">
-                                            <Link href={'/m5/final2/sci.pdf'} className="flex items-center text-sm">
-                                                <div className="inline-block relative w-8 h-8 mr-3 rounded-full">
-                                                    <Image
-                                                        className="icon-subject object-cover w-full h-auto"
-                                                        src="/assets/img/icon/sci.png"
-                                                        alt="math"
-                                                        width={100}
-                                                        height={100}
-                                                    />
-                                                    <div className="absolute inset-0 rounded-full shadow-inner" aria-hidden="true"></div>
-                                                </div>
-                                                <div className="inline-block">
-                                                    <p className="font-semibold whitespace-nowrap">
-                                                        วิทยาศาสตร์
-                                                    </p>
-                                                    <p className="text-xs text-gray-600">
-                                                        สอบปลายภาค
-                                                    </p>
-                                                </div>
-                                            </Link>
-                                        </td>
-                                        <td className="px-4 py-3 text-sm whitespace-nowrap">
-                                            ม.5 เทอม 2
-                                        </td>
-                                        <td className="px-4 py-3 text-xs">
-                                            <Link href={'/m5/final2/sci.pdf'}>
-                                                <span className="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-full">
-                                                    ดาวน์โหลด
-                                                </span>
-                                            </Link>
-                                        </td>
-                                        <td className="px-2 py-3 text-sm">
-                                            17/11/2024
-                                        </td>
-                                    </tr>
-                                    <tr className="text-gray-700">
-                                        <td className="px-4 py-3">
-                                            <Link href={'/m5/final2/thai.pdf'} className="flex items-center text-sm">
-                                                <div className="inline-block relative w-8 h-8 mr-3 rounded-full">
-                                                    <Image
-                                                        className="icon-subject object-cover w-full h-auto"
-                                                        src="/assets/img/icon/thai.png"
-                                                        alt="math"
-                                                        width={100}
-                                                        height={100}
-                                                    />
-                                                    <div className="absolute inset-0 rounded-full shadow-inner" aria-hidden="true"></div>
-                                                </div>
-                                                <div className="inline-block">
-                                                    <p className="font-semibold whitespace-nowrap">
-                                                        ภาษาไทย
-                                                    </p>
-                                                    <p className="text-xs text-gray-600">
-                                                        สอบปลายภาค
-                                                    </p>
-                                                </div>
-                                            </Link>
-                                        </td>
-                                        <td className="px-4 py-3 text-sm whitespace-nowrap">
-                                            ม.5 เทอม 2
-                                        </td>
-                                        <td className="px-4 py-3 text-xs">
-                                            <Link href={'/m5/final2/thai.pdf'}>
-                                                <span className="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-full">
-                                                    ดาวน์โหลด
-                                                </span>
-                                            </Link>
-                                        </td>
-                                        <td className="px-2 py-3 text-sm">
-                                            17/11/2024
-                                        </td>
-                                    </tr>
-                                    <tr className="text-gray-700">
-                                        <td className="px-4 py-3">
-                                            <Link href={'/m5/final2/social.pdf'} className="flex items-center text-sm">
-                                                <div className="inline-block relative w-8 h-8 mr-3 rounded-full">
-                                                    <Image
-                                                        className="icon-subject object-cover w-full h-auto"
-                                                        src="/assets/img/icon/social.png"
-                                                        alt="math"
-                                                        width={100}
-                                                        height={100}
-                                                    />
-                                                    <div className="absolute inset-0 rounded-full shadow-inner" aria-hidden="true"></div>
-                                                </div>
-                                                <div className="inline-block">
-                                                    <p className="font-semibold whitespace-nowrap">
-                                                        สังคมศึกษา
-                                                    </p>
-                                                    <p className="text-xs text-gray-600">
-                                                        สอบปลายภาค
-                                                    </p>
-                                                </div>
-                                            </Link>
-                                        </td>
-                                        <td className="px-4 py-3 text-sm whitespace-nowrap">
-                                            ม.5 เทอม 2
-                                        </td>
-                                        <td className="px-4 py-3 text-xs">
-                                            <Link href={'/m5/final2/social.pdf'}>
-                                                <span className="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-full">
-                                                    ดาวน์โหลด
-                                                </span>
-                                            </Link>
-                                        </td>
-                                        <td className="px-2 py-3 text-sm">
-                                            17/11/2024
-                                        </td>
-                                    </tr>
-                                    <tr className="text-gray-700">
-                                        <td className="px-4 py-3">
-                                            <Link href={'/m5/final2/history.pdf'} className="flex items-center text-sm">
-                                                <div className="inline-block relative w-8 h-8 mr-3 rounded-full">
-                                                    <Image
-                                                        className="icon-subject object-cover w-full h-auto"
-                                                        src="/assets/img/icon/history.png"
-                                                        alt="math"
-                                                        width={100}
-                                                        height={100}
-                                                    />
-                                                    <div className="absolute inset-0 rounded-full shadow-inner" aria-hidden="true"></div>
-                                                </div>
-                                                <div className="inline-block">
-                                                    <p className="font-semibold whitespace-nowrap">
-                                                        ประวัติศาสตร์
-                                                    </p>
-                                                    <p className="text-xs text-gray-600">
-                                                        สอบปลายภาค
-                                                    </p>
-                                                </div>
-                                            </Link>
-                                        </td>
-                                        <td className="px-4 py-3 text-sm whitespace-nowrap">
-                                            ม.5 เทอม 2
-                                        </td>
-                                        <td className="px-4 py-3 text-xs">
-                                            <Link href={'/m5/final2/history.pdf'}>
-                                                <span className="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-full">
-                                                    ดาวน์โหลด
-                                                </span>
-                                            </Link>
-                                        </td>
-                                        <td className="px-2 py-3 text-sm">
-                                            17/11/2024
-                                        </td>
-                                    </tr>
-                                    <tr className="text-gray-700">
-                                        <td className="px-4 py-3">
-                                            <Link href={'/m5/final2/eng.pdf'} className="flex items-center text-sm">
-                                                <div className="inline-block relative w-8 h-8 mr-3 rounded-full">
-                                                    <Image
-                                                        className="icon-subject object-cover w-full h-auto"
-                                                        src="/assets/img/icon/english.png"
-                                                        alt="math"
-                                                        width={100}
-                                                        height={100}
-                                                    />
-                                                    <div className="absolute inset-0 rounded-full shadow-inner" aria-hidden="true"></div>
-                                                </div>
-                                                <div className="inline-block">
-                                                    <p className="font-semibold whitespace-nowrap">
-                                                        ภาษาอังกฤษ
-                                                    </p>
-                                                    <p className="text-xs text-gray-600">
-                                                        สอบปลายภาค
-                                                    </p>
-                                                </div>
-                                            </Link>
-                                        </td>
-                                        <td className="px-4 py-3 text-sm whitespace-nowrap">
-                                            ม.5 เทอม 2
-                                        </td>
-                                        <td className="px-4 py-3 text-xs">
-                                            <Link href={'/m5/final2/eng.pdf'}>
-                                                <span className="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-full">
-                                                    ดาวน์โหลด
-                                                </span>
-                                            </Link>
-                                        </td>
-                                        <td className="px-2 py-3 text-sm">
-                                            17/11/2024
-                                        </td>
-                                    </tr>
+                                    </tr> */}
                                 </tbody>
                             </table>
                         </div>

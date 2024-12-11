@@ -41,10 +41,10 @@ export  default function Home() {
                                                 </div>
                                                 <div className="inline-block">
                                                     <p className="font-semibold whitespace-nowrap">
-                                                        คณิตศาสตร์
+                                                        คณิตศาสตร์ <small className="text-red-500 dark:text-red-100">(พื้นฐาน)</small>
                                                     </p>
                                                     <p className="text-xs text-gray-600">
-                                                        สอบปลายภาค
+                                                        สอบปลายภาค 
                                                     </p>
                                                 </div>
                                             </Link>
@@ -60,7 +60,7 @@ export  default function Home() {
                                             </Link>
                                         </td>
                                         <td className="px-2 py-3 text-sm">
-                                            29/11/2024
+                                            11/12/2024
                                         </td>
                                     </tr>
                                     <tr className="text-gray-700">
@@ -78,7 +78,7 @@ export  default function Home() {
                                                 </div>
                                                 <div className="inline-block">
                                                     <p className="font-semibold whitespace-nowrap">
-                                                        วิทยาศาสตร์
+                                                        วิทยาศาสตร์ <small className="text-red-500 dark:text-red-100">(ห้องศิลป์)</small>
                                                     </p>
                                                     <p className="text-xs text-gray-600">
                                                         สอบปลายภาค
@@ -97,16 +97,16 @@ export  default function Home() {
                                             </Link>
                                         </td>
                                         <td className="px-2 py-3 text-sm">
-                                            29/11/2024
+                                            11/12/2024
                                         </td>
                                     </tr>
                                     <tr className="text-gray-700">
                                         <td className="px-4 py-3">
-                                            <Link href={'/m4/final1/thai.pdf'} className="flex items-center text-sm">
+                                            <Link href={'/m4/final1/biology.pdf'} className="flex items-center text-sm">
                                                 <div className="inline-block relative w-8 h-8 mr-3 rounded-full">
                                                     <Image
                                                         className="icon-subject object-cover w-full h-auto"
-                                                        src="/assets/img/icon/thai.png"
+                                                        src="/assets/img/icon/biology.png"
                                                         alt="math"
                                                         width={100}
                                                         height={100}
@@ -115,100 +115,26 @@ export  default function Home() {
                                                 </div>
                                                 <div className="inline-block">
                                                     <p className="font-semibold whitespace-nowrap">
-                                                        ภาษาไทย
+                                                        ชีววิทยา <small className="text-red-500 dark:text-red-100">(ห้องสายวิทย์)</small>
                                                     </p>
                                                     <p className="text-xs text-gray-600">
-                                                        สอบปลายภาค
+                                                        สอบปลายภาค (by มิสบีม)
                                                     </p>
                                                 </div>
                                             </Link>
                                         </td>
                                         <td className="px-4 py-3 text-sm whitespace-nowrap">
-                                            ม.4 เทอม 1
+                                            ม.4 เทอม 1 
                                         </td>
                                         <td className="px-4 py-3 text-xs">
-                                            <Link href={'/m4/final1/thai.pdf'}>
+                                            <Link href={'/m4/final1/biology.pdf'}>
                                                 <span className="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-full">
                                                     ดาวน์โหลด
                                                 </span>
                                             </Link>
                                         </td>
                                         <td className="px-2 py-3 text-sm">
-                                            29/11/2024
-                                        </td>
-                                    </tr>
-                                    <tr className="text-gray-700">
-                                        <td className="px-4 py-3">
-                                            <Link href={'/m4/final1/social.pdf'} className="flex items-center text-sm">
-                                                <div className="inline-block relative w-8 h-8 mr-3 rounded-full">
-                                                    <Image
-                                                        className="icon-subject object-cover w-full h-auto"
-                                                        src="/assets/img/icon/social.png"
-                                                        alt="math"
-                                                        width={100}
-                                                        height={100}
-                                                    />
-                                                    <div className="absolute inset-0 rounded-full shadow-inner" aria-hidden="true"></div>
-                                                </div>
-                                                <div className="inline-block">
-                                                    <p className="font-semibold whitespace-nowrap">
-                                                        สังคมศึกษา
-                                                    </p>
-                                                    <p className="text-xs text-gray-600">
-                                                        สอบปลายภาค
-                                                    </p>
-                                                </div>
-                                            </Link>
-                                        </td>
-                                        <td className="px-4 py-3 text-sm whitespace-nowrap">
-                                            ม.4 เทอม 1
-                                        </td>
-                                        <td className="px-4 py-3 text-xs">
-                                            <Link href={'/m4/final1/social.pdf'}>
-                                                <span className="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-full">
-                                                    ดาวน์โหลด
-                                                </span>
-                                            </Link>
-                                        </td>
-                                        <td className="px-2 py-3 text-sm">
-                                            29/11/2024
-                                        </td>
-                                    </tr>
-                                    <tr className="text-gray-700">
-                                        <td className="px-4 py-3">
-                                            <Link href={'/m4/final1/history.pdf'} className="flex items-center text-sm">
-                                                <div className="inline-block relative w-8 h-8 mr-3 rounded-full">
-                                                    <Image
-                                                        className="icon-subject object-cover w-full h-auto"
-                                                        src="/assets/img/icon/history.png"
-                                                        alt="math"
-                                                        width={100}
-                                                        height={100}
-                                                    />
-                                                    <div className="absolute inset-0 rounded-full shadow-inner" aria-hidden="true"></div>
-                                                </div>
-                                                <div className="inline-block">
-                                                    <p className="font-semibold whitespace-nowrap">
-                                                        ประวัติศาสตร์
-                                                    </p>
-                                                    <p className="text-xs text-gray-600">
-                                                        สอบปลายภาค
-                                                    </p>
-                                                </div>
-                                            </Link>
-                                        </td>
-                                        <td className="px-4 py-3 text-sm whitespace-nowrap">
-                                            ม.4 เทอม 1
-                                        </td>
-                                        <td className="px-4 py-3 text-xs">
-                                            <Link href={'/m4/final1/history.pdf'}>
-                                                <span className="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-full">
-                                                    ดาวน์โหลด
-                                                </span>
-                                            </Link>
-                                        </td>
-                                        <td className="px-2 py-3 text-sm">
-                                            29/11/2024
+                                            11/12/2024
                                         </td>
                                     </tr>
                                     <tr className="text-gray-700">
@@ -229,7 +155,7 @@ export  default function Home() {
                                                         ภาษาอังกฤษ
                                                     </p>
                                                     <p className="text-xs text-gray-600">
-                                                        สอบปลายภาค
+                                                        สอบปลายภาค (by <Link className="text-purple-800" href="https://www.instagram.com/creammyeiieee__/">creammyeiieee__</Link>)
                                                     </p>
                                                 </div>
                                             </Link>

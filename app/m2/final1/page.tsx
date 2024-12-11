@@ -44,7 +44,7 @@ export  default function Home() {
                                                         คณิตศาสตร์
                                                     </p>
                                                     <p className="text-xs text-gray-600 text-nowrap">
-                                                        สอบปลายภาค (by <Link className="text-purple-800 dark:text-white" href="https://www.instagram.com/jellorpxrz_/">jellorpxrz_</Link>)
+                                                        สอบปลายภาค (by <Link className="text-purple-800" href="https://www.instagram.com/jellorpxrz_/">jellorpxrz_</Link>)
                                                     </p>
                                                 </div>
                                             </Link>
@@ -81,7 +81,7 @@ export  default function Home() {
                                                         วิทยาศาสตร์
                                                     </p>
                                                     <p className="text-xs text-gray-600 text-nowrap">
-                                                        สอบปลายภาค (by <Link className="text-purple-800 dark:text-white" href="https://www.instagram.com/meemmiiimi/">meemmiiimi</Link>)
+                                                        สอบปลายภาค (by <Link className="text-purple-800" href="https://www.instagram.com/meemmiiimi/">meemmiiimi</Link>)
                                                     </p>
                                                 </div>
                                             </Link>
@@ -118,7 +118,7 @@ export  default function Home() {
                                                         ภาษาอังกฤษ
                                                     </p>
                                                     <p className="text-xs text-gray-600 text-nowrap">
-                                                        สอบปลายภาค (by <Link className="text-purple-800 dark:text-white" href="https://www.instagram.com/meemmiiimi/">meemmiiimi</Link>)
+                                                        สอบปลายภาค (by <Link className="text-purple-800" href="https://www.instagram.com/meemmiiimi/">meemmiiimi</Link>)
                                                     </p>
                                                 </div>
                                             </Link>
