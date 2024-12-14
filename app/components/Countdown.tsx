@@ -1,8 +1,15 @@
 "use client";
 import { useState, useEffect } from "react";
 
+interface TimeLeft {
+    days: number;
+    hours: number;
+    minutes: number;
+    seconds: number;
+}
+
 export default function Countdown() {
-    const [timeLeft, setTimeLeft] = useState(null);
+    const [timeLeft, setTimeLeft] = useState<TimeLeft | null>(null);
     const [isCountdownOver, setIsCountdownOver] = useState(false);
 
     useEffect(() => {
@@ -25,7 +32,7 @@ export default function Countdown() {
 
         const targetTimestamp = calculateTargetDate();
 
-        const updateCountdown = () => {
+        const updateCountdown = (): TimeLeft | null => {
             const now = new Date().getTime();
             const distance = targetTimestamp - now;
 
@@ -42,7 +49,11 @@ export default function Countdown() {
             };
         };
 
-        setTimeLeft(updateCountdown());
+        // Explicitly handle potential null return
+        const initialTimeLeft = updateCountdown();
+        if (initialTimeLeft !== null) {
+            setTimeLeft(initialTimeLeft);
+        }
 
         const intervalId = setInterval(() => {
             const newTimeLeft = updateCountdown();
@@ -54,12 +65,11 @@ export default function Countdown() {
             }
         }, 1000);
 
-        // Cleanup interval on component unmount
         return () => clearInterval(intervalId);
     }, []);
 
-    const renderCountdownItem = (value) => {
-        if (value == null) {
+    const renderCountdownItem = (value: number | undefined) => {
+        if (value === undefined || value === null) {
             return <span className="inline-block w-10 h-10 bg-gray-100 animate-pulse rounded"></span>;
         }
         return String(value).padStart(2, "0");
