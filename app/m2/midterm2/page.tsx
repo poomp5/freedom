@@ -106,7 +106,7 @@ export default function Home() {
                                                 <div className="inline-block relative w-8 h-8 mr-3 rounded-full">
                                                     <Image
                                                         className="icon-subject object-cover w-full h-auto"
-                                                        src="/assets/img/icon/thai.png"
+                                                        src="/assets/img/icon/social.png"
                                                         alt="math"
                                                         width={100}
                                                         height={100}
