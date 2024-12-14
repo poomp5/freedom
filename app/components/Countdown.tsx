@@ -1,75 +1,93 @@
-"use client"
+"use client";
 import { useState, useEffect } from "react";
 
 export default function Countdown() {
-    const [timeLeft, setTimeLeft] = useState({
-        days: "00",
-        hours: "00",
-        minutes: "00",
-        seconds: "00",
-    });
+    const [timeLeft, setTimeLeft] = useState(null);
     const [isCountdownOver, setIsCountdownOver] = useState(false);
 
     useEffect(() => {
-        const second = 1000,
-            minute = second * 60,
-            hour = minute * 60,
-            day = hour * 24;
+        const SECOND = 1000;
+        const MINUTE = SECOND * 60;
+        const HOUR = MINUTE * 60;
+        const DAY = HOUR * 24;
 
-        const today = new Date();
-        const dd = String(today.getDate()).padStart(2, "0");
-        const mm = String(today.getMonth() + 1).padStart(2, "0");
-        const yyyy = today.getFullYear();
-        const nextYear = yyyy + 1;
-        const dayMonth = "12/18/";
-        let birthday = `${dayMonth}${yyyy}`;
+        const calculateTargetDate = () => {
+            const today = new Date();
+            const currentYear = today.getFullYear();
+            const targetDate = new Date(`12/18/${currentYear}`);
 
-        if (new Date(`${mm}/${dd}/${yyyy}`) > new Date(birthday)) {
-            birthday = `${dayMonth}${nextYear}`;
-        }
+            if (today > targetDate) {
+                targetDate.setFullYear(currentYear + 1);
+            }
 
-        const countDown = new Date(birthday).getTime();
+            return targetDate.getTime();
+        };
 
-        const interval = setInterval(() => {
+        const targetTimestamp = calculateTargetDate();
+
+        const updateCountdown = () => {
             const now = new Date().getTime();
-            const distance = countDown - now;
+            const distance = targetTimestamp - now;
 
             if (distance < 0) {
                 setIsCountdownOver(true);
-                clearInterval(interval);
+                return null;
+            }
+
+            return {
+                days: Math.floor(distance / DAY),
+                hours: Math.floor((distance % DAY) / HOUR),
+                minutes: Math.floor((distance % HOUR) / MINUTE),
+                seconds: Math.floor((distance % MINUTE) / SECOND)
+            };
+        };
+
+        setTimeLeft(updateCountdown());
+
+        const intervalId = setInterval(() => {
+            const newTimeLeft = updateCountdown();
+            if (newTimeLeft === null) {
+                setIsCountdownOver(true);
+                clearInterval(intervalId);
             } else {
-                setTimeLeft({
-                    days: String(Math.floor(distance / day)).padStart(2, "0"),
-                    hours: String(Math.floor((distance % day) / hour)).padStart(2, "0"),
-                    minutes: String(Math.floor((distance % hour) / minute)).padStart(2, "0"),
-                    seconds: String(Math.floor((distance % minute) / second)).padStart(2, "0"),
-                });
+                setTimeLeft(newTimeLeft);
             }
         }, 1000);
 
-        return () => clearInterval(interval); // Cleanup interval on component unmount
+        // Cleanup interval on component unmount
+        return () => clearInterval(intervalId);
     }, []);
 
+    const renderCountdownItem = (value) => {
+        if (value == null) {
+            return <span className="inline-block w-10 h-10 bg-gray-100 animate-pulse rounded"></span>;
+        }
+        return String(value).padStart(2, "0");
+    };
+
     return (
-        <div>
+        <div className="flex justify-center items-center">
             {isCountdownOver ? (
-                <div id="content">🎉 The countdown is over! 🎉</div>
+                <div className="text-center text-2xl font-bold text-green-600">
+                    สอบเสร็จแล้ว!
+                </div>
             ) : (
-                <div id="countdown" className="mt-0 kanit text-gray-600 font- text-center max-w-screen-sm md:max-w-screen-xl">
-                <ul className="inline-flex space-x-1.5 md:space-x-6 font-bold">
-                    <li className="inline-block rounded-lg p-2.5">
-                    <span className="countdown-span">{timeLeft.days}</span> <span className="font-semibold text-gray-500">DAYS</span>
-                    </li>
-                    <li className="inline-block rounded-lg p-2.5">
-                    <span className="countdown-span">{timeLeft.hours}</span> <span className="font-semibold text-gray-500">HOURS</span>
-                    </li>
-                    <li className="inline-block rounded-lg p-2.5">
-                        <span className="countdown-span">{timeLeft.minutes}</span> <span className="font-semibold text-gray-500">MINUTIES</span>
-                    </li>
-                    <li className="inline-block rounded-lg p-2.5">
-                        <span className="countdown-span">{timeLeft.seconds}</span> <span className="font-semibold text-gray-500">SECONDS</span>
-                    </li>
-                </ul>
+                <div className="mt-4 kanit text-gray-600 font-bold text-center max-w-screen-sm md:max-w-screen-xl">
+                    <ul className="inline-flex space-x-2 md:space-x-8">
+                        {[
+                            { label: "DAYS", value: timeLeft?.days },
+                            { label: "HOURS", value: timeLeft?.hours },
+                            { label: "MINUTES", value: timeLeft?.minutes },
+                            { label: "SECONDS", value: timeLeft?.seconds }
+                        ].map(({ label, value }) => (
+                            <li key={label} className="inline-block rounded-lg p-3">
+                                <span className="text-4xl text-gray-600 countdown-span">
+                                    {renderCountdownItem(value)}
+                                </span>
+                                <div className="mt-2 font-semibold text-gray-500">{label}</div>
+                            </li>
+                        ))}
+                    </ul>
                 </div>
             )}
         </div>

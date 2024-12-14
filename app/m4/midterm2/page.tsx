@@ -50,7 +50,7 @@ export default function Home() {
                                             </Link>
                                         </td>
                                         <td className="px-4 py-3 text-sm whitespace-nowrap">
-                                            ม.4 เทอม 2
+                                            ม.4 เทอม 2 (by <Link className="text-purple-800" href="https://www.instagram.com/d3w4r_zz/">d3w4r_zz</Link>)
                                         </td>
                                         <td className="px-4 py-3 text-xs">
                                             <Link href={'/m4/midterm2/math.pdf'}>
@@ -60,7 +60,7 @@ export default function Home() {
                                             </Link>
                                         </td>
                                         <td className="px-2 py-3 text-sm">
-                                            17/11/2024
+                                            15/12/2024
                                         </td>
                                     </tr> */}
                                 </tbody>
