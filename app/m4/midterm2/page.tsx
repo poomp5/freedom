@@ -1,5 +1,5 @@
-// import Link from "next/link";
-// import Image from "next/image";
+import Link from "next/link";
+import Image from "next/image";
 import Bottombar from "../../components/Bottombar";
 import Navbar from "../../components/Navbar";
 import PaginationFooter from "../../components/PaginationFooter";
@@ -26,9 +26,9 @@ export default function Home() {
                                     </tr>
                                 </thead>
                                 <tbody className="bg-white divide-y0">
-                                    {/* <tr className="text-gray-700">
+                                    <tr className="text-gray-700">
                                         <td className="px-4 py-3">
-                                            <Link href={'/m4/midterm2/math.pdf'} className="flex items-center text-sm">
+                                            <Link href={'https://www.canva.com/design/DAGZOuf0NVU/kQTP1eZqFJ_nBftTxH5_lA/view?utm_content=DAGZOuf0NVU&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h2987ce50e3#2'} className="flex items-center text-sm">
                                                 <div className="inline-block relative w-8 h-8 mr-3 rounded-full">
                                                     <Image
                                                         className="icon-subject object-cover w-full h-auto"
@@ -53,16 +53,16 @@ export default function Home() {
                                             ม.4 เทอม 2 (by <Link className="text-purple-800" href="https://www.instagram.com/d3w4r_zz/">d3w4r_zz</Link>)
                                         </td>
                                         <td className="px-4 py-3 text-xs">
-                                            <Link href={'/m4/midterm2/math.pdf'}>
+                                            <Link href={'https://www.canva.com/design/DAGZOuf0NVU/kQTP1eZqFJ_nBftTxH5_lA/view?utm_content=DAGZOuf0NVU&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h2987ce50e3#2'}>
                                                 <span className="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-full">
                                                     ดาวน์โหลด
                                                 </span>
                                             </Link>
                                         </td>
                                         <td className="px-2 py-3 text-sm">
-                                            15/12/2024
+                                            17/12/2024
                                         </td>
-                                    </tr> */}
+                                    </tr>
                                 </tbody>
                             </table>
                         </div>
