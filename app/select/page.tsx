@@ -37,7 +37,7 @@ export default function Home() {
                                 </div>
                             </div>
                         </Link>
-                        <Link href="/m4">
+                        <Link href="/m4/midterm2">
                             <div className="p-4 bg-gray-700 rounded-lg shadow-xs border border-gray-600 border-1">
                                 <div className="text-center">
                                     <p className="mb-2 text-2xl font-semibold text-white">
@@ -49,7 +49,7 @@ export default function Home() {
                                 </div>
                             </div>
                         </Link>
-                        <Link href="/m5">
+                        <Link href="/m5/midterm2">
                             <div className="p-4 bg-gray-700 rounded-lg shadow-xs border border-gray-600 border-1">
                                 <div className="text-center">
                                     <p className="mb-2 text-2xl font-semibold text-white">
