@@ -21,7 +21,7 @@ export default function Countdown() {
         const calculateTargetDate = () => {
             const today = new Date();
             const currentYear = today.getFullYear();
-            const targetDate = new Date(`12/18/${currentYear}`);
+            const targetDate = new Date(`12/23/${currentYear}`);
 
             if (today > targetDate) {
                 targetDate.setFullYear(currentYear + 1);
