@@ -2,7 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import Bottombar from "./components/Bottombar";
 import Navbar from "./components/Navbar";
-import Countdown from "./components/Countdown";
+// import Countdown from "./components/Countdown";
 import PaginationFooter from "./components/PaginationFooter";
 export default function Home() { 
   return (
@@ -14,7 +14,7 @@ export default function Home() {
     <section>
       <div className="py-8 px-4 mx-auto max-w-screen-xl text-center lg:py-16">
             <h1 className="mb-4 text-5xl font-extrabold tracking-tight leading-none md:text-5xl lg:text-6xl text-gray-600">สอบกลางภาค</h1>
-            <Countdown />
+            {/* <Countdown /> */}
         <div className="mt-5 flex flex-col space-y-2 sm:flex-row sm:justify-center sm:space-y-0">
               <Link href="/select" className="inline-flex justify-center items-center py-3 px-5 text-base font-medium text-center text-white rounded-lg bg-[#f45455] hover:bg-[#d13f3f]">
             โหลดชีทสรุป
