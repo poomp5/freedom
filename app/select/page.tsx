@@ -13,7 +13,7 @@ export default function Home() {
                         <h1 className="my-2  text-lg text-gray-600">เลือกระดับชั้น</h1>
                     </div>
                     <div className="grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 gap-2">
-                        <Link href="/m2/midterm2">
+                        <Link href="/m2/final2">
                             <div className="p-4 bg-gray-700 rounded-lg shadow-xs border border-gray-600 border-1">
                                 <div className="text-center">
                                     <p className="mb-2 text-2xl font-semibold text-white">
@@ -25,7 +25,7 @@ export default function Home() {
                                 </div>
                             </div>
                         </Link>
-                        <Link href="/m3/midterm2">
+                        <Link href="/m3/final2">
                             <div className="p-4 bg-gray-700 rounded-lg shadow-xs border border-gray-600 border-1">
                                 <div className="text-center">
                                     <p className="mb-2 text-2xl font-semibold text-white">
@@ -37,7 +37,7 @@ export default function Home() {
                                 </div>
                             </div>
                         </Link>
-                        <Link href="/m4/midterm2">
+                        <Link href="/m4/final2">
                             <div className="p-4 bg-gray-700 rounded-lg shadow-xs border border-gray-600 border-1">
                                 <div className="text-center">
                                     <p className="mb-2 text-2xl font-semibold text-white">
@@ -49,7 +49,7 @@ export default function Home() {
                                 </div>
                             </div>
                         </Link>
-                        <Link href="/m5/midterm2">
+                        <Link href="/m5/final2">
                             <div className="p-4 bg-gray-700 rounded-lg shadow-xs border border-gray-600 border-1">
                                 <div className="text-center">
                                     <p className="mb-2 text-2xl font-semibold text-white">
