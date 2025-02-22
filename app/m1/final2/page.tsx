@@ -33,7 +33,7 @@ export default function Home() {
                                                     <Image
                                                         className="icon-subject object-cover w-full h-auto"
                                                         src="/assets/img/icon/sci.png"
-                                                        alt="math"
+                                                          alt="math"
                                                         width={100}
                                                         height={100}
                                                     />
@@ -215,11 +215,11 @@ export default function Home() {
                             </table>
                         </div>
                         <PaginationFooter
-                            leftArrow={{ label: "เทอม 1", href: "/m4/midterm1" }}
-                            rightArrow={{ label: "เทอม 2", href: "/m4/midterm2" }}
+                            leftArrow={{ label: "เทอม 1", href: "/m1/midterm1" }}
+                            rightArrow={{ label: "เทอม 2", href: "/m1/midterm2" }}
                             links={[
-                                { label: "กลางภาค", href: "/m4/midterm2", isActive: false },
-                                { label: "ปลายภาค", href: "/m4/final2", isActive: true },
+                                { label: "กลางภาค", href: "/m1/midterm2", isActive: false },
+                                { label: "ปลายภาค", href: "/m1/final2", isActive: true },
                             ]}
                         />
                     </div>
