@@ -20,7 +20,7 @@ export default function Home() {
                                         ชีทสรุป ม.1
                                     </p>
                                     <p className="text-lg font-normal text-gray-200">
-                                        ชีทของปีการศึกษา 2567
+                                        ชีทของปีการศึกษา 2565
                                     </p>
                                 </div>
                             </div>

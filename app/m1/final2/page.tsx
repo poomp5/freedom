@@ -60,7 +60,7 @@ export default function Home() {
                                             </Link>
                                         </td>
                                         <td className="px-2 py-3 text-sm">
-                                            22/02/2024
+                                            22/02/2025
                                         </td>
                                     </tr>
                                     <tr className="text-gray-700">
@@ -97,7 +97,7 @@ export default function Home() {
                                             </Link>
                                         </td>
                                         <td className="px-2 py-3 text-sm">
-                                            22/02/2024
+                                            22/02/2025
                                         </td>
                                     </tr>
                                     <tr className="text-gray-700">
@@ -134,7 +134,7 @@ export default function Home() {
                                             </Link>
                                         </td>
                                         <td className="px-2 py-3 text-sm">
-                                            22/02/2024
+                                            22/02/2025
                                         </td>
                                     </tr>
                                     <tr className="text-gray-700">
@@ -171,7 +171,7 @@ export default function Home() {
                                             </Link>
                                         </td>
                                         <td className="px-2 py-3 text-sm">
-                                            22/02/2024
+                                            22/02/2025
                                         </td>
                                     </tr>
                                     <tr className="text-gray-700">
@@ -208,7 +208,7 @@ export default function Home() {
                                             </Link>
                                         </td>
                                         <td className="px-2 py-3 text-sm">
-                                            22/02/2024
+                                            22/02/2025
                                         </td>
                                     </tr>
                                 </tbody>
