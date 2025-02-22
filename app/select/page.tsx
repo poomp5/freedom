@@ -12,7 +12,19 @@ export default function Home() {
                         <h1 className="my-2 text-xl text-gray-800">Choose category</h1>
                         <h1 className="my-2  text-lg text-gray-600">เลือกระดับชั้น</h1>
                     </div>
-                    <div className="grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 gap-2">
+                    <div className="grid lg:grid-cols-5 md:grid-cols-1 grid-cols-1 gap-2">
+                        <Link href="/m1/final2">
+                            <div className="p-4 bg-gray-700 rounded-lg shadow-xs border border-gray-600 border-1">
+                                <div className="text-center">
+                                    <p className="mb-2 text-2xl font-semibold text-white">
+                                        ชีทสรุป ม.1
+                                    </p>
+                                    <p className="text-lg font-normal text-gray-200">
+                                        ชีทของปีการศึกษา 2567
+                                    </p>
+                                </div>
+                            </div>
+                        </Link>
                         <Link href="/m2/final2">
                             <div className="p-4 bg-gray-700 rounded-lg shadow-xs border border-gray-600 border-1">
                                 <div className="text-center">

@@ -56,6 +56,9 @@ export default function Navbar() {
                             >
                                 <ul className="py-2 text-sm text-gray-700">
                                     <li>
+                                        <Link href="/m1/final2" className="block px-4 py-2 hover:bg-gray-100">ม.1</Link>
+                                    </li>
+                                    <li>
                                         <Link href="/m2/final2" className="block px-4 py-2 hover:bg-gray-100">ม.2</Link>
                                     </li>
                                     <li>
