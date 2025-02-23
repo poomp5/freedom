@@ -1,4 +1,4 @@
-![[FREEDOM BANNER](https://img2.pic.in.th/pic/github-image-banner2e179f89930d92ce.png)](https://img2.pic.in.th/pic/github-image-banner2e179f89930d92ce.png)
+![[FREEDOM BANNER](https://raw.githubusercontent.com/poomp5/freedom/main/banner.png)](https://raw.githubusercontent.com/poomp5/freedom/main/banner.png)
 
 ## เว็บแจกชีทสรุปฟรีด้อม
 
