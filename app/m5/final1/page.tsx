@@ -41,7 +41,7 @@ export  default function Home() {
                                                 </div>
                                                 <div className="inline-block">
                                                     <p className="font-semibold whitespace-nowrap">
-                                                        เคมี <small className="text-red-500 dark:text-red-100">(พื้นฐาน)</small>
+                                                        เคมี <small className="text-red-500">(พื้นฐาน)</small>
                                                     </p>
                                                     <p className="text-xs text-gray-600">
                                                         สอบปลายภาค (by <Link className="text-purple-800" href="https://www.instagram.com/bosssu_p/">bosssu_p</Link>)
@@ -78,7 +78,7 @@ export  default function Home() {
                                                 </div>
                                                 <div className="inline-block">
                                                     <p className="font-semibold whitespace-nowrap">
-                                                        เคมี <small className="text-red-500 dark:text-red-100">(GIFTED)</small>
+                                                        เคมี <small className="text-red-500">(GIFTED)</small>
                                                     </p>
                                                     <p className="text-xs text-gray-600">
                                                         สอบปลายภาค (by <Link className="text-purple-800" href="https://www.instagram.com/iammaylyyyy/">iammaylyyyy</Link>)
@@ -115,9 +115,9 @@ export  default function Home() {
                                                 </div>
                                                 <div className="inline-block">
                                                     <p className="font-semibold whitespace-nowrap">
-                                                        ชีววิทยา <small className="text-red-500 dark:text-red-100">(ห้องสายวิทย์)</small>
+                                                        ชีววิทยา <small className="text-red-500">(ห้องสายวิทย์)</small>
                                                     </p>
-                                                    <p className="text-xs text-gray-600">
+                                                    <p className="text-xs text-gray-600 ">
                                                         สอบปลายภาค (by <Link className="text-purple-800" href="https://www.instagram.com/bosssu_p/">bosssu_p</Link>)
                                                     </p>
                                                 </div>

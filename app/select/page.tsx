@@ -6,7 +6,7 @@ export default function Home() {
         <div>
             <Navbar />
             <Bottombar />
-            <main className="mt-8 h-full overflow-y-auto">
+            <main className="mt-8 h-screen overflow-y-auto">
                 <div className="container px-4 lg:px-8 mx-auto">
                     <div className="flex justify-between mb-4">
                         <h1 className="my-2 text-xl text-gray-800">Choose category</h1>
