@@ -1,5 +1,5 @@
-// import Link from "next/link";
-// import Image from "next/image";
+import Link from "next/link";
+import Image from "next/image";
 import Bottombar from "@/app/components/Bottombar";
 import Navbar from "@/app/components/Navbar";
 import PaginationFooter from "@/app/components/PaginationFooter";
@@ -14,7 +14,7 @@ export default function Home() {
                 <div className="container px-4 lg:px-8 mx-auto grid md:mb-[4vh] mb-[12vh]">
                     <h1 className="mx-auto mb-2 text-4xl font-extrabold tracking-tight leading-none md:text-5xl lg:text-4xl text-gray-700">สอบกลางภาค 1/{year}</h1>
                     
-                    <p className="mx-auto mb-4 text-xl text-gray-500">ชีทสรุป (ม.5) ที่จัดทำในปีการศึกษา 2566</p>
+                    <p className="mx-auto mb-4 text-xl text-gray-500">ชีทสรุป (ม.5) ที่จัดทำในปีการศึกษา 2568</p>
                     <div className="w-full overflow-hidden rounded-lg shadow-xs">
                         <div className="w-full overflow-x-auto">
                             <table className="w-full whitespace-no-wrap">
@@ -27,13 +27,13 @@ export default function Home() {
                                     </tr>
                                 </thead>
                                 <tbody className="bg-white divide-y0">
-                                    {/* <tr className="text-gray-700">
+                                    <tr className="text-gray-700">
                                         <td className="px-4 py-3">
-                                            <Link href={'/m5/midterm1/math.pdf'} className="flex items-center text-sm">
+                                            <Link href={'/m5/midterm1/sci.pdf'} className="flex items-center text-sm">
                                                 <div className="inline-block relative w-8 h-8 mr-3 rounded-full">
                                                     <Image
                                                         className="icon-subject object-cover w-full h-auto"
-                                                        src="/assets/img/icon/math.png"
+                                                        src="/assets/img/icon/sci.png"
                                                         alt="math"
                                                         width={100}
                                                         height={100}
@@ -42,7 +42,7 @@ export default function Home() {
                                                 </div>
                                                 <div className="inline-block">
                                                     <p className="font-semibold whitespace-nowrap">
-                                                        คณิตศาสตร์
+                                                        วิทยาศาสตร์
                                                     </p>
                                                     <p className="text-xs text-gray-600">
                                                         สอบกลางภาค
@@ -54,16 +54,16 @@ export default function Home() {
                                             ม.5 เทอม 1
                                         </td>
                                         <td className="px-4 py-3 text-xs">
-                                            <Link href={'/m5/midterm1/math.pdf'}>
+                                            <Link href={'/m5/midterm1/sci.pdf'}>
                                                 <span className="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-full">
                                                     ดาวน์โหลด
                                                 </span>
                                             </Link>
                                         </td>
                                         <td className="px-2 py-3 text-sm">
-                                            29/11/2024
+                                            15/07/2025
                                         </td>
-                                    </tr> */}
+                                    </tr>
                                 </tbody>
                             </table>
                         </div>
