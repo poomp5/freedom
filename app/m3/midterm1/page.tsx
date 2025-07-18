@@ -175,7 +175,7 @@ export default function Home() {
                                             29/11/2024
                                         </td>
                                     </tr>
-                                    <tr className="text-gray-700">
+                                    {/* <tr className="text-gray-700">
                                         <td className="px-4 py-3">
                                             <Link href={'/m3/midterm1/history.pdf'} className="flex items-center text-sm">
                                                 <div className="inline-block relative w-8 h-8 mr-3 rounded-full">
@@ -211,7 +211,7 @@ export default function Home() {
                                         <td className="px-2 py-3 text-sm">
                                             29/11/2024
                                         </td>
-                                    </tr>
+                                    </tr> */}
                                     <tr className="text-gray-700">
                                         <td className="px-4 py-3">
                                             <Link href={'/m3/midterm1/eng.pdf'} className="flex items-center text-sm">
