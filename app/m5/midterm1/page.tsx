@@ -4,7 +4,7 @@ import Bottombar from "@/app/components/Bottombar";
 import Navbar from "@/app/components/Navbar";
 import PaginationFooter from "@/app/components/PaginationFooter";
 import { year } from "@/app/components/var";
-import { Link2, LinkIcon } from "lucide-react";
+import { LinkIcon } from "lucide-react";
 export default function Home() {
     return (
       <div>
