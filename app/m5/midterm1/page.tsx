@@ -55,7 +55,12 @@ export default function Home() {
                             <p className="font-semibold whitespace-nowrap">
                               วิทยาศาสตร์
                             </p>
-                            <p className="text-xs text-gray-600">สอบกลางภาค</p>
+                            <p className="text-xs text-gray-600">
+                              สอบกลางภาค{" "}
+                              <span className="text-gray-400">
+                                (มาสเตอร์พสิษฐ์)
+                              </span>
+                            </p>
                           </div>
                         </Link>
                       </td>
@@ -70,6 +75,47 @@ export default function Home() {
                         </Link>
                       </td>
                       <td className="px-2 py-3 text-sm">15/07/2025</td>
+                    </tr>
+                    <tr className="text-gray-700">
+                      <td className="px-4 py-3">
+                        <Link
+                          href={"/m5/midterm1/social.pdf"}
+                          className="flex items-center text-sm"
+                        >
+                          <div className="inline-block relative w-8 h-8 mr-3 rounded-full">
+                            <Image
+                              className="icon-subject object-cover w-full h-auto"
+                              src="/assets/img/icon/social.png"
+                              alt="math"
+                              width={100}
+                              height={100}
+                            />
+                            <div
+                              className="absolute inset-0 rounded-full shadow-inner"
+                              aria-hidden="true"
+                            ></div>
+                          </div>
+                          <div className="inline-block">
+                            <p className="font-semibold whitespace-nowrap">
+                              สังคมศึกษา
+                            </p>
+                            <p className="text-xs text-gray-600">
+                              สอบกลางภาค <span className="text-gray-400">(มาสเตอร์ตุ๊ต๊ะ)</span>
+                            </p>
+                          </div>
+                        </Link>
+                      </td>
+                      <td className="px-4 py-3 text-sm whitespace-nowrap">
+                        ม.5 เทอม 1
+                      </td>
+                      <td className="px-4 py-3 text-xs">
+                        <Link href={"/m5/midterm1/social.pdf"}>
+                          <span className="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-full">
+                            ดาวน์โหลด
+                          </span>
+                        </Link>
+                      </td>
+                      <td className="px-2 py-3 text-sm">19/07/2025</td>
                     </tr>
                     <tr className="text-gray-700">
                       <td className="px-4 py-3">
@@ -167,7 +213,8 @@ export default function Home() {
                           }
                         >
                           <span className="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 hover:bg-gray-200 hover:text-gray-700 rounded-full whitespace-nowrap">
-                            <LinkIcon className="inline-block w-4 h-4" /> เปิดลิงก์
+                            <LinkIcon className="inline-block w-4 h-4" />{" "}
+                            เปิดลิงก์
                           </span>
                         </Link>
                       </td>
