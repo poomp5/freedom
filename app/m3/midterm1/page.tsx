@@ -47,6 +47,10 @@ const sheets = [
       name: "jellorpxrz",
       url: "https://www.instagram.com/jellorpxrz/",
     },
+    extraLink: {
+      label: "Donate",
+      url: "/donate/jellorpxrz",
+    },
   },
   {
     subject: "สังคมศึกษา (2566)",

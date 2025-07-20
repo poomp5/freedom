@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Bottombar from "@/app/components/Bottombar";
 import Navbar from "@/app/components/Navbar";
-
+import Image from "next/image";
 export default function DonatePage() {
   const [amountInput, setAmountInput] = useState("");
   const [amountToDonate, setAmountToDonate] = useState("");
@@ -18,18 +18,13 @@ export default function DonatePage() {
     setAmountToDonate(amount); // เซ็ตค่าจริงตอนกด
     setShowQR(true);
   };
-
-  const logoUrl = "/assets/img/freedom.svg";
-  const qrUrl = `https://promptpay.io/0641566647/${amountToDonate}?logo=${encodeURIComponent(
-    logoUrl
-  )}`;
-
+  const qrUrl = `https://promptpay.io/0641566647/${amountToDonate}`;
 
   return (
     <div>
       <Navbar />
       <Bottombar />
-      <main className="mt-8 h-full overflow-y-auto">
+      <main className="mt-8 h-screen overflow-y-auto">
         <div className="container px-4 lg:px-8 mx-auto text-center">
           <h1 className="mb-4 font-extrabold tracking-tight leading-none text-3xl md:text-4xl lg:text-5xl text-gray-700">
             โดเนทให้กับ <span className="text-pink-400">jellorpxrz</span>
@@ -61,16 +56,20 @@ export default function DonatePage() {
                   QR พร้อมเพย์ (จำนวน {amountToDonate} บาท)
                 </p>
                 <div className="relative w-64 h-64 mx-auto">
-                  <img
+                  <Image
                     src={qrUrl}
                     alt="PromptPay QR Code"
                     className="w-full h-full rounded-md border"
+                    width={300}
+                    height={300}
                   />
-                  <img
-                    src="/assets/img/donatelogo.png" 
+                  <Image
+                    src={'/assets/img/donatelogo.png'}
                     alt="Logo"
                     className="absolute inset-0 m-auto w-12 h-12 pointer-events-none rounded-xl"
                     style={{ objectFit: "contain" }}
+                    width={300}
+                    height={300}
                   />
                 </div>
               </div>
