@@ -100,7 +100,10 @@ export default function Home() {
                               สังคมศึกษา
                             </p>
                             <p className="text-xs text-gray-600">
-                              สอบกลางภาค <span className="text-gray-400">(มาสเตอร์ตุ๊ต๊ะ)</span>
+                              สอบกลางภาค{" "}
+                              <span className="text-gray-400">
+                                (มาสเตอร์ตุ๊ต๊ะ)
+                              </span>
                             </p>
                           </div>
                         </Link>
@@ -168,9 +171,7 @@ export default function Home() {
                     <tr className="text-gray-700">
                       <td className="px-4 py-3">
                         <Link
-                          href={
-                            "https://www.canva.com/design/DAGtkcL6n7I/AMpAJ9SZivS0R6JurYuv8w/edit?utm_content=DAGtkcL6n7I&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton"
-                          }
+                          href={"/m5/midterm1/math.pdf"}
                           className="flex items-center text-sm"
                         >
                           <div className="inline-block relative w-8 h-8 mr-3 rounded-full">
@@ -206,15 +207,19 @@ export default function Home() {
                       <td className="px-4 py-3 text-sm whitespace-nowrap">
                         ม.5 เทอม 1
                       </td>
-                      <td className="px-4 py-3 text-xs">
+                      <td className="px-4 py-3 text-xs space-x-2">
+                        <Link href={"/m5/midterm1/math.pdf"}>
+                          <span className="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-full whitespace-nowrap">
+                            ดาวน์โหลด
+                          </span>
+                        </Link>
                         <Link
                           href={
                             "https://www.canva.com/design/DAGtkcL6n7I/AMpAJ9SZivS0R6JurYuv8w/edit?utm_content=DAGtkcL6n7I&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton"
                           }
                         >
-                          <span className="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 hover:bg-gray-200 hover:text-gray-700 rounded-full whitespace-nowrap">
-                            <LinkIcon className="inline-block w-4 h-4" />{" "}
-                            เปิดลิงก์
+                          <span className="px-2 py-1 font-semibold leading-tight text-blue-700 bg-blue-100 hover:bg-gray-200 hover:text-gray-700 rounded-full whitespace-nowrap">
+                            <LinkIcon className="inline-block w-4 h-4" /> Canva
                           </span>
                         </Link>
                       </td>
