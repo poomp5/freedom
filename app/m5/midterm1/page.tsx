@@ -207,13 +207,13 @@ export default function Home() {
                       <td className="px-4 py-3 text-sm whitespace-nowrap">
                         ม.5 เทอม 1
                       </td>
-                      <td className="px-4 py-3 text-xs space-x-2">
+                      <td className="px-4 py-3 text-xs space-x-2 flex flex-row items-center">
                         <Link href={"/m5/midterm1/math.pdf"}>
                           <span className="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-full whitespace-nowrap">
                             ดาวน์โหลด
                           </span>
                         </Link>
-                        <Link
+                        <Link 
                           href={
                             "https://www.canva.com/design/DAGtkcL6n7I/AMpAJ9SZivS0R6JurYuv8w/edit?utm_content=DAGtkcL6n7I&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton"
                           }
