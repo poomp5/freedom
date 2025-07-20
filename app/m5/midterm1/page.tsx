@@ -1,10 +1,70 @@
-import Link from "next/link";
-import Image from "next/image";
 import Bottombar from "@/app/components/Bottombar";
 import Navbar from "@/app/components/Navbar";
 import PaginationFooter from "@/app/components/PaginationFooter";
 import { year } from "@/app/components/var";
-import { LinkIcon } from "lucide-react";
+import SheetRow from "@/app/components/SheetRow";
+
+const sheets = [
+  {
+    subject: "วิทยาศาสตร์",
+    filename: "/m5/midterm1/sci.pdf",
+    icon: "/assets/img/icon/sci.png",
+    date: "15/07/2025",
+    term: "ม.5 เทอม 1",
+    by: { name: "มาสเตอร์พสิษฐ์" },
+  },
+  {
+    subject: "สังคมศึกษา",
+    filename: "/m5/midterm1/social.pdf",
+    icon: "/assets/img/icon/social.png",
+    date: "19/07/2025",
+    term: "ม.5 เทอม 1",
+    by: { name: "มาสเตอร์ตุ๊ต๊ะ"},
+  },
+  {
+    subject: "ประวัติศาสตร์",
+    filename: "/m5/midterm1/history.pdf",
+    icon: "/assets/img/icon/history.png",
+    date: "19/07/2025",
+    term: "ม.5 เทอม 1",
+    by: { name: "มาสเตอร์เขม" },
+  },
+  {
+    subject: "ประวัติศาสตร์ (นเรศวร)",
+    filename: "/m5/midterm1/history_naresuan.pdf",
+    icon: "/assets/img/icon/history.png",
+    date: "19/07/2025",
+    term: "ม.5 เทอม 1",
+    by: { name: "มาสเตอร์เขม" },
+  },
+  {
+    subject: "ชีววิทยา",
+    filename: "/m5/midterm1/biology.pdf",
+    icon: "/assets/img/icon/biology.png",
+    date: "19/07/2025",
+    term: "ม.5 เทอม 1",
+    by: {
+      name: "torgor_xlt.09",
+      url: "https://www.instagram.com/torgor_xlt.09",
+    },
+  },
+  {
+    subject: "คณิตศาสตร์",
+    filename: "/m5/midterm1/math.pdf",
+    icon: "/assets/img/icon/math.png",
+    date: "19/07/2025",
+    term: "ม.5 เทอม 1",
+    by: {
+      name: "d3w4r_zz",
+      url: "https://www.instagram.com/d3w4r_zz/",
+    },
+    extraLink: {
+      label: "Canva",
+      url: "https://www.canva.com/design/DAGtkcL6n7I/AMpAJ9SZivS0R6JurYuv8w/edit?utm_content=DAGtkcL6n7I&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton",
+    },
+  },
+];
+
 export default function Home() {
     return (
       <div>
@@ -32,287 +92,9 @@ export default function Home() {
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y0">
-                    <tr className="text-gray-700">
-                      <td className="px-4 py-3">
-                        <Link
-                          href={"/m5/midterm1/sci.pdf"}
-                          className="flex items-center text-sm"
-                        >
-                          <div className="inline-block relative w-8 h-8 mr-3 rounded-full">
-                            <Image
-                              className="icon-subject object-cover w-full h-auto"
-                              src="/assets/img/icon/sci.png"
-                              alt="math"
-                              width={100}
-                              height={100}
-                            />
-                            <div
-                              className="absolute inset-0 rounded-full shadow-inner"
-                              aria-hidden="true"
-                            ></div>
-                          </div>
-                          <div className="inline-block">
-                            <p className="font-semibold whitespace-nowrap">
-                              วิทยาศาสตร์
-                            </p>
-                            <p className="text-xs text-gray-600">
-                              สอบกลางภาค{" "}
-                              <span className="text-gray-400">
-                                (มาสเตอร์พสิษฐ์)
-                              </span>
-                            </p>
-                          </div>
-                        </Link>
-                      </td>
-                      <td className="px-4 py-3 text-sm whitespace-nowrap">
-                        ม.5 เทอม 1
-                      </td>
-                      <td className="px-4 py-3 text-xs">
-                        <Link href={"/m5/midterm1/sci.pdf"}>
-                          <span className="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-full">
-                            ดาวน์โหลด
-                          </span>
-                        </Link>
-                      </td>
-                      <td className="px-2 py-3 text-sm">15/07/2025</td>
-                    </tr>
-                    <tr className="text-gray-700">
-                      <td className="px-4 py-3">
-                        <Link
-                          href={"/m5/midterm1/social.pdf"}
-                          className="flex items-center text-sm"
-                        >
-                          <div className="inline-block relative w-8 h-8 mr-3 rounded-full">
-                            <Image
-                              className="icon-subject object-cover w-full h-auto"
-                              src="/assets/img/icon/social.png"
-                              alt="math"
-                              width={100}
-                              height={100}
-                            />
-                            <div
-                              className="absolute inset-0 rounded-full shadow-inner"
-                              aria-hidden="true"
-                            ></div>
-                          </div>
-                          <div className="inline-block">
-                            <p className="font-semibold whitespace-nowrap">
-                              สังคมศึกษา
-                            </p>
-                            <p className="text-xs text-gray-600">
-                              สอบกลางภาค{" "}
-                              <span className="text-gray-400">
-                                (มาสเตอร์ตุ๊ต๊ะ)
-                              </span>
-                            </p>
-                          </div>
-                        </Link>
-                      </td>
-                      <td className="px-4 py-3 text-sm whitespace-nowrap">
-                        ม.5 เทอม 1
-                      </td>
-                      <td className="px-4 py-3 text-xs">
-                        <Link href={"/m5/midterm1/social.pdf"}>
-                          <span className="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-full">
-                            ดาวน์โหลด
-                          </span>
-                        </Link>
-                      </td>
-                      <td className="px-2 py-3 text-sm">19/07/2025</td>
-                    </tr>
-                    <tr className="text-gray-700">
-                      <td className="px-4 py-3">
-                        <Link
-                          href={"/m5/midterm1/history.pdf"}
-                          className="flex items-center text-sm"
-                        >
-                          <div className="inline-block relative w-8 h-8 mr-3 rounded-full">
-                            <Image
-                              className="icon-subject object-cover w-full h-auto"
-                              src="/assets/img/icon/history.png"
-                              alt="math"
-                              width={100}
-                              height={100}
-                            />
-                            <div
-                              className="absolute inset-0 rounded-full shadow-inner"
-                              aria-hidden="true"
-                            ></div>
-                          </div>
-                          <div className="inline-block">
-                            <p className="font-semibold whitespace-nowrap">
-                              ประวัติศาสตร์
-                            </p>
-                            <p className="text-xs text-gray-600">
-                              สอบกลางภาค{" "}
-                              <span className="text-gray-400">
-                                (มาสเตอร์เขม)
-                              </span>
-                            </p>
-                          </div>
-                        </Link>
-                      </td>
-                      <td className="px-4 py-3 text-sm whitespace-nowrap">
-                        ม.5 เทอม 1
-                      </td>
-                      <td className="px-4 py-3 text-xs">
-                        <Link href={"/m5/midterm1/history.pdf"}>
-                          <span className="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-full">
-                            ดาวน์โหลด
-                          </span>
-                        </Link>
-                      </td>
-                      <td className="px-2 py-3 text-sm">19/07/2025</td>
-                    </tr>
-                    <tr className="text-gray-700">
-                      <td className="px-4 py-3">
-                        <Link
-                          href={"/m5/midterm1/history_naresuan.pdf"}
-                          className="flex items-center text-sm"
-                        >
-                          <div className="inline-block relative w-8 h-8 mr-3 rounded-full">
-                            <Image
-                              className="icon-subject object-cover w-full h-auto"
-                              src="/assets/img/icon/history.png"
-                              alt="math"
-                              width={100}
-                              height={100}
-                            />
-                            <div
-                              className="absolute inset-0 rounded-full shadow-inner"
-                              aria-hidden="true"
-                            ></div>
-                          </div>
-                          <div className="inline-block">
-                            <p className="font-semibold whitespace-nowrap">
-                              ประวัติศาสตร์ (นเรศวร)
-                            </p>
-                            <p className="text-xs text-gray-600">
-                              สอบกลางภาค{" "}
-                              <span className="text-gray-400">
-                                (มาสเตอร์เขม)
-                              </span>
-                            </p>
-                          </div>
-                        </Link>
-                      </td>
-                      <td className="px-4 py-3 text-sm whitespace-nowrap">
-                        ม.5 เทอม 1
-                      </td>
-                      <td className="px-4 py-3 text-xs">
-                        <Link href={"/m5/midterm1/history_naresuan.pdf"}>
-                          <span className="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-full">
-                            ดาวน์โหลด
-                          </span>
-                        </Link>
-                      </td>
-                      <td className="px-2 py-3 text-sm">19/07/2025</td>
-                    </tr>
-                    <tr className="text-gray-700">
-                      <td className="px-4 py-3">
-                        <Link
-                          href={"/m5/midterm1/biology.pdf"}
-                          className="flex items-center text-sm"
-                        >
-                          <div className="inline-block relative w-8 h-8 mr-3 rounded-full">
-                            <Image
-                              className="icon-subject object-cover w-full h-auto"
-                              src="/assets/img/icon/biology.png"
-                              alt="math"
-                              width={100}
-                              height={100}
-                            />
-                            <div
-                              className="absolute inset-0 rounded-full shadow-inner"
-                              aria-hidden="true"
-                            ></div>
-                          </div>
-                          <div className="inline-block">
-                            <p className="font-semibold whitespace-nowrap">
-                              ชีววิทยา
-                            </p>
-                            <p className="text-xs text-gray-600">
-                              สอบกลางภาค (by{" "}
-                              <Link
-                                className="text-purple-800"
-                                href="https://www.instagram.com/torgor_xlt.09"
-                              >
-                                torgor_xlt.09
-                              </Link>
-                              )
-                            </p>
-                          </div>
-                        </Link>
-                      </td>
-                      <td className="px-4 py-3 text-sm whitespace-nowrap">
-                        ม.5 เทอม 1
-                      </td>
-                      <td className="px-4 py-3 text-xs">
-                        <Link href={"/m5/midterm1/biology.pdf"}>
-                          <span className="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-full">
-                            ดาวน์โหลด
-                          </span>
-                        </Link>
-                      </td>
-                      <td className="px-2 py-3 text-sm">19/07/2025</td>
-                    </tr>
-                    <tr className="text-gray-700">
-                      <td className="px-4 py-3">
-                        <Link
-                          href={"/m5/midterm1/math.pdf"}
-                          className="flex items-center text-sm"
-                        >
-                          <div className="inline-block relative w-8 h-8 mr-3 rounded-full">
-                            <Image
-                              className="icon-subject object-cover w-full h-auto"
-                              src="/assets/img/icon/math.png"
-                              alt="math"
-                              width={100}
-                              height={100}
-                            />
-                            <div
-                              className="absolute inset-0 rounded-full shadow-inner"
-                              aria-hidden="true"
-                            ></div>
-                          </div>
-                          <div className="inline-block">
-                            <p className="font-semibold whitespace-nowrap">
-                              คณิตศาสตร์
-                            </p>
-                            <p className="text-xs text-gray-600">
-                              สอบกลางภาค (by{" "}
-                              <Link
-                                className="text-purple-800"
-                                href="https://www.instagram.com/d3w4r_zz/"
-                              >
-                                d3w4r_zz
-                              </Link>
-                              )
-                            </p>
-                          </div>
-                        </Link>
-                      </td>
-                      <td className="px-4 py-3 text-sm whitespace-nowrap">
-                        ม.5 เทอม 1
-                      </td>
-                      <td className="px-4 py-3 text-xs space-x-2 flex flex-row items-center">
-                        <Link href={"/m5/midterm1/math.pdf"}>
-                          <span className="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-full whitespace-nowrap">
-                            ดาวน์โหลด
-                          </span>
-                        </Link>
-                        <Link
-                          href={
-                            "https://www.canva.com/design/DAGtkcL6n7I/AMpAJ9SZivS0R6JurYuv8w/edit?utm_content=DAGtkcL6n7I&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton"
-                          }
-                        >
-                          <span className="px-2 py-1 font-semibold leading-tight text-blue-700 bg-blue-100 hover:bg-gray-200 hover:text-gray-700 rounded-full whitespace-nowrap">
-                            <LinkIcon className="inline-block w-4 h-4" /> Canva
-                          </span>
-                        </Link>
-                      </td>
-                      <td className="px-2 py-3 text-sm">19/07/2025</td>
-                    </tr>
+                    {sheets.map((sheet, i) => (
+                      <SheetRow key={i} {...sheet} />
+                    ))}
                   </tbody>
                 </table>
               </div>
