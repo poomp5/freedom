@@ -219,7 +219,7 @@ export default function Home() {
                     </td>
                     <td className="px-2 py-3 text-sm">29/11/2024</td>
                   </tr>
-                  {/* <tr className="text-gray-700">
+                  <tr className="text-gray-700">
                     <td className="px-4 py-3">
                       <Link
                         href={"/m3/midterm1/history.pdf"}
@@ -242,7 +242,16 @@ export default function Home() {
                           <p className="font-semibold whitespace-nowrap">
                             ประวัติศาสตร์
                           </p>
-                          <p className="text-xs text-gray-600">สอบกลางภาค</p>
+                          <p className="text-xs text-gray-600">
+                            สอบกลางภาค (by{" "}
+                            <Link
+                              className="text-purple-800"
+                              href="https://www.instagram.com/ger_nakub/"
+                            >
+                              ger_nakub
+                            </Link>
+                            )
+                          </p>
                         </div>
                       </Link>
                     </td>
@@ -256,8 +265,8 @@ export default function Home() {
                         </span>
                       </Link>
                     </td>
-                    <td className="px-2 py-3 text-sm">29/11/2024</td>
-                  </tr> */}
+                    <td className="px-2 py-3 text-sm">20/07/2025</td>
+                  </tr>
                   <tr className="text-gray-700">
                     <td className="px-4 py-3">
                       <Link
