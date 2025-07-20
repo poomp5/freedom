@@ -6,6 +6,14 @@ import SheetRow from "@/app/components/SheetRow";
 
 const sheets = [
   {
+    subject: "ภาษาไทย",
+    filename: "/m4/midterm1/thai.pdf",
+    icon: "/assets/img/icon/thai.png",
+    date: "20/7/2025",
+    term: "ม.4 เทอม 1",
+    by: { name: "cholemie", url: "https://www.instagram.com/cholemie/" },
+  },
+  {
     subject: "ภาษาอังกฤษ",
     filename: "/m4/midterm1/english.pdf",
     icon: "/assets/img/icon/english.png",
