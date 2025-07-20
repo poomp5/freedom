@@ -7,17 +7,50 @@ import { year } from "@/app/components/var";
 const sheets = [
   {
     subject: "คณิตศาสตร์",
+    filename: "/m3/midterm1/math67.pdf",
+    icon: "/assets/img/icon/math.png",
+    date: "20/7/2025",
+    term: "ม.3 เทอม 1",
+    by: {
+      name: "nxmnuxng_q",
+      url: "https://www.instagram.com/nxmnuxng_q/",
+    },
+  },
+  {
+    subject: "คณิตศาสตร์",
     filename: "/m3/midterm1/math.pdf",
     icon: "/assets/img/icon/math.png",
     date: "29/11/2024",
     term: "ม.3 เทอม 1",
   },
   {
-    subject: "วิทยาศาสตร์",
+    subject: "วิทยาศาสตร์ (2567)",
+    filename: "/m3/midterm1/sci67.pdf",
+    icon: "/assets/img/icon/sci.png",
+    date: "29/11/2024",
+    term: "ม.3 เทอม 1",
+    by: {
+      name: "nxmnuxng_q",
+      url: "https://www.instagram.com/nxmnuxng_q/",
+    },
+  },
+  {
+    subject: "วิทยาศาสตร์ (ม.ปอนด์)",
     filename: "/m3/midterm1/sci.pdf",
     icon: "/assets/img/icon/sci.png",
     date: "29/11/2024",
     term: "ม.3 เทอม 1",
+  },
+  {
+    subject: "ภาษาไทย",
+    filename: "/m3/midterm1/thai67.pdf",
+    icon: "/assets/img/icon/thai.png",
+    date: "20/07/2025",
+    term: "ม.3 เทอม 1",
+    by: {
+      name: "nxmnuxng_q",
+      url: "https://www.instagram.com/nxmnuxng_q/",
+    },
   },
   {
     subject: "ภาษาไทย",
@@ -53,11 +86,33 @@ const sheets = [
     },
   },
   {
+    subject: "สังคมศึกษา (2567)",
+    filename: "/m3/midterm1/social67.pdf",
+    icon: "/assets/img/icon/social.png",
+    date: "20/7/2025",
+    term: "ม.3 เทอม 1",
+    by: {
+      name: "nxmnuxng_q",
+      url: "https://www.instagram.com/nxmnuxng_q/",
+    },
+  },
+  {
     subject: "สังคมศึกษา (2566)",
     filename: "/m3/midterm1/social.pdf",
     icon: "/assets/img/icon/social.png",
     date: "29/11/2024",
     term: "ม.3 เทอม 1",
+  },
+  {
+    subject: "ประวัติศาสตร์",
+    filename: "/m3/midterm1/history.pdf",
+    icon: "/assets/img/icon/history.png",
+    date: "20/07/2025",
+    term: "ม.3 เทอม 1",
+    by: {
+      name: "ger_nakub",
+      url: "https://www.instagram.com/ger_nakub/",
+    },
   },
   {
     subject: "ประวัติศาสตร์ (One Page)",
@@ -75,18 +130,29 @@ const sheets = [
     },
   },
   {
-    subject: "ประวัติศาสตร์",
-    filename: "/m3/midterm1/history.pdf",
+    subject: "ประวัติศาสตร์ (2567)",
+    filename: "/m3/midterm1/history67.pdf",
     icon: "/assets/img/icon/history.png",
     date: "20/07/2025",
     term: "ม.3 เทอม 1",
     by: {
-      name: "ger_nakub",
-      url: "https://www.instagram.com/ger_nakub/",
+      name: "nxmnuxng_q",
+      url: "https://www.instagram.com/nxmnuxng_q/",
     },
   },
   {
-    subject: "ภาษาอังกฤษ",
+    subject: "ภาษาอังกฤษ (2567)",
+    filename: "/m3/midterm1/eng.pdf",
+    icon: "/assets/img/icon/english.png",
+    date: "20/07/2025",
+    term: "ม.3 เทอม 1",
+    by: {
+      name: "nxmnuxng_q",
+      url: "https://www.instagram.com/nxmnuxng_q/",
+    },
+  },
+  {
+    subject: "ภาษาอังกฤษ (2566)",
     filename: "/m3/midterm1/eng.pdf",
     icon: "/assets/img/icon/english.png",
     date: "29/11/2024",
@@ -95,7 +161,7 @@ const sheets = [
   {
     subject: "ภาษาอังกฤษเพิ่มเติม",
     filename: "/m3/midterm1/iep.pdf",
-    icon: "/assets/img/icon/english.png",
+    icon: "/assets/img/icon/iepicon.png",
     date: "29/11/2024",
     term: "ม.3 เทอม 1",
   },
