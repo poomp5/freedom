@@ -29,7 +29,7 @@ const sheets = [
   },
   {
     subject: "สังคมศึกษา",
-    filename: "/m3/midterm1/social_new.pdf",
+    filename: "/m3/midterm1/social68.pdf",
     icon: "/assets/img/icon/social.png",
     date: "20/7/2025",
     term: "ม.3 เทอม 1",
