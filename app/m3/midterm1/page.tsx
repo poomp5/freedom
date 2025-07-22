@@ -45,7 +45,7 @@ const sheets = [
     subject: "ภาษาไทย",
     filename: "/m3/midterm1/thai68.pdf",
     icon: "/assets/img/icon/thai.png",
-    date: "20/07/2025",
+    date: "22/07/2025",
     term: "ม.3 เทอม 1",
     by: {
       name: "ger_nakub",
@@ -152,8 +152,19 @@ const sheets = [
     },
   },
   {
+    subject: "ภาษาอังกฤษ",
+    filename: "/m3/midterm1/english68.pdf",
+    icon: "/assets/img/icon/english.png",
+    date: "22/07/2025",
+    term: "ม.3 เทอม 1",
+    by: {
+      name: "ger_nakub",
+      url: "https://www.instagram.com/ger_nakub/",
+    },
+  },
+  {
     subject: "ภาษาอังกฤษ (2567)",
-    filename: "/m3/midterm1/eng.pdf",
+    filename: "/m3/midterm1/english67.pdf",
     icon: "/assets/img/icon/english.png",
     date: "20/07/2025",
     term: "ม.3 เทอม 1",
