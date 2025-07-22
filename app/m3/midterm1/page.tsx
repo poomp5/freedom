@@ -43,6 +43,17 @@ const sheets = [
   },
   {
     subject: "ภาษาไทย",
+    filename: "/m3/midterm1/thai68.pdf",
+    icon: "/assets/img/icon/thai.png",
+    date: "20/07/2025",
+    term: "ม.3 เทอม 1",
+    by: {
+      name: "ger_nakub",
+      url: "https://www.instagram.com/ger_nakub/",
+    },
+  },
+  {
+    subject: "ภาษาไทย",
     filename: "/m3/midterm1/thai67.pdf",
     icon: "/assets/img/icon/thai.png",
     date: "20/07/2025",
