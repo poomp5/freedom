@@ -70,6 +70,9 @@ export default function Navbar() {
                                     <li>
                                         <Link href="/m5/midterm1" className="block px-4 py-2 hover:bg-gray-100">ม.5</Link>
                                     </li>
+                                    <li>
+                                        <Link href="/m6/midterm1" className="block px-4 py-2 hover:bg-gray-100">ม.6</Link>
+                                    </li>
                                 </ul>
                                 <div className="py-1">
                                     <Link href="/select" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">ทั้งหมด</Link>
