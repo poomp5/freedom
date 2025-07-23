@@ -19,7 +19,7 @@ const sheets = [
     icon: "/assets/img/icon/social.png",
     date: "19/07/2025",
     term: "ม.5 เทอม 1",
-    by: { name: "มาสเตอร์ตุ๊ต๊ะ"},
+    by: { name: "มาสเตอร์ตุ๊ต๊ะ" },
   },
   {
     subject: "ประวัติศาสตร์",
@@ -42,6 +42,17 @@ const sheets = [
     filename: "/m5/midterm1/biology.pdf",
     icon: "/assets/img/icon/biology.png",
     date: "19/07/2025",
+    term: "ม.5 เทอม 1",
+    by: {
+      name: "torgor_xlt.09",
+      url: "https://www.instagram.com/torgor_xlt.09",
+    },
+  },
+  {
+    subject: "ชีววิทยา (Plant tissue)",
+    filename: "/m5/midterm1/biology_plant.pdf",
+    icon: "/assets/img/icon/biology.png",
+    date: "23/07/2025",
     term: "ม.5 เทอม 1",
     by: {
       name: "torgor_xlt.09",
