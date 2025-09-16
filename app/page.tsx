@@ -8,120 +8,42 @@ import SheetRow from "@/app/components/SheetRow";
 const sheets = [
   {
     subject: "คณิตศาสตร์",
-    filename: "/m3/midterm1/math.pdf",
+    filename: "/m3/final1/math.pdf",
     icon: "/assets/img/icon/math.png",
     date: "29/11/2024",
     term: "ม.3 เทอม 1",
   },
   {
     subject: "วิทยาศาสตร์",
-    filename: "/m3/midterm1/sci.pdf",
+    filename: "/m3/final1/sci.pdf",
     icon: "/assets/img/icon/sci.png",
     date: "29/11/2024",
     term: "ม.3 เทอม 1",
   },
   {
     subject: "ภาษาไทย",
-    filename: "/m3/midterm1/thai68.pdf",
-    icon: "/assets/img/icon/thai.png",
-    date: "20/07/2025",
-    term: "ม.3 เทอม 1",
-    by: {
-      name: "ger_nakub",
-      url: "https://www.instagram.com/ger_nakub/",
-    },
-  },
-  {
-    subject: "ภาษาไทย",
-    filename: "/m3/midterm1/thai.pdf",
+    filename: "/m3/final1/thai.pdf",
     icon: "/assets/img/icon/thai.png",
     date: "29/11/2024",
     term: "ม.3 เทอม 1",
   },
   {
     subject: "สังคมศึกษา",
-    filename: "/m3/midterm1/social68.pdf",
-    icon: "/assets/img/icon/social.png",
-    date: "20/7/2025",
-    term: "ม.3 เทอม 1",
-    by: {
-      name: "antnut8778",
-      url: "https://www.instagram.com/antnut8778/",
-    },
-  },
-  {
-    subject: "สังคมศึกษา (One Page)",
-    filename: "/m3/midterm1/social_onepage.pdf",
-    icon: "/assets/img/icon/social.png",
-    date: "20/7/2025",
-    term: "ม.3 เทอม 1",
-    by: {
-      name: "jellorpxrz",
-      url: "https://www.instagram.com/jellorpxrz/",
-    },
-    extraLink: {
-      label: "Donate",
-      url: "/donate/jellorpxrz",
-    },
-  },
-  {
-    subject: "สังคมศึกษา (2566)",
-    filename: "/m3/midterm1/social.pdf",
+    filename: "/m3/final1/social.pdf",
     icon: "/assets/img/icon/social.png",
     date: "29/11/2024",
     term: "ม.3 เทอม 1",
   },
   {
-    subject: "ประวัติศาสตร์ (One Page)",
-    filename: "/m3/midterm1/history_onepage.pdf",
-    icon: "/assets/img/icon/history.png",
-    date: "20/07/2025",
-    term: "ม.3 เทอม 1",
-    by: {
-      name: "jellorpxrz",
-      url: "https://www.instagram.com/jellorpxrz/",
-    },
-    extraLink: {
-      label: "Donate",
-      url: "/donate/jellorpxrz",
-    },
-  },
-  {
     subject: "ประวัติศาสตร์",
-    filename: "/m3/midterm1/history.pdf",
+    filename: "/m3/final1/history.pdf",
     icon: "/assets/img/icon/history.png",
-    date: "20/07/2025",
+    date: "29/11/2024",
     term: "ม.3 เทอม 1",
-    by: {
-      name: "ger_nakub",
-      url: "https://www.instagram.com/ger_nakub/",
-    },
   },
   {
     subject: "ภาษาอังกฤษ",
-    filename: "/m3/midterm1/english68.pdf",
-    icon: "/assets/img/icon/english.png",
-    date: "22/07/2025",
-    term: "ม.3 เทอม 1",
-    by: {
-      name: "ger_nakub",
-      url: "https://www.instagram.com/ger_nakub/",
-    },
-  },
-  {
-    subject: "ภาษาอังกฤษ (2567)",
-    filename: "/m3/midterm1/english67.pdf",
-    icon: "/assets/img/icon/english.png",
-    date: "20/07/2025",
-    term: "ม.3 เทอม 1",
-    by: {
-      name: "nxmnuxng_q",
-      url: "https://www.instagram.com/nxmnuxng_q/",
-    },
-  },
-  {
-    subject: "ภาษาอังกฤษเพิ่มเติม",
-    filename: "/m3/midterm1/iep.pdf",
+    filename: "/m3/final1/eng.pdf",
     icon: "/assets/img/icon/english.png",
     date: "29/11/2024",
     term: "ม.3 เทอม 1",
@@ -139,7 +61,7 @@ export default function Home() {
         <section>
           <div className="py-8 px-4 mx-auto max-w-screen-xl text-center lg:py-16">
             <h1 className="mb-4 text-5xl font-extrabold tracking-tight leading-none md:text-5xl lg:text-6xl text-gray-600">
-              สอบกลางภาค
+              สอบปลายภาค
             </h1>
             <Countdown />
             <div className="mt-5 flex flex-col space-y-2 sm:flex-row sm:justify-center sm:space-y-0">
@@ -198,8 +120,8 @@ export default function Home() {
               leftArrow={{ label: "เทอม 1", href: "/m3/midterm1" }}
               rightArrow={{ label: "เทอม 2", href: "/m3/midterm2" }}
               links={[
-                { label: "กลางภาค", href: "/m3/midterm1", isActive: true },
-                { label: "ปลายภาค", href: "/m3/final1", isActive: false },
+                { label: "กลางภาค", href: "/m3/midterm1", isActive: false },
+                { label: "ปลายภาค", href: "/m3/final1", isActive: true },
               ]}
             />
           </div>
