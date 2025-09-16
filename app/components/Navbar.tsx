@@ -56,22 +56,22 @@ export default function Navbar() {
                             >
                                 <ul className="py-2 text-sm text-gray-700">
                                     <li>
-                                        <Link href="/m1/midterm1" className="block px-4 py-2 hover:bg-gray-100">ม.1</Link>
+                                        <Link href="/m1/final1" className="block px-4 py-2 hover:bg-gray-100">ม.1</Link>
                                     </li>
                                     <li>
-                                        <Link href="/m2/midterm1" className="block px-4 py-2 hover:bg-gray-100">ม.2</Link>
+                                        <Link href="/m2/final1" className="block px-4 py-2 hover:bg-gray-100">ม.2</Link>
                                     </li>
                                     <li>
-                                        <Link href="/m3/midterm1" className="block px-4 py-2 hover:bg-gray-100">ม.3</Link>
+                                        <Link href="/m3/final1" className="block px-4 py-2 hover:bg-gray-100">ม.3</Link>
                                     </li>
                                     <li>
-                                        <Link href="/m4/midterm1" className="block px-4 py-2 hover:bg-gray-100">ม.4</Link>
+                                        <Link href="/m4/final1" className="block px-4 py-2 hover:bg-gray-100">ม.4</Link>
                                     </li>
                                     <li>
-                                        <Link href="/m5/midterm1" className="block px-4 py-2 hover:bg-gray-100">ม.5</Link>
+                                        <Link href="/m5/final1" className="block px-4 py-2 hover:bg-gray-100">ม.5</Link>
                                     </li>
                                     <li>
-                                        <Link href="/m6/midterm1" className="block px-4 py-2 hover:bg-gray-100">ม.6</Link>
+                                        <Link href="/m6/final1" className="block px-4 py-2 hover:bg-gray-100">ม.6</Link>
                                     </li>
                                 </ul>
                                 <div className="py-1">
