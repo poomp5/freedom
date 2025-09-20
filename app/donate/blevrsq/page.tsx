@@ -27,7 +27,7 @@ export default function DonatePage() {
       <main className="mt-8 h-screen overflow-y-auto">
         <div className="container px-4 lg:px-8 mx-auto text-center">
           <h1 className="mb-4 font-extrabold tracking-tight leading-none text-3xl md:text-4xl lg:text-5xl text-gray-700">
-            โดเนทให้กับ <span className="text-pink-400">jellorpxrz</span>
+            โดเนทให้กับ <span className="text-pink-400">blevrsq</span>
           </h1>
           <p className="text-gray-500 mb-6">
             Kbank (<span className="font-semibold">รัศมิ์ลภัส รติสุขพิมล</span>)

@@ -303,7 +303,7 @@ export default function Home() {
                                                         สังคมศึกษา (ทวีปยุโรป)
                                                     </p>
                                                     <p className="text-xs text-gray-600">
-                                                        สอบปลายภาค (by <Link className="text-purple-800" href="https://www.instagram.com/jellorpxrz_/">jellorpxrz_</Link>)
+                                                        สอบปลายภาค (by <Link className="text-purple-800" href="https://www.instagram.com/blevrsq_/">blevrsq_</Link>)
                                                     </p>
                                                 </div>
                                             </Link>

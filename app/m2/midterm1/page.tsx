@@ -20,12 +20,12 @@ const sheets = [
     date: "20/7/2025",
     term: "ม.2 เทอม 1",
     by: {
-      name: "jellorpxrz",
-      url: "https://www.instagram.com/jellorpxrz/",
+      name: "blevrsq",
+      url: "https://www.instagram.com/blevrsq/",
     },
     extraLink: {
       label: "Donate",
-      url: "/donate/jellorpxrz",
+      url: "/donate/blevrsq",
     },
   },
   {
