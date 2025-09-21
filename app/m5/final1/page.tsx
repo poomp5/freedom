@@ -26,6 +26,15 @@ const sheets = [
     examType: "สอบปลายภาค" as const,
   },
   {
+    subject: "วิทยาศาสตร์ (ห้องศิลป์)",
+    filename: "/m5/final1/sci.pdf",
+    icon: "/assets/img/icon/sci.png",
+    date: "21/09/2025",
+    term: "ม.5 เทอม 1",
+    by: { name: "มาสเตอร์พสิษฐ์" },
+    examType: "สอบปลายภาค" as const,
+  },
+  {
     subject: "เคมี (พื้นฐาน)",
     filename: "/m5/final1/chemis.pdf",
     icon: "/assets/img/icon/chemistry.png",
