@@ -13,6 +13,15 @@ const sheets = [
     term: "ม.3 เทอม 1",
   },
   {
+    subject: "วิทยาศาสตร์ (2567)",
+    filename: "/m3/final1/sci-nana.pdf",
+    icon: "/assets/img/icon/sci.png",
+    date: "21/09/2025",
+    term: "ม.3 เทอม 1",
+    by: { name: "jirariin", url: "https://www.instagram.com/jirariin/" },
+    examType: "สอบปลายภาค" as const,
+  },
+  {
     subject: "วิทยาศาสตร์",
     filename: "/m3/final1/sci.pdf",
     icon: "/assets/img/icon/sci.png",
