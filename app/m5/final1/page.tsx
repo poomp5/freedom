@@ -85,6 +85,15 @@ const sheets = [
     by: { name: "bosssu_p", url: "https://www.instagram.com/bosssu_p/" },
     examType: "สอบปลายภาค" as const,
   },
+  {
+    subject: "ประวัติศาสตร์",
+    filename: "/m5/final1/history.pdf",
+    icon: "/assets/img/icon/history.png",
+    date: "21/09/2025",
+    term: "ม.5 เทอม 1",
+    by: { name: "มาสเตอร์เขม"},
+    examType: "สอบปลายภาค" as const,
+  },
 ];
 
 export default function Home() {
