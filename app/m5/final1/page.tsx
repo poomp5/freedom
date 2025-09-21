@@ -56,6 +56,18 @@ const sheets = [
     examType: "สอบปลายภาค" as const,
   },
   {
+    subject: "ฟิสิกส์",
+    filename: "/m5/final1/physics.pdf",
+    icon: "/assets/img/icon/physics.png",
+    date: "21/09/2025",
+    term: "ม.5 เทอม 1",
+    by: {
+      name: "มาสเตอร์ปอนด์",
+      url: "https://www.instagram.com/_chps.x/",
+    },
+    examType: "สอบปลายภาค" as const,
+  },
+  {
     subject: "ชีววิทยา (2567)",
     filename: "/m5/final1/biology-oil.pdf",
     icon: "/assets/img/icon/biology.png",
@@ -87,7 +99,7 @@ export default function Home() {
             {examType} 1/{year}
           </h1>
           <p className="mx-auto mb-4 text-xl text-gray-500">
-            ชีทสรุป (ม.5) ที่จัดทำในปีการศึกษา 2567
+            ชีทสรุป (ม.5) ที่จัดทำในปีการศึกษา 2568
           </p>
           <div className="w-full overflow-hidden rounded-lg shadow-xs">
             <div className="w-full overflow-x-auto">
