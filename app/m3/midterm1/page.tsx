@@ -3,7 +3,7 @@ import Bottombar from "@/app/components/Bottombar";
 import Navbar from "@/app/components/Navbar";
 import PaginationFooter from "@/app/components/PaginationFooter";
 import { year } from "@/app/components/var";
-
+const examType = "สอบกลางภาค" as const;
 const sheets = [
   {
     subject: "คณิตศาสตร์",
@@ -217,7 +217,7 @@ export default function Home() {
                   </thead>
                   <tbody className="bg-white divide-y0">
                     {sheets.map((sheet, i) => (
-                      <SheetRow key={i} {...sheet} />
+                      <SheetRow key={i} {...sheet} examType={examType} />
                     ))}
                   </tbody>
                 </table>

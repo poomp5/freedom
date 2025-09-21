@@ -8,9 +8,10 @@ interface SheetRowProps {
   icon: string;
   date: string;
   term: string;
+  examType: "สอบกลางภาค" | "สอบปลายภาค"; // 👈 เพิ่มตรงนี้
   by?: {
     name: string;
-    url?: string; 
+    url?: string;
   };
   extraLink?: {
     label: string;
@@ -24,6 +25,7 @@ export default function SheetRow({
   icon,
   date,
   term,
+  examType,
   by,
   extraLink,
 }: SheetRowProps) {
@@ -47,7 +49,7 @@ export default function SheetRow({
           <div className="inline-block">
             <p className="font-semibold whitespace-nowrap">{subject}</p>
             <p className="text-xs text-gray-600">
-              สอบปลายภาค{" "}
+              {examType}{" "}
               {by && (
                 <>
                   (by{" "}
@@ -65,7 +67,9 @@ export default function SheetRow({
           </div>
         </Link>
       </td>
+
       <td className="px-4 py-3 text-sm whitespace-nowrap">{term}</td>
+
       <td className="px-4 py-3 text-xs">
         <div className="flex flex-col sm:flex-row items-center gap-2 space-y-2 sm:space-y-0">
           <Link href={filename}>

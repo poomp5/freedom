@@ -3,7 +3,7 @@ import Navbar from "@/app/components/Navbar";
 import PaginationFooter from "@/app/components/PaginationFooter";
 import { year } from "@/app/components/var";
 import SheetRow from "@/app/components/SheetRow";
-
+const examType = "สอบปลายภาค" as const;
 const sheets = [
   {
     subject: "ภาษาไทย (ย่อความ)",
@@ -83,7 +83,7 @@ export default function Home() {
                 </thead>
                 <tbody className="bg-white divide-y0">
                   {sheets.map((sheet, i) => (
-                    <SheetRow key={i} {...sheet} />
+                    <SheetRow key={i} {...sheet} examType={examType}/>
                   ))}
                 </tbody>
               </table>

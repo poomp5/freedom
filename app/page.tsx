@@ -5,6 +5,8 @@ import Countdown from "./components/Countdown";
 import PaginationFooter from "./components/PaginationFooter";
 import SheetRow from "@/app/components/SheetRow";
 
+const examType = "สอบปลายภาค" as const;
+
 const sheets = [
   {
     subject: "คณิตศาสตร์",
@@ -76,7 +78,7 @@ export default function Home() {
         <section>
           <div className="py-8 px-4 mx-auto max-w-screen-xl text-center lg:py-16">
             <h1 className="mb-4 text-5xl font-extrabold tracking-tight leading-none md:text-5xl lg:text-6xl text-gray-600">
-              สอบปลายภาค
+              {examType}
             </h1>
             <Countdown />
             <div className="mt-5 flex flex-col space-y-2 sm:flex-row sm:justify-center sm:space-y-0">
@@ -126,7 +128,7 @@ export default function Home() {
                 </thead>
                 <tbody className="bg-white divide-y0">
                   {sheets.map((sheet, i) => (
-                    <SheetRow key={i} {...sheet} />
+                    <SheetRow key={i} {...sheet} examType={examType} />
                   ))}
                 </tbody>
               </table>
