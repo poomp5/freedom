@@ -1,7 +1,7 @@
 import Bottombar from "@/app/components/Bottombar";
 import Navbar from "@/app/components/Navbar";
 import PaginationFooter from "@/app/components/PaginationFooter";
-import { year } from "@/app/components/var";
+import { year } from "@/app/components/config";
 import SheetRow from "@/app/components/SheetRow";
 const examType = "สอบกลางภาค" as const;
 const sheets = [
@@ -55,7 +55,7 @@ export default function Home() {
       <main className="mt-8 h-full overflow-y-auto">
         <div className="container px-4 lg:px-8 mx-auto grid md:mb-[4vh] mb-[12vh]">
           <h1 className="mx-auto mb-2 text-4xl font-extrabold tracking-tight leading-none md:text-5xl lg:text-4xl text-gray-700">
-            สอบกลางภาค 1/{year}
+            {examType} 1/{year}
           </h1>
           <p className="mx-auto mb-4 text-xl text-gray-500">
             ชีทสรุป (ม.4) ที่จัดทำในปีการศึกษา 2568
