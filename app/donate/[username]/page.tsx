@@ -1,13 +1,27 @@
 "use client";
 
 import { useState } from "react";
+import { useParams } from "next/navigation";
 import Bottombar from "@/app/components/Bottombar";
 import Navbar from "@/app/components/Navbar";
 import Image from "next/image";
+import { donors } from "@/app/config/donate";
+
 export default function DonatePage() {
+  const { username } = useParams<{ username: string }>();
+  const donor = donors[username as keyof typeof donors];
+
   const [amountInput, setAmountInput] = useState("");
   const [amountToDonate, setAmountToDonate] = useState("");
   const [showQR, setShowQR] = useState(false);
+
+  if (!donor) {
+    return (
+      <div className="text-center mt-10">
+        <h1 className="text-2xl font-bold">ไม่พบผู้รับโดเนท</h1>
+      </div>
+    );
+  }
 
   const handleGenerateQR = () => {
     const amount = amountInput.trim();
@@ -15,10 +29,11 @@ export default function DonatePage() {
       alert("กรุณากรอกจำนวนเงินให้ถูกต้อง");
       return;
     }
-    setAmountToDonate(amount); // เซ็ตค่าจริงตอนกด
+    setAmountToDonate(amount);
     setShowQR(true);
   };
-  const qrUrl = `https://promptpay.io/0641566647/${amountToDonate}`;
+
+  const qrUrl = `https://promptpay.io/${donor.phone}/${amountToDonate}`;
 
   return (
     <div>
@@ -26,11 +41,13 @@ export default function DonatePage() {
       <Bottombar />
       <main className="mt-8 h-screen overflow-y-auto">
         <div className="container px-4 lg:px-8 mx-auto text-center">
-          <h1 className="mb-4 font-extrabold tracking-tight leading-none text-3xl md:text-4xl lg:text-5xl text-gray-700">
-            โดเนทให้กับ <span className="text-pink-400">blevrsq</span>
+          <h1 className="mb-4 font-extrabold text-3xl md:text-4xl lg:text-5xl text-gray-700">
+            โดเนทให้กับ{" "}
+            <span className={`text-${donor.color}-400`}>{donor.name}</span>
           </h1>
           <p className="text-gray-500 mb-6">
-            Kbank (<span className="font-semibold">รัศมิ์ลภัส รติสุขพิมล</span>)
+            {donor.bank} (
+            <span className="font-semibold">{donor.accountName}</span>)
           </p>
 
           <div className="max-w-sm mx-auto flex flex-col gap-4">
@@ -45,7 +62,8 @@ export default function DonatePage() {
 
             <button
               onClick={handleGenerateQR}
-              className="w-full px-4 py-2 bg-pink-400 hover:bg-pink-500 text-white font-semibold rounded-md transition"
+              className={`w-full px-4 py-2 bg-${donor.color}-400 hover:bg-${donor.color}-500 
+              text-white font-semibold rounded-md transition`}
             >
               โดเนท
             </button>
@@ -64,7 +82,7 @@ export default function DonatePage() {
                     height={300}
                   />
                   <Image
-                    src={'/assets/img/donatelogo.png'}
+                    src={donor.logo}
                     alt="Logo"
                     className="absolute inset-0 m-auto w-12 h-12 pointer-events-none rounded-xl"
                     style={{ objectFit: "contain" }}
