@@ -77,6 +77,18 @@ const sheets = [
     examType: "สอบปลายภาค" as const,
   },
   {
+    subject: "ฟิสิกส์",
+    filename: "/m5/final1/physics-pai.pdf",
+    icon: "/assets/img/icon/physics.png",
+    date: "21/09/2025",
+    term: "ม.5 เทอม 1",
+    by: {
+      name: "kongphobbb.007",
+      url: "https://www.instagram.com/kongphobbb.007/",
+    },
+    examType: "สอบปลายภาค" as const,
+  },
+  {
     subject: "ชีววิทยา (2567)",
     filename: "/m5/final1/biology-oil.pdf",
     icon: "/assets/img/icon/biology.png",
@@ -100,7 +112,7 @@ const sheets = [
     icon: "/assets/img/icon/history.png",
     date: "21/09/2025",
     term: "ม.5 เทอม 1",
-    by: { name: "มาสเตอร์เขม"},
+    by: { name: "มาสเตอร์เขม" },
     examType: "สอบปลายภาค" as const,
   },
 ];
