@@ -8,6 +8,15 @@ const examType = "สอบปลายภาค" as const;
 
 const sheets = [
   {
+    subject: "ภาษาไทย",
+    filename: "/m5/final1/thai.pdf",
+    icon: "/assets/img/icon/thai.png",
+    date: "21/09/2025",
+    term: "ม.5 เทอม 1",
+    by: { name: "foko._", url: "https://www.instagram.com/foko._/" },
+    examType: "สอบปลายภาค" as const,
+  },
+  {
     subject: "เคมี (พื้นฐาน)",
     filename: "/m5/final1/chemis.pdf",
     icon: "/assets/img/icon/chemistry.png",
