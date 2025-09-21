@@ -30,6 +30,6 @@ export const donors = {
     logo: "/assets/img/donatelogo.png",
     avatar: "/assets/img/avatar/blevrsq.jpg",
     color: "pink",
-    role: "ทำชีทสรุป ม.2",
+    role: "ทำชีทสรุป ม.2-3",
   },
 };
