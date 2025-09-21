@@ -47,7 +47,7 @@ export default function SheetRow({
           <div className="inline-block">
             <p className="font-semibold whitespace-nowrap">{subject}</p>
             <p className="text-xs text-gray-600">
-              สอบกลางภาค{" "}
+              สอบปลายภาค{" "}
               {by && (
                 <>
                   (by{" "}

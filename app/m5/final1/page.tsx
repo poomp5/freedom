@@ -24,7 +24,19 @@ const sheets = [
     examType: "สอบปลายภาค" as const,
   },
   {
-    subject: "ชีววิทยา",
+    subject: "ชีววิทยา (ใหม่)",
+    filename: "/m5/final1/biology-tiger.pdf",
+    icon: "/assets/img/icon/biology.png",
+    date: "21/09/2025",
+    term: "ม.5 เทอม 1",
+    by: {
+      name: "torgor_xlt.09",
+      url: "https://www.instagram.com/torgor_xlt.09/",
+    },
+    examType: "สอบปลายภาค" as const,
+  },
+  {
+    subject: "ชีววิทยา (2567)",
     filename: "/m5/final1/biology-oil.pdf",
     icon: "/assets/img/icon/biology.png",
     date: "20/09/2025",
@@ -33,7 +45,7 @@ const sheets = [
     examType: "สอบปลายภาค" as const,
   },
   {
-    subject: "ชีววิทยา",
+    subject: "ชีววิทยา (2567)",
     filename: "/m5/final1/biology.pdf",
     icon: "/assets/img/icon/biology.png",
     date: "11/12/2024",
