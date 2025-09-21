@@ -18,7 +18,19 @@ const sheets = [
     },
   },
   {
-    subject: "คณิตศาสตร์ (พื้นฐาน)",
+    subject: "คณิตศาสตร์ พื้นฐาน (ใหม่)",
+    filename: "/m4/final1/math-new.pdf",
+    icon: "/assets/img/icon/math.png",
+    date: "21/09/2025",
+    term: "ม.4 เทอม 1",
+    examType: "สอบปลายภาค" as const,
+    by: {
+      name: "kenmary_15",
+      url: "https://www.instagram.com/kenmary_15/",
+    },
+  },
+  {
+    subject: "คณิตศาสตร์ พื้นฐาน (2567)",
     filename: "/m4/final1/math.pdf",
     icon: "/assets/img/icon/math.png",
     date: "11/12/2024",
