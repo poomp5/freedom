@@ -19,7 +19,7 @@ const sheets = [
     subject: "วิทยาศาสตร์",
     filename: "/m3/final1/sci-chemis.pdf",
     icon: "/assets/img/icon/sci.png",
-    date: "21/09/2025",
+    date: "22/09/2025",
     term: "ม.3 เทอม 1",
     by: { name: "antnut8778", url: "https://www.instagram.com/antnut8778/" },
     examType: "สอบปลายภาค" as const,
