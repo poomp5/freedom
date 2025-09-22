@@ -12,7 +12,7 @@ export const TZ_OFFSET_HOURS = 7;
 // ถ้าอยาก “วันเดียวกันทุกปี” ให้กำหนด everyYear = true
 export const EXAM_TARGET = {
   month: 9, // กันยายน = 9
-  day: 22, // วัน
+  day: 23, // วัน
   hour: 8, 
   minute: 30,
   second: 0,
