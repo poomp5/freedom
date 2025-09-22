@@ -32,4 +32,15 @@ export const donors = {
     color: "pink",
     role: "ทำชีทสรุป ม.2-3",
   },
+  antnut8778: {
+    username: "antnut8778",
+    name: "antnut8778",
+    accountName: "สลิลลา เกียรติเกษมกุล",
+    bank: "Kbank",
+    phone: "0633635642",
+    logo: "/assets/img/donatelogo.png",
+    avatar: "/assets/img/avatar/antnut8778.jpg",
+    color: "green",
+    role: "ทำชีทสรุป ม.3",
+  },
 };
