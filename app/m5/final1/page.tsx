@@ -8,6 +8,15 @@ const examType = "สอบปลายภาค" as const;
 
 const sheets = [
   {
+    subject: "อังกฤษ",
+    filename: "/m5/final1/eng.pdf",
+    icon: "/assets/img/icon/eng.png",
+    date: "23/09/2025",
+    term: "ม.5 เทอม 1",
+    by: { name: "มิสโมนา" },
+    examType: "สอบปลายภาค" as const,
+  },
+  {
     subject: "ภาษาไทย",
     filename: "/m5/final1/thai-tiger.pdf",
     icon: "/assets/img/icon/thai.png",
@@ -33,6 +42,15 @@ const sheets = [
     filename: "/m5/final1/math.pdf",
     icon: "/assets/img/icon/math.png",
     date: "21/09/2025",
+    term: "ม.5 เทอม 1",
+    by: { name: "d3w4r_zz", url: "https://www.instagram.com/d3w4r_zz/" },
+    examType: "สอบปลายภาค" as const,
+  },
+  {
+    subject: "วิทยาศาสตร์ (ห้องศิลป์)",
+    filename: "/m5/final1/sci-dewar.pdf",
+    icon: "/assets/img/icon/sci.png",
+    date: "23/09/2025",
     term: "ม.5 เทอม 1",
     by: { name: "d3w4r_zz", url: "https://www.instagram.com/d3w4r_zz/" },
     examType: "สอบปลายภาค" as const,
