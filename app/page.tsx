@@ -10,6 +10,21 @@ const examType = "สอบปลายภาค" as const;
 const sheets = [
   {
     subject: "คณิตศาสตร์",
+    filename: "/m3/final1/math-new.pdf",
+    icon: "/assets/img/icon/math.png",
+    date: "24/09/2025",
+    term: "ม.3 เทอม 1",
+    by: {
+      name: "blevrsq",
+      url: "https://www.instagram.com/blevrsq/",
+    },
+    extraLink: {
+      label: "Donate",
+      url: "/donate/blevrsq",
+    },
+  },
+  {
+    subject: "คณิตศาสตร์",
     filename: "/m3/final1/math.pdf",
     icon: "/assets/img/icon/math.png",
     date: "29/11/2024",
