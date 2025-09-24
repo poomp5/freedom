@@ -53,6 +53,14 @@ const sheets = [
   },
   {
     subject: "ประวัติศาสตร์",
+    filename: "/m3/final1/history-new.pdf",
+    icon: "/assets/img/icon/history.png",
+    date: "24/09/2025",
+    by: { name: "antnut8778", url: "https://www.instagram.com/antnut8778/" },
+    term: "ม.3 เทอม 1",
+  },
+  {
+    subject: "ประวัติศาสตร์ (2567)",
     filename: "/m3/final1/history.pdf",
     icon: "/assets/img/icon/history.png",
     date: "29/11/2024",
