@@ -8,7 +8,7 @@ const examType = "สอบปลายภาค" as const;
 const sheets = [
   {
     subject: "ชีววิทยา (เรื่อง ประชากร)",
-    filename: "/m5/final1/biology.pdf",
+    filename: "/m6/final1/biology.pdf",
     icon: "/assets/img/icon/biology.png",
     date: "25/09/2025",
     term: "ม.6 เทอม 1",
