@@ -2,10 +2,20 @@ import Navbar from "../../components/Navbar";
 import Bottombar from "../../components/Bottombar";
 import PaginationFooter from "../../components/PaginationFooter";
 import { year } from "@/app/components/config";
-// import SheetRow from "@/app/components/SheetRow";
+import SheetRow from "@/app/components/SheetRow";
 
 const examType = "สอบปลายภาค" as const;
-
+const sheets = [
+  {
+    subject: "ชีววิทยา (เรื่อง ประชากร)",
+    filename: "/m5/final1/biology.pdf",
+    icon: "/assets/img/icon/biology.png",
+    date: "25/09/2025",
+    term: "ม.6 เทอม 1",
+    by: { name: "cotarincy_", url: "https://www.instagram.com/cotarincy_/" },
+    examType: "สอบปลายภาค" as const,
+  },
+];
 export default function Home() {
   return (
     <div>
@@ -33,14 +43,9 @@ export default function Home() {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y0">
-                  <tr>
-                    <td
-                      colSpan={4}
-                      className="text-center text-gray-500 py-6 text-sm"
-                    >
-                      ยังไม่มีชีทตอนนี้
-                    </td>
-                  </tr>
+                  {sheets.map((sheet, i) => (
+                    <SheetRow key={i} {...sheet} examType={examType} />
+                  ))}
                 </tbody>
               </table>
             </div>
