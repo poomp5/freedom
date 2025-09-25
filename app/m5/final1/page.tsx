@@ -9,6 +9,15 @@ const examType = "สอบปลายภาค" as const;
 const sheets = [
   {
     subject: "อังกฤษ",
+    filename: "/m5/final1/eng-dewar.pdf",
+    icon: "/assets/img/icon/english.png",
+    date: "25/09/2025",
+    term: "ม.5 เทอม 1",
+    by: { name: "d3w4r_zz", url: "https://www.instagram.com/d3w4r_zz/" },
+    examType: "สอบปลายภาค" as const,
+  },
+  {
+    subject: "อังกฤษ (สไลด์)",
     filename: "/m5/final1/eng.pdf",
     icon: "/assets/img/icon/english.png",
     date: "23/09/2025",
