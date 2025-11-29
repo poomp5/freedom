@@ -16,9 +16,28 @@ const geistMono = localFont({
 
 export const metadata = {
   title: "FREEDOM | NEXT GEN",
-  description: "ASSUMPTION COLLEGE THONBURI",
+  description: "รวมชีทสรุปทุกวิชา ม.1-ม.6 โรงเรียนอัสสัมชัญธนบุรี",
   icons: {
-    icon: "/assets/img/poomicon.png", 
+    icon: "/assets/img/poomicon.png",
+  },
+  openGraph: {
+    title: "FREEDOM | NEXT GEN",
+    description: "รวมชีทสรุปทุกวิชา ม.1-ม.6 โรงเรียนอัสสัมชัญธนบุรี",
+    images: [
+      {
+        url: "/assets/img/cover.png",
+        width: 1200,
+        height: 630,
+        alt: "Freedom - ชีทสรุป",
+      },
+    ],
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "FREEDOM | NEXT GEN",
+    description: "รวมชีทสรุปทุกวิชา ม.1-ม.6 โรงเรียนอัสสัมชัญธนบุรี",
+    images: ["/assets/img/cover.png"],
   },
 };
 
