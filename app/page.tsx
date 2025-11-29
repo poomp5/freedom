@@ -123,9 +123,9 @@ export default function Home() {
                 </div>
               </div>
 
-              {/* Right - Avatar Image */}
-              <div className="flex-shrink-0 relative z-0">
-                <div className="relative w-64 h-64 md:w-80 md:h-80 lg:w-96 lg:h-96">
+              {/* Right - Avatar Image (hidden on mobile) */}
+              <div className="hidden lg:block flex-shrink-0 relative z-0">
+                <div className="relative w-96 h-96">
                   {/* Glow effect behind image */}
                   <div className="absolute inset-0 bg-gradient-to-br from-blue-400 to-cyan-400 rounded-full blur-2xl opacity-30 animate-pulse"></div>
                   {/* Decorative ring */}
