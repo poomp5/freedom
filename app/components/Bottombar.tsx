@@ -93,17 +93,40 @@ export default function Bottombar() {
             >
               <svg
                 className="w-6 h-6 mb-1 text-gray-500 group-hover:text-blue-600"
-                aria-hidden="true"
+                width="24"
+                height="24"
+                viewBox="0 0 600 600"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="20"
+                strokeLinecap="round"
                 xmlns="http://www.w3.org/2000/svg"
-                fill="currentColor"
-                viewBox="0 0 20 20"
               >
-                <path
-                  fillRule="evenodd"
-                  d="M4 4c0-.975.718-2 1.875-2h12.25C19.282 2 20 3.025 20 4v16c0 .975-.718 2-1.875 2H5.875C4.718 22 4 20.975 4 20V4Zm7 13a1 1 0 1 0 0 2h2a1 1 0 1 0 0-2h-2Z"
-                  clipRule="evenodd"
+                <rect x="50" y="50" width="500" height="500" />
+                <rect x="120" y="120" width="360" height="360" />
+                <rect
+                  x="200"
+                  y="200"
+                  width="200"
+                  height="200"
+                  transform="rotate(45 300 300)"
                 />
+                <line x1="200" y1="200" x2="400" y2="400" />
+                <line x1="400" y1="200" x2="200" y2="400" />
+                <path d="M240 120 H360" />
+                <path d="M240 120 Q300 160 360 120" />
+                <path d="M240 480 H360" />
+                <path d="M240 480 Q300 440 360 480" />
+                <path d="M120 240 V360" />
+                <path d="M120 240 Q160 300 120 360" />
+                <path d="M480 240 V360" />
+                <path d="M480 240 Q440 300 480 360" />
+                <line x1="300" y1="50" x2="300" y2="80" />
+                <line x1="300" y1="520" x2="300" y2="550" />
+                <line x1="50" y1="300" x2="80" y2="300" />
+                <line x1="520" y1="300" x2="550" y2="300" />
               </svg>
+
               <span className="text-xs text-gray-500 group-hover:text-blue-600">
                 ยันต์
               </span>
