@@ -2,7 +2,7 @@
 
 // ปีการศึกษา (ไทย)
 export const year = "2568";
-export const basePath = "final1";
+export const basePath = "midterm2";
 
 // โซนเวลาหลักของโปรเจกต์
 export const TIMEZONE = "Asia/Bangkok"; // GMT+7 (ไม่มี DST)

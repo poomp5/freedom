@@ -87,14 +87,14 @@ export default function Countdown() {
     );
 
   return (
-    <div className="flex flex-col items-center justify-center">
+    <div className="flex flex-col items-center lg:items-start">
       {isCountdownOver ? (
-        <div className="text-center text-3xl font-bold text-green-600">
+        <div className="text-center lg:text-left text-3xl font-bold text-green-600">
           เริ่มสอบแล้ว 🎉
         </div>
       ) : (
         <>
-          <div className="mt-2 kanit text-gray-600 font-bold text-center max-w-screen-sm md:max-w-screen-xl">
+          <div className="mt-2 kanit text-gray-600 font-bold text-center lg:text-left max-w-screen-sm md:max-w-screen-xl">
             <ul className="inline-flex space-x-2 md:space-x-8">
               {[
                 { label: "DAYS", value: timeLeft?.days },

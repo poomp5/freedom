@@ -52,11 +52,11 @@ export default function DonateHome() {
                 height={100}
                 className="rounded-full w-24 h-24 mb-4 object-cover p-2 border-2 border-solid border-gray-300"
               />
-              <h2 className="text-xl font-semibold text-red-700">
+              <h2 className="text-xl font-semibold text-blue-700">
                 อยากมีชื่ออยู่ตรงนี้!?
               </h2>
               <p
-                className="text-base mt-3 bg-red-800 text-white px-4 py-1 rounded-full"
+                className="text-base mt-3 bg-blue-800 text-white px-4 py-1 rounded-full"
               >
                 ติดต่อเลย
               </p>
