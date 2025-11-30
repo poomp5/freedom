@@ -2,9 +2,23 @@ import Navbar from "../../components/Navbar";
 import Bottombar from "../../components/Bottombar";
 import PaginationFooter from "../../components/PaginationFooter";
 import { year } from "@/app/components/config";
-// import SheetRow from "@/app/components/SheetRow";
+import SheetRow from "@/app/components/SheetRow";
 
 const examType = "สอบกลางภาค" as const;
+
+const sheets = [
+  {
+    subject: "ชีววิทยา",
+    filename: "/m5/midterm2/biology.pdf",
+    icon: "/assets/img/icon/sci.png",
+    date: "30/11/2025",
+    term: "ม.5 เทอม 2",
+    by: {
+      name: "torgor_xlt.09",
+      url: "https://www.instagram.com/torgor_xlt.09",
+    },
+  },
+];
 
 export default function Home() {
   return (
@@ -18,7 +32,7 @@ export default function Home() {
             {examType} 2/{year}
           </h1>
           <p className="mx-auto mb-4 text-xl text-gray-500">
-            ชีทสรุป (ม.5) ที่จัดทำในปีการศึกษา 2566
+            ชีทสรุป (ม.5) ที่จัดทำในปีการศึกษา 2568
           </p>
 
           <div className="w-full overflow-hidden rounded-lg shadow-xs">
@@ -33,14 +47,9 @@ export default function Home() {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y0">
-                  <tr>
-                    <td
-                      colSpan={4}
-                      className="text-center text-gray-500 py-6 text-sm"
-                    >
-                      ยังไม่มีชีทตอนนี้
-                    </td>
-                  </tr>
+                  {sheets.map((sheet, i) => (
+                    <SheetRow key={i} {...sheet} examType={examType} />
+                  ))}
                 </tbody>
               </table>
             </div>

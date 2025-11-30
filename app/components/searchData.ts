@@ -185,6 +185,9 @@ export const allSheets: SheetData[] = [
   { subject: "ชีววิทยา (2567)", filename: "/m5/final1/biology.pdf", term: "เทอม 1", level: "ม.5", examType: "ปลายภาค", by: "bosssu_p", icon: getIconBySubject("ชีว") },
   { subject: "ประวัติศาสตร์", filename: "/m5/final1/history.pdf", term: "เทอม 1", level: "ม.5", examType: "ปลายภาค", by: "มาสเตอร์เขม", icon: getIconBySubject("ประวัติ") },
 
+  // ม.5 กลางภาค เทอม 2
+  { subject: "ชีววิทยา",  filename: "/m5/midterm2/biology.pdf", term: "เทอม 2", level: "ม.5", examType: "กลางภาค", by: "torgor_xlt.09", icon: getIconBySubject("ชีว"),},
+
   // ม.5 ปลายภาค เทอม 2
   { subject: "ภาษาไทย", filename: "/m5/final2/thai.pdf", term: "เทอม 2", level: "ม.5", examType: "ปลายภาค", by: "bosssu_p", icon: getIconBySubject("ไทย") },
   { subject: "ภาษาอังกฤษ", filename: "/m5/final2/eng.pdf", term: "เทอม 2", level: "ม.5", examType: "ปลายภาค", by: "creammyeiieee__", icon: getIconBySubject("อังกฤษ") },
