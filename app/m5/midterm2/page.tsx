@@ -18,6 +18,16 @@ const sheets = [
       url: "https://www.instagram.com/torgor_xlt.09",
     },
   },
+  {
+    subject: "วิทยาศาสตร์ (สายศิลป์)",
+    filename: "/m5/midterm2/sci.pdf",
+    icon: "/assets/img/icon/sci.png",
+    date: "7/12/2025",
+    term: "ม.5 เทอม 2",
+    by: {
+      name: "มาสเตอร์พสิษฐ์",
+    },
+  },
 ];
 
 export default function Home() {
