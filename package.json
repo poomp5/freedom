@@ -9,7 +9,7 @@
     "lint": "eslint ."
   },
   "dependencies": {
-    "flowbite": "^2.5.2",
+    "flowbite": "^4.0.1",
     "flowbite-react": "^0.10.2",
     "headlessui": "^0.0.0",
     "heroicons": "^2.1.5",
