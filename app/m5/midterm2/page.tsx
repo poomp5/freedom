@@ -10,7 +10,7 @@ const sheets = [
   {
     subject: "ชีววิทยา",
     filename: "/m5/midterm2/biology.pdf",
-    icon: "/assets/img/icon/sci.png",
+    icon: "/assets/img/icon/biology.png",
     date: "30/11/2025",
     term: "ม.5 เทอม 2",
     by: {
@@ -26,6 +26,22 @@ const sheets = [
     term: "ม.5 เทอม 2",
     by: {
       name: "มาสเตอร์พสิษฐ์",
+    },
+  },
+  {
+    subject: "คณิตพื้นฐาน",
+    filename:
+      "https://www.canva.com/design/DAG7E1TVVUk/uDqGAcwC_pW-lyxGVxzH4w/view",
+    icon: "/assets/img/icon/math.png",
+    date: "11/12/2025",
+    term: "ม.5 เทอม 2",
+    by: {
+      name: "d3w4r_zz",
+      url: "https://www.instagram.com/d3w4r_zz/",
+    },
+    extraLink: {
+      label: "Canva",
+      url: "https://www.canva.com/design/DAG7E1TVVUk/uDqGAcwC_pW-lyxGVxzH4w/view",
     },
   },
 ];
