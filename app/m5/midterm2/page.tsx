@@ -19,6 +19,17 @@ const sheets = [
     },
   },
   {
+    subject: "ชีววิทยา (แนวข้อสอบ)",
+    filename: "/m5/midterm2/biology-exam.pdf",
+    icon: "/assets/img/icon/biology.png",
+    date: "13/12/2025",
+    term: "ม.5 เทอม 2",
+    by: {
+      name: "torgor_xlt.09",
+      url: "https://www.instagram.com/torgor_xlt.09",
+    },
+  },
+  {
     subject: "ชีววิทยา (67)",
     filename: "/m5/midterm2/biology-67.pdf",
     icon: "/assets/img/icon/biology.png",
@@ -29,6 +40,7 @@ const sheets = [
       url: "https://www.instagram.com/ppuinoon.s",
     },
   },
+
   {
     subject: "วิทยาศาสตร์ (สายศิลป์)",
     filename: "/m5/midterm2/sci.pdf",
