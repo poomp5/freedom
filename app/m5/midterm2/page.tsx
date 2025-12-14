@@ -20,7 +20,7 @@ const sheets = [
   },
   {
     subject: "ชีววิทยา (Circulatory & Respiratory System)",
-    filename: "/m5/midterm2/biology-cr.pdf",
+    filename: "/m5/midterm2/biology-edit.pdf",
     icon: "/assets/img/icon/biology.png",
     date: "14/12/2025",
     term: "ม.5 เทอม 2",
