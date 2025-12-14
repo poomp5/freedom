@@ -19,6 +19,17 @@ const sheets = [
     },
   },
   {
+    subject: "ชีววิทยา (Circulatory & Respiratory System)",
+    filename: "/m5/midterm2/biology-cr.pdf",
+    icon: "/assets/img/icon/biology.png",
+    date: "14/12/2025",
+    term: "ม.5 เทอม 2",
+    by: {
+      name: "torgor_xlt.09",
+      url: "https://www.instagram.com/torgor_xlt.09",
+    },
+  },
+  {
     subject: "ชีววิทยา (แนวข้อสอบ)",
     filename: "/m5/midterm2/biology-exam.pdf",
     icon: "/assets/img/icon/biology.png",
