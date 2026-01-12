@@ -58,7 +58,7 @@ const PaginationFooter: React.FC<PaginationFooterProps> = ({
                                 <Link href={link.href}>
                                     <button
                                         className={`px-3 mx-1 py-1 transition-colors duration-150 rounded-md focus:outline-none focus:shadow-outline-red ${link.isActive
-                                                ? "bg-red-600 text-white border border-r-0 border-red-600"
+                                                ? "bg-blue-600 text-white border border-r-0 border-blue-600"
                                                 : "text-gray-800"
                                             }`}
                                     >

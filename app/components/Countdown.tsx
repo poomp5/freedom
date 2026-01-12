@@ -1,105 +1,120 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { EXAM_TARGET, TZ_OFFSET_HOURS } from "./config";
 
 interface TimeLeft {
-    days: number;
-    hours: number;
-    minutes: number;
-    seconds: number;
+  days: number;
+  hours: number;
+  minutes: number;
+  seconds: number;
 }
 
 export default function Countdown() {
-    const [timeLeft, setTimeLeft] = useState<TimeLeft | null>(null);
-    const [isCountdownOver, setIsCountdownOver] = useState(false);
+  const [timeLeft, setTimeLeft] = useState<TimeLeft | null>(null);
+  const [isCountdownOver, setIsCountdownOver] = useState(false);
 
-    useEffect(() => {
-        const SECOND = 1000;
-        const MINUTE = SECOND * 60;
-        const HOUR = MINUTE * 60;
-        const DAY = HOUR * 24;
+  // สร้าง timestamp ของเป้าหมายในรูป UTC จากเวลาไทย
+  const targetTimestamp = useMemo(() => {
+    const makeTargetTimestampUTC = (y: number) =>
+      Date.UTC(
+        y,
+        EXAM_TARGET.month - 1,
+        EXAM_TARGET.day,
+        EXAM_TARGET.hour - TZ_OFFSET_HOURS, // แปลงเวลาไทย -> UTC
+        EXAM_TARGET.minute,
+        EXAM_TARGET.second,
+        0
+      );
 
-        const calculateTargetDate = () => {
-            const today = new Date();
-            const currentYear = today.getFullYear();
-            const targetDate = new Date(`12/23/${currentYear}`);
+    const nowUTC = Date.now();
 
-            if (today > targetDate) {
-                targetDate.setFullYear(currentYear + 1);
-            }
+    // กำหนดปีเป้าหมาย
+    let targetYear: number;
+    if (EXAM_TARGET.everyYear) {
+      const thisYear = new Date().getFullYear();
+      const thisYearTs = makeTargetTimestampUTC(thisYear);
+      targetYear = nowUTC > thisYearTs ? thisYear + 1 : thisYear;
+    } else {
+      // ถ้าระบุปีตายตัว (เพิ่ม field year ใน EXAM_TARGET)
+      // @ts-expect-error year may be absent by design
+      targetYear = EXAM_TARGET.year ?? new Date().getFullYear();
+    }
 
-            return targetDate.getTime();
-        };
+    return makeTargetTimestampUTC(targetYear);
+  }, []);
 
-        const targetTimestamp = calculateTargetDate();
+  useEffect(() => {
+    const SECOND = 1000;
+    const MINUTE = 60 * SECOND;
+    const HOUR = 60 * MINUTE;
+    const DAY = 24 * HOUR;
 
-        const updateCountdown = (): TimeLeft | null => {
-            const now = new Date().getTime();
-            const distance = targetTimestamp - now;
+    const tick = (): TimeLeft | null => {
+      const now = Date.now();
+      const diff = targetTimestamp - now;
 
-            if (distance < 0) {
-                setIsCountdownOver(true);
-                return null;
-            }
+      if (diff <= 0) {
+        setIsCountdownOver(true);
+        return null;
+      }
 
-            return {
-                days: Math.floor(distance / DAY),
-                hours: Math.floor((distance % DAY) / HOUR),
-                minutes: Math.floor((distance % HOUR) / MINUTE),
-                seconds: Math.floor((distance % MINUTE) / SECOND)
-            };
-        };
-
-        // Explicitly handle potential null return
-        const initialTimeLeft = updateCountdown();
-        if (initialTimeLeft !== null) {
-            setTimeLeft(initialTimeLeft);
-        }
-
-        const intervalId = setInterval(() => {
-            const newTimeLeft = updateCountdown();
-            if (newTimeLeft === null) {
-                setIsCountdownOver(true);
-                clearInterval(intervalId);
-            } else {
-                setTimeLeft(newTimeLeft);
-            }
-        }, 1000);
-
-        return () => clearInterval(intervalId);
-    }, []);
-
-    const renderCountdownItem = (value: number | undefined) => {
-        if (value === undefined || value === null) {
-            return <span className="inline-block w-10 h-10 bg-gray-100 animate-pulse rounded"></span>;
-        }
-        return String(value).padStart(2, "0");
+      return {
+        days: Math.floor(diff / DAY),
+        hours: Math.floor((diff % DAY) / HOUR),
+        minutes: Math.floor((diff % HOUR) / MINUTE),
+        seconds: Math.floor((diff % MINUTE) / SECOND),
+      };
     };
 
-    return (
-        <div className="flex justify-center items-center">
-            {isCountdownOver ? (
-                <div className="text-center text-2xl font-bold text-green-600">
-                    สอบเสร็จแล้ว!
-                </div>
-            ) : (
-                <div className="mt-4 kanit text-gray-600 font-bold text-center max-w-screen-sm md:max-w-screen-xl">
-                    <ul className="inline-flex space-x-2 md:space-x-8">
-                        {[
-                            { label: "DAYS", value: timeLeft?.days },
-                            { label: "HOURS", value: timeLeft?.hours },
-                            { label: "MINUTES", value: timeLeft?.minutes },
-                            { label: "SECONDS", value: timeLeft?.seconds }
-                        ].map(({ label, value }) => (
-                            <li key={label} className="inline-block rounded-lg p-3">
-                                <span className="text-4xl text-gray-600 countdown-span">
-                                    {renderCountdownItem(value)}
-                                </span>
-                                <div className="mt-2 font-semibold text-gray-500">{label}</div>
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-            )}
-        </div>
+    // initial
+    const init = tick();
+    if (init) setTimeLeft(init);
+
+    const id = setInterval(() => {
+      const t = tick();
+      if (!t) clearInterval(id);
+      else setTimeLeft(t);
+    }, 1000);
+
+    return () => clearInterval(id);
+  }, [targetTimestamp]);
+
+  const renderVal = (v?: number) =>
+    v === undefined || v === null ? (
+      <span className="inline-block w-10 h-10 bg-gray-100 animate-pulse rounded" />
+    ) : (
+      String(v).padStart(2, "0")
     );
+
+  return (
+    <div className="flex flex-col items-center lg:items-start">
+      {isCountdownOver ? (
+        <div className="text-center lg:text-left text-3xl font-bold text-green-600">
+          เริ่มสอบแล้ว 🎉
+        </div>
+      ) : (
+        <>
+          <div className="mt-2 kanit text-gray-600 font-bold text-center lg:text-left max-w-screen-sm md:max-w-screen-xl">
+            <ul className="inline-flex space-x-2 md:space-x-8">
+              {[
+                { label: "DAYS", value: timeLeft?.days },
+                { label: "HOURS", value: timeLeft?.hours },
+                { label: "MINUTES", value: timeLeft?.minutes },
+                { label: "SECONDS", value: timeLeft?.seconds },
+              ].map(({ label, value }) => (
+                <li key={label} className="inline-block rounded-lg p-3">
+                  <span className="text-4xl text-gray-600 countdown-span">
+                    {renderVal(value)}
+                  </span>
+                  <div className="mt-2 font-semibold text-gray-500">
+                    {label}
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </>
+      )}
+    </div>
+  );
 }
