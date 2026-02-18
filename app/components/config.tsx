@@ -1,5 +1,3 @@
-// components/var.tsx
-
 // ปีการศึกษา (ไทย)
 export const year = "2568";
 export const basePath = "midterm2";
