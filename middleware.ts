@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  const sessionCookie = request.cookies.get("better-auth.session_token");
+  const sessionCookie = request.cookies.get("__Secure-better-auth.session_token");
   const isAuthenticated = !!sessionCookie;
 
   // Redirect authenticated users away from auth pages
