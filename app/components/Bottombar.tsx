@@ -1,6 +1,10 @@
+"use client";
+
 import Link from "next/link";
+import { useSession } from "@/lib/auth-client";
 
 export default function Bottombar() {
+    const { data: session } = useSession();
     return (
       <div className="mt-6 block md:hidden fixed bottom-0 left-0 z-50 w-full h-16 bg-white border-t border-gray-200">
         <div className="relative grid h-full grid-cols-5 mx-auto">
@@ -132,32 +136,40 @@ export default function Bottombar() {
               </span>
             </button>
           </Link>
-          <Link href="donate" className="w-full">
+          <Link href={session ? "/donate" : "/signin"} className="w-full">
             <button
               type="button"
               className="w-full h-full inline-flex flex-col items-center justify-center hover:bg-gray-50 group px-1"
             >
-              <svg
-                className="w-6 h-6 mb-1 text-gray-500 group-hover:text-blue-600"
-                aria-hidden="true"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M12 14a3 3 0 0 1 3-3h4a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2h-4a3 3 0 0 1-3-3Zm3-1a1 1 0 1 0 0 2h4v-2h-4Z"
-                  clipRule="evenodd"
-                />
-                <path
-                  fillRule="evenodd"
-                  d="M12.293 3.293a1 1 0 0 1 1.414 0L16.414 6h-2.828l-1.293-1.293a1 1 0 0 1 0-1.414ZM12.414 6 9.707 3.293a1 1 0 0 0-1.414 0L5.586 6h6.828ZM4.586 7l-.056.055A2 2 0 0 0 3 9v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2h-4a5 5 0 0 1 0-10h4a2 2 0 0 0-1.53-1.945L17.414 7H4.586Z"
-                  clipRule="evenodd"
-                />
-              </svg>
-              <span className="text-xs text-gray-500 group-hover:text-blue-600">
-                โดเนท
-              </span>
+              {session ? (
+                <>
+                  <svg
+                    className="w-6 h-6 mb-1 text-gray-500 group-hover:text-blue-600"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  </svg>
+                  <span className="text-xs text-gray-500 group-hover:text-blue-600">
+                    โปรไฟล์
+                  </span>
+                </>
+              ) : (
+                <>
+                  <svg
+                    className="w-6 h-6 mb-1 text-gray-500 group-hover:text-blue-600"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+                  </svg>
+                  <span className="text-xs text-gray-500 group-hover:text-blue-600">
+                    เข้าสู่ระบบ
+                  </span>
+                </>
+              )}
             </button>
           </Link>
         </div>

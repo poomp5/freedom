@@ -4,6 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import { basePath } from "./config";
 import SearchModal from "./SearchModal";
+import UserMenu from "./UserMenu";
 
 export default function Navbar() {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -31,6 +32,8 @@ export default function Navbar() {
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                             </svg>
                         </button>
+                        {/* User Menu */}
+                        <UserMenu />
                     </div>
                     <div className="hidden w-full md:block md:w-auto md:order-1" id="navbar-dropdown">
                         <ul className="flex flex-col font-medium p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:space-x-8 md:flex-row md:mt-0 md:border-0 md:bg-white">
