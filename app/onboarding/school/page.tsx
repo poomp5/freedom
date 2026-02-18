@@ -1,10 +1,9 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import Image from "next/image";
-import Link from "next/link";
 import SchoolSearch from "@/app/components/SchoolSearch";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 interface School {
   id: string;
@@ -29,14 +28,17 @@ export default function SchoolOnboarding() {
   const [selectedGrade, setSelectedGrade] = useState<number | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const canSubmit = selectedSchool !== null && selectedGrade !== null;
+
   const handleSubmit = async () => {
+    if (!canSubmit) return;
     setIsSubmitting(true);
     try {
       await fetch("/api/user/school", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          schoolId: selectedSchool?.id ?? null,
+          schoolId: selectedSchool.id,
           gradeLevel: selectedGrade,
         }),
       });
@@ -95,8 +97,16 @@ export default function SchoolOnboarding() {
                   {grade.label}
                   {selectedGrade === grade.level && (
                     <div className="absolute -top-1 -right-1 w-5 h-5 bg-white rounded-full flex items-center justify-center shadow">
-                      <svg className="w-3 h-3 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                      <svg
+                        className="w-3 h-3 text-blue-600"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                          clipRule="evenodd"
+                        />
                       </svg>
                     </div>
                   )}
@@ -108,21 +118,16 @@ export default function SchoolOnboarding() {
           {/* Submit Button */}
           <button
             onClick={handleSubmit}
-            disabled={isSubmitting}
-            className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-medium rounded-xl transition-colors duration-200 shadow-sm"
+            disabled={!canSubmit || isSubmitting}
+            className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-medium rounded-xl transition-colors duration-200 shadow-sm"
           >
             {isSubmitting ? "กำลังบันทึก..." : "ดำเนินการต่อ"}
           </button>
-
-          {/* Skip Link */}
-          <div className="text-center mt-4">
-            <Link
-              href="/"
-              className="text-sm text-gray-400 hover:text-gray-600 transition-colors"
-            >
-              ข้ามขั้นตอนนี้
-            </Link>
-          </div>
+          {!canSubmit && (
+            <p className="text-center text-sm text-red-400 mt-3">
+              กรุณาเลือกโรงเรียนและระดับชั้น
+            </p>
+          )}
         </div>
       </div>
     </div>

@@ -17,23 +17,28 @@ export async function POST(request: NextRequest) {
   const body = await request.json();
   const { schoolId, gradeLevel } = body;
 
-  if (gradeLevel && (gradeLevel < 1 || gradeLevel > 6)) {
+  if (!schoolId || !gradeLevel) {
+    return NextResponse.json(
+      { error: "School and grade level are required" },
+      { status: 400 }
+    );
+  }
+
+  if (gradeLevel < 1 || gradeLevel > 6) {
     return NextResponse.json(
       { error: "Grade level must be between 1 and 6" },
       { status: 400 }
     );
   }
 
-  if (schoolId) {
-    const school = await prisma.school.findUnique({
-      where: { id: schoolId },
-    });
-    if (!school) {
-      return NextResponse.json(
-        { error: "School not found" },
-        { status: 404 }
-      );
-    }
+  const school = await prisma.school.findUnique({
+    where: { id: schoolId },
+  });
+  if (!school) {
+    return NextResponse.json(
+      { error: "School not found" },
+      { status: 404 }
+    );
   }
 
   await prisma.user.update({
