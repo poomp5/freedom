@@ -24,6 +24,7 @@ model User {
 
   sessions Session[]
   accounts Account[]
+  uploads  SpreadsheetUpload[]
 }
 
 model Session {
@@ -76,4 +77,21 @@ model School {
   users User[]
 
   @@index([name])
+}
+
+model SpreadsheetUpload {
+  id           String   @id @default(cuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  originalName String
+  mimeType     String
+  fileSize     Int
+  sheetName    String?
+  rowCount     Int
+  columnCount  Int
+  headers      Json?
+  previewRows  Json?
+  createdAt    DateTime @default(now())
+
+  @@index([userId, createdAt])
 }

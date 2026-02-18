@@ -12,7 +12,10 @@ export async function middleware(request: NextRequest) {
   }
 
   // Protect onboarding routes — require auth
-  if (!isAuthenticated && pathname.startsWith("/onboarding")) {
+  if (
+    !isAuthenticated &&
+    (pathname.startsWith("/onboarding") || pathname.startsWith("/dashboard"))
+  ) {
     return NextResponse.redirect(new URL("/signin", request.url));
   }
 
@@ -48,6 +51,7 @@ export const config = {
     "/signin",
     "/signup",
     "/onboarding/:path*",
+    "/dashboard/:path*",
     "/",
     "/select",
     "/donate/:path*",

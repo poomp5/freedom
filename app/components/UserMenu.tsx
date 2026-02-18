@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { signOut, useSession } from "@/lib/auth-client";
 
 export default function UserMenu() {
@@ -77,6 +78,12 @@ export default function UserMenu() {
               {session.user.email}
             </p>
           </div>
+          <Link
+            href="/dashboard"
+            className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-blue-50 transition-colors"
+          >
+            Dashboard
+          </Link>
           <button
             onClick={handleSignOut}
             className="w-full text-left px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors"

@@ -136,7 +136,7 @@ export default function Bottombar() {
               </span>
             </button>
           </Link>
-          <Link href={session ? "/donate" : "/signin"} className="w-full">
+          <Link href={session ? "/dashboard" : "/signin"} className="w-full">
             <button
               type="button"
               className="w-full h-full inline-flex flex-col items-center justify-center hover:bg-gray-50 group px-1"
