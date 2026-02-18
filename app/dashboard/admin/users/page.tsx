@@ -1,0 +1,41 @@
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
+import { auth } from "@/lib/auth";
+import { isAdmin, getUserRole } from "@/lib/roles";
+import { prisma } from "@/lib/prisma";
+import UserTable from "./UserTable";
+
+export default async function AdminUsersPage() {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  if (!session) redirect("/dashboard");
+
+  const role = getUserRole(session.user as Record<string, unknown>);
+  if (!isAdmin(role)) {
+    redirect("/dashboard");
+  }
+
+  const users = await prisma.user.findMany({
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      role: true,
+      image: true,
+      createdAt: true,
+    },
+    orderBy: { createdAt: "desc" },
+  });
+
+  return (
+    <div className="p-6 lg:p-8 max-w-6xl">
+      <h1 className="text-2xl font-bold text-gray-800 mb-6">จัดการผู้ใช้</h1>
+      <UserTable
+        users={JSON.parse(JSON.stringify(users))}
+        currentUserId={session.user.id}
+      />
+    </div>
+  );
+}

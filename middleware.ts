@@ -16,8 +16,12 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL("/signin", request.url));
   }
 
-  // Check if authenticated user has completed onboarding (school + grade)
-  // Skip this check for onboarding, API, auth, and static asset routes
+  // Protect dashboard routes — require auth
+  if (!isAuthenticated && pathname.startsWith("/dashboard")) {
+    return NextResponse.redirect(new URL("/signin", request.url));
+  }
+
+  // Check session for role-based routing
   if (isAuthenticated && !pathname.startsWith("/onboarding")) {
     try {
       const sessionRes = await fetch(
@@ -29,10 +33,37 @@ export async function middleware(request: NextRequest) {
 
       if (sessionRes.ok) {
         const session = await sessionRes.json();
-        if (!session.user?.schoolId || !session.user?.gradeLevel) {
+        const role = session.user?.role;
+
+        // Suspended users: redirect to /suspended
+        if (role === "suspended" && pathname !== "/suspended") {
           return NextResponse.redirect(
-            new URL("/onboarding/school", request.url)
+            new URL("/suspended", request.url)
           );
+        }
+
+        // Non-suspended users should not access /suspended
+        if (role !== "suspended" && pathname === "/suspended") {
+          return NextResponse.redirect(new URL("/", request.url));
+        }
+
+        // Dashboard access: require admin or publisher role
+        if (pathname.startsWith("/dashboard")) {
+          if (role !== "admin" && role !== "publisher") {
+            return NextResponse.redirect(new URL("/", request.url));
+          }
+        }
+
+        // Onboarding check (skip for dashboard and suspended)
+        if (
+          !pathname.startsWith("/dashboard") &&
+          pathname !== "/suspended"
+        ) {
+          if (!session.user?.schoolId || !session.user?.gradeLevel) {
+            return NextResponse.redirect(
+              new URL("/onboarding/school", request.url)
+            );
+          }
         }
       }
     } catch {
@@ -48,6 +79,8 @@ export const config = {
     "/signin",
     "/signup",
     "/onboarding/:path*",
+    "/dashboard/:path*",
+    "/suspended",
     "/",
     "/select",
     "/donate/:path*",
