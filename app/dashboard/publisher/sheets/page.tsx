@@ -2,7 +2,7 @@ import { Upload } from "lucide-react";
 
 export default function PublisherSheetsPage() {
   return (
-    <div className="p-6 lg:p-8 max-w-4xl">
+    <div className="p-6 lg:p-8 w-full">
       <h1 className="text-2xl font-bold text-gray-800 mb-6">อัปโหลดชีท</h1>
       <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-12 text-center">
         <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-4">

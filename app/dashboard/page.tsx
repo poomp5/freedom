@@ -25,7 +25,7 @@ export default async function DashboardPage() {
   }
 
   return (
-    <div className="p-6 lg:p-8 max-w-5xl">
+    <div className="p-6 lg:p-8 w-full">
       {/* Welcome */}
       <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-6">
         <h1 className="text-2xl font-bold text-gray-800">

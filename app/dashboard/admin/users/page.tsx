@@ -30,7 +30,7 @@ export default async function AdminUsersPage() {
   });
 
   return (
-    <div className="p-6 lg:p-8 max-w-6xl">
+    <div className="p-6 lg:p-8 w-full">
       <h1 className="text-2xl font-bold text-gray-800 mb-6">จัดการผู้ใช้</h1>
       <UserTable
         users={JSON.parse(JSON.stringify(users))}
