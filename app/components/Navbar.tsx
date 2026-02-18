@@ -99,6 +99,10 @@ export default function Navbar() {
                                 </div>
                             </li>
                             <li>
+                                <Link href="/sheets"
+                                    className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0">ชีทจากชุมชน</Link>
+                            </li>
+                            <li>
                                 <Link href="/freedom"
                                     className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0">ยันต์</Link>
                             </li>

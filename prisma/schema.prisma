@@ -36,6 +36,8 @@ model User {
   sessions          Session[]
   accounts          Account[]
   publisherRequests PublisherRequest[]
+  sheets            Sheet[]
+  ratings           Rating[]
 }
 
 model PublisherRequest {
@@ -104,4 +106,40 @@ model School {
   users User[]
 
   @@index([name])
+}
+
+// ─── Sheet Upload & Rating ───
+
+model Sheet {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  subject     String
+  level       String
+  examType    String
+  term        String
+  pdfUrl      String
+  pdfKey      String
+  uploadedBy  String
+  uploader    User     @relation(fields: [uploadedBy], references: [id], onDelete: Cascade)
+  ratings     Rating[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([level, examType, term])
+  @@index([uploadedBy])
+}
+
+model Rating {
+  id        String   @id @default(cuid())
+  score     Int
+  userId    String
+  sheetId   String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sheet     Sheet    @relation(fields: [sheetId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, sheetId])
+  @@index([sheetId])
 }

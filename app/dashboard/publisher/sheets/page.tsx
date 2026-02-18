@@ -1,18 +1,46 @@
-import { Upload } from "lucide-react";
+import { headers } from "next/headers";
+import { auth } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
+import { redirect } from "next/navigation";
+import { getUserRole } from "@/lib/roles";
+import PublisherSheetsClient from "./PublisherSheetsClient";
 
-export default function PublisherSheetsPage() {
-  return (
-    <div className="p-6 lg:p-8 w-full">
-      <h1 className="text-2xl font-bold text-gray-800 mb-6">อัปโหลดชีท</h1>
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-12 text-center">
-        <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-4">
-          <Upload size={28} className="text-blue-500" />
-        </div>
-        <h2 className="text-lg font-medium text-gray-800 mb-2">เร็วๆ นี้</h2>
-        <p className="text-gray-400 text-sm">
-          ฟีเจอร์อัปโหลดชีทจะพร้อมใช้งานในเร็วๆ นี้
-        </p>
-      </div>
-    </div>
-  );
+export default async function PublisherSheetsPage() {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  if (!session) redirect("/signin");
+
+  const role = getUserRole(session.user as Record<string, unknown>);
+  if (role !== "publisher" && role !== "admin") redirect("/dashboard");
+
+  const sheets = await prisma.sheet.findMany({
+    where: { uploadedBy: session.user.id },
+    include: { ratings: { select: { score: true } } },
+    orderBy: { createdAt: "desc" },
+  });
+
+  const formattedSheets = sheets.map((sheet) => {
+    const totalRatings = sheet.ratings.length;
+    const averageRating =
+      totalRatings > 0
+        ? sheet.ratings.reduce((sum, r) => sum + r.score, 0) / totalRatings
+        : 0;
+
+    return {
+      id: sheet.id,
+      title: sheet.title,
+      subject: sheet.subject,
+      level: sheet.level,
+      examType: sheet.examType,
+      term: sheet.term,
+      pdfUrl: sheet.pdfUrl,
+      averageRating: Math.round(averageRating * 10) / 10,
+      totalRatings,
+      createdAt: sheet.createdAt.toISOString(),
+    };
+  });
+
+  return <PublisherSheetsClient initialSheets={formattedSheets} />;
 }

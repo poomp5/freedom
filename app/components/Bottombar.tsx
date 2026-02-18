@@ -7,7 +7,7 @@ export default function Bottombar() {
     const { data: session } = useSession();
     return (
       <div className="mt-6 block md:hidden fixed bottom-0 left-0 z-50 w-full h-16 bg-white border-t border-gray-200">
-        <div className="relative grid h-full grid-cols-5 mx-auto">
+        <div className="relative grid h-full grid-cols-6 mx-auto">
           <Link href="/" className="w-full">
             <button
               type="button"
@@ -88,6 +88,24 @@ export default function Bottombar() {
                 <path d="M12 6l0 13" />
                 <path d="M21 6l0 13" />
               </svg>
+            </button>
+          </Link>
+          <Link href="/sheets" className="w-full">
+            <button
+              type="button"
+              className="w-full h-full inline-flex flex-col items-center justify-center hover:bg-gray-50 group px-1"
+            >
+              <svg
+                className="w-6 h-6 mb-1 text-gray-500 group-hover:text-blue-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+              <span className="text-xs text-gray-500 group-hover:text-blue-600">
+                ชีทชุมชน
+              </span>
             </button>
           </Link>
           <Link href="/freedom" className="w-full">
