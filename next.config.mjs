@@ -1,7 +1,10 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: ['promptpay.io', 'lh3.googleusercontent.com'],
+    remotePatterns: [
+      { hostname: 'promptpay.io' },
+      { hostname: 'lh3.googleusercontent.com' },
+    ],
   },
   serverExternalPackages: ['@prisma/client'],
 };
