@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { Star } from "lucide-react";
+import { useMutation } from "@tanstack/react-query";
+import { useTRPC } from "@/trpc/client";
 
 interface StarRatingProps {
   sheetId: string;
@@ -18,46 +20,36 @@ export default function StarRating({
   totalRatings,
   onRated,
 }: StarRatingProps) {
+  const trpc = useTRPC();
   const [hoveredStar, setHoveredStar] = useState(0);
   const [myRating, setMyRating] = useState(currentRating ?? 0);
   const [avg, setAvg] = useState(averageRating);
   const [total, setTotal] = useState(totalRatings);
-  const [submitting, setSubmitting] = useState(false);
+
+  const rateMutation = useMutation(
+    trpc.sheets.rate.mutationOptions({
+      onSuccess: (data) => {
+        setAvg(data.averageRating);
+        setTotal(data.totalRatings);
+        onRated?.(data.averageRating, data.totalRatings);
+      },
+    })
+  );
 
   const handleRate = async (score: number) => {
-    if (submitting) return;
+    if (rateMutation.isPending) return;
 
-    // Optimistic update
     const prevRating = myRating;
     const prevAvg = avg;
     const prevTotal = total;
     setMyRating(score);
 
-    setSubmitting(true);
     try {
-      const res = await fetch(`/api/sheets/${sheetId}/rate`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ score }),
-      });
-
-      if (res.ok) {
-        const data = await res.json();
-        setAvg(data.averageRating);
-        setTotal(data.totalRatings);
-        onRated?.(data.averageRating, data.totalRatings);
-      } else {
-        // Revert on error
-        setMyRating(prevRating);
-        setAvg(prevAvg);
-        setTotal(prevTotal);
-      }
+      await rateMutation.mutateAsync({ sheetId, score });
     } catch {
       setMyRating(prevRating);
       setAvg(prevAvg);
       setTotal(prevTotal);
-    } finally {
-      setSubmitting(false);
     }
   };
 
@@ -72,7 +64,7 @@ export default function StarRating({
               onClick={() => handleRate(star)}
               onMouseEnter={() => setHoveredStar(star)}
               onMouseLeave={() => setHoveredStar(0)}
-              disabled={submitting}
+              disabled={rateMutation.isPending}
               className="p-0.5 transition-transform hover:scale-110 disabled:opacity-50"
             >
               <Star

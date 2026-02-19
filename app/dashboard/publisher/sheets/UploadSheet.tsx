@@ -2,6 +2,8 @@
 
 import { useState, useRef } from "react";
 import { Upload, FileText, X, Loader2, CheckCircle } from "lucide-react";
+import { useMutation } from "@tanstack/react-query";
+import { useTRPC } from "@/trpc/client";
 
 const SUBJECTS = [
   "คณิตศาสตร์",
@@ -25,6 +27,7 @@ const TERMS = ["เทอม 1", "เทอม 2"];
 type UploadStatus = "idle" | "compressing" | "uploading" | "saving" | "done" | "error";
 
 export default function UploadSheet({ onUploaded }: { onUploaded: () => void }) {
+  const trpc = useTRPC();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [subject, setSubject] = useState("");
@@ -37,6 +40,9 @@ export default function UploadSheet({ onUploaded }: { onUploaded: () => void }) 
   const [status, setStatus] = useState<UploadStatus>("idle");
   const [error, setError] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const presignMutation = useMutation(trpc.upload.presign.mutationOptions());
+  const createSheetMutation = useMutation(trpc.sheets.create.mutationOptions());
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const selected = e.target.files?.[0];
@@ -68,7 +74,6 @@ export default function UploadSheet({ onUploaded }: { onUploaded: () => void }) 
       setPreviewUrl(url);
       setStatus("idle");
     } catch {
-      // If compression fails, use original file
       setCompressedBlob(selected);
       const url = URL.createObjectURL(selected);
       setPreviewUrl(url);
@@ -107,22 +112,11 @@ export default function UploadSheet({ onUploaded }: { onUploaded: () => void }) 
     try {
       // 1. Get presigned URL
       setStatus("uploading");
-      const presignRes = await fetch("/api/upload/presign", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          fileName: file.name,
-          contentType: "application/pdf",
-          fileSize: compressedBlob.size,
-        }),
+      const { uploadUrl, publicUrl, key } = await presignMutation.mutateAsync({
+        fileName: file.name,
+        contentType: "application/pdf" as const,
+        fileSize: compressedBlob.size,
       });
-
-      if (!presignRes.ok) {
-        const data = await presignRes.json();
-        throw new Error(data.error || "ไม่สามารถสร้างลิงก์อัปโหลดได้");
-      }
-
-      const { uploadUrl, publicUrl, key } = await presignRes.json();
 
       // 2. Upload to R2
       const uploadRes = await fetch(uploadUrl, {
@@ -137,28 +131,18 @@ export default function UploadSheet({ onUploaded }: { onUploaded: () => void }) 
 
       // 3. Save sheet metadata
       setStatus("saving");
-      const sheetRes = await fetch("/api/sheets", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          title,
-          description,
-          subject,
-          level,
-          examType,
-          term,
-          pdfUrl: publicUrl,
-          pdfKey: key,
-        }),
+      await createSheetMutation.mutateAsync({
+        title,
+        description,
+        subject,
+        level,
+        examType,
+        term,
+        pdfUrl: publicUrl,
+        pdfKey: key,
       });
 
-      if (!sheetRes.ok) {
-        const data = await sheetRes.json();
-        throw new Error(data.error || "บันทึกข้อมูลไม่สำเร็จ");
-      }
-
       setStatus("done");
-      // Reset form after a short delay
       setTimeout(() => {
         setTitle("");
         setDescription("");
@@ -183,7 +167,6 @@ export default function UploadSheet({ onUploaded }: { onUploaded: () => void }) 
       <h2 className="text-lg font-semibold text-gray-800 mb-4">อัปโหลดชีทใหม่</h2>
 
       <form onSubmit={handleSubmit} className="space-y-4">
-        {/* Title */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
             ชื่อชีท <span className="text-red-500">*</span>
@@ -197,7 +180,6 @@ export default function UploadSheet({ onUploaded }: { onUploaded: () => void }) 
           />
         </div>
 
-        {/* Description */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
             คำอธิบาย
@@ -211,7 +193,6 @@ export default function UploadSheet({ onUploaded }: { onUploaded: () => void }) 
           />
         </div>
 
-        {/* Dropdowns row */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -278,7 +259,6 @@ export default function UploadSheet({ onUploaded }: { onUploaded: () => void }) 
           </div>
         </div>
 
-        {/* File upload */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
             ไฟล์ PDF <span className="text-red-500">*</span>
@@ -333,12 +313,10 @@ export default function UploadSheet({ onUploaded }: { onUploaded: () => void }) 
           )}
         </div>
 
-        {/* Error */}
         {error && (
           <p className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{error}</p>
         )}
 
-        {/* Submit */}
         <button
           type="submit"
           disabled={isSubmitting || status === "done"}

@@ -2,17 +2,10 @@
 
 import { useState } from "react";
 import { Search } from "lucide-react";
+import { useSuspenseQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useTRPC } from "@/trpc/client";
 
-interface User {
-  id: string;
-  name: string;
-  email: string;
-  role: string;
-  image: string | null;
-  createdAt: string;
-}
-
-const ROLES = ["user", "admin", "publisher", "suspended", "pending_publisher"];
+const ROLES = ["user", "admin", "publisher", "suspended", "pending_publisher"] as const;
 
 const ROLE_LABELS: Record<string, string> = {
   user: "ผู้ใช้",
@@ -31,15 +24,25 @@ const ROLE_COLORS: Record<string, string> = {
 };
 
 export default function UserTable({
-  users: initialUsers,
   currentUserId,
 }: {
-  users: User[];
   currentUserId: string;
 }) {
-  const [users, setUsers] = useState(initialUsers);
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+  const { data: users } = useSuspenseQuery(trpc.users.list.queryOptions());
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState<string | null>(null);
+
+  const updateRoleMutation = useMutation(
+    trpc.users.updateRole.mutationOptions({
+      onSuccess: () => {
+        queryClient.invalidateQueries({
+          queryKey: trpc.users.list.queryKey(),
+        });
+      },
+    })
+  );
 
   const filtered = users.filter(
     (u) =>
@@ -51,16 +54,10 @@ export default function UserTable({
     if (userId === currentUserId) return;
     setLoading(userId);
     try {
-      const res = await fetch(`/api/dashboard/users/${userId}/role`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ role: newRole }),
+      await updateRoleMutation.mutateAsync({
+        userId,
+        role: newRole as (typeof ROLES)[number],
       });
-      if (res.ok) {
-        setUsers((prev) =>
-          prev.map((u) => (u.id === userId ? { ...u, role: newRole } : u))
-        );
-      }
     } finally {
       setLoading(null);
     }
@@ -68,7 +65,6 @@ export default function UserTable({
 
   return (
     <div>
-      {/* Search */}
       <div className="relative mb-4">
         <Search
           size={18}
@@ -83,41 +79,27 @@ export default function UserTable({
         />
       </div>
 
-      {/* Table */}
       <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-gray-100">
-                <th className="text-left px-4 py-3 font-medium text-gray-500">
-                  ชื่อ
-                </th>
-                <th className="text-left px-4 py-3 font-medium text-gray-500">
-                  อีเมล
-                </th>
-                <th className="text-left px-4 py-3 font-medium text-gray-500">
-                  บทบาท
-                </th>
-                <th className="text-left px-4 py-3 font-medium text-gray-500">
-                  เปลี่ยนบทบาท
-                </th>
+                <th className="text-left px-4 py-3 font-medium text-gray-500">ชื่อ</th>
+                <th className="text-left px-4 py-3 font-medium text-gray-500">อีเมล</th>
+                <th className="text-left px-4 py-3 font-medium text-gray-500">บทบาท</th>
+                <th className="text-left px-4 py-3 font-medium text-gray-500">เปลี่ยนบทบาท</th>
               </tr>
             </thead>
             <tbody>
               {filtered.map((user) => (
-                <tr
-                  key={user.id}
-                  className="border-b border-gray-50 hover:bg-gray-50"
-                >
-                  <td className="px-4 py-3 font-medium text-gray-800">
-                    {user.name}
-                  </td>
+                <tr key={user.id} className="border-b border-gray-50 hover:bg-gray-50">
+                  <td className="px-4 py-3 font-medium text-gray-800">{user.name}</td>
                   <td className="px-4 py-3 text-gray-500">{user.email}</td>
                   <td className="px-4 py-3">
                     <span
-                      className={`px-2 py-1 rounded-lg text-xs font-medium ${ROLE_COLORS[user.role] || "bg-gray-100 text-gray-700"}`}
+                      className={`px-2 py-1 rounded-lg text-xs font-medium ${ROLE_COLORS[user.role ?? "user"] || "bg-gray-100 text-gray-700"}`}
                     >
-                      {ROLE_LABELS[user.role] || user.role}
+                      {ROLE_LABELS[user.role ?? "user"] || user.role}
                     </span>
                   </td>
                   <td className="px-4 py-3">
@@ -125,10 +107,8 @@ export default function UserTable({
                       <span className="text-xs text-gray-400">คุณ</span>
                     ) : (
                       <select
-                        value={user.role}
-                        onChange={(e) =>
-                          handleRoleChange(user.id, e.target.value)
-                        }
+                        value={user.role ?? "user"}
+                        onChange={(e) => handleRoleChange(user.id, e.target.value)}
                         disabled={loading === user.id}
                         className="text-sm border border-gray-200 rounded-lg px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
                       >

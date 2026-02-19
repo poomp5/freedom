@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useTRPC } from "@/trpc/client";
 
 interface School {
   id: string;
@@ -16,40 +18,41 @@ interface SchoolSearchProps {
 }
 
 export default function SchoolSearch({ onSelect, selected }: SchoolSearchProps) {
+  const trpc = useTRPC();
   const [query, setQuery] = useState("");
-  const [results, setResults] = useState<School[]>([]);
+  const [debouncedQuery, setDebouncedQuery] = useState("");
   const [isOpen, setIsOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout>>(null);
 
   useEffect(() => {
     if (query.length < 2) {
-      setResults([]);
+      setDebouncedQuery("");
       setIsOpen(false);
       return;
     }
 
     if (debounceRef.current) clearTimeout(debounceRef.current);
 
-    debounceRef.current = setTimeout(async () => {
-      setIsLoading(true);
-      try {
-        const res = await fetch(`/api/schools?q=${encodeURIComponent(query)}`);
-        const data = await res.json();
-        setResults(data);
-        setIsOpen(data.length > 0);
-      } catch {
-        setResults([]);
-      } finally {
-        setIsLoading(false);
-      }
+    debounceRef.current = setTimeout(() => {
+      setDebouncedQuery(query);
     }, 300);
 
     return () => {
       if (debounceRef.current) clearTimeout(debounceRef.current);
     };
   }, [query]);
+
+  const { data: results = [], isLoading } = useQuery({
+    ...trpc.schools.search.queryOptions({ q: debouncedQuery }),
+    enabled: debouncedQuery.length >= 2,
+  });
+
+  useEffect(() => {
+    if (results.length > 0 && debouncedQuery.length >= 2) {
+      setIsOpen(true);
+    }
+  }, [results, debouncedQuery]);
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
@@ -70,7 +73,7 @@ export default function SchoolSearch({ onSelect, selected }: SchoolSearchProps) 
   const handleClear = () => {
     onSelect(null);
     setQuery("");
-    setResults([]);
+    setDebouncedQuery("");
   };
 
   return (

@@ -5,34 +5,23 @@ import { FileText, User, Calendar, ExternalLink } from "lucide-react";
 import StarRating from "@/app/components/StarRating";
 import Navbar from "@/app/components/Navbar";
 import Bottombar from "@/app/components/Bottombar";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { useTRPC } from "@/trpc/client";
 
 const LEVELS = ["ทั้งหมด", "ม.1", "ม.2", "ม.3", "ม.4", "ม.5", "ม.6"];
 const EXAM_TYPES = ["ทั้งหมด", "กลางภาค", "ปลายภาค"];
 const TERMS = ["ทั้งหมด", "เทอม 1", "เทอม 2"];
 
-interface SheetData {
-  id: string;
-  title: string;
-  description: string | null;
-  subject: string;
-  level: string;
-  examType: string;
-  term: string;
-  pdfUrl: string;
-  uploader: { id: string; name: string; image: string | null };
-  averageRating: number;
-  totalRatings: number;
-  userRating: number | null;
-  createdAt: string;
-}
-
 export default function SheetsClient({
-  sheets,
   isLoggedIn,
+  userId,
 }: {
-  sheets: SheetData[];
   isLoggedIn: boolean;
+  userId: string | null;
 }) {
+  const trpc = useTRPC();
+  const { data: sheets } = useSuspenseQuery(trpc.sheets.list.queryOptions({}));
+
   const [levelFilter, setLevelFilter] = useState("ทั้งหมด");
   const [examTypeFilter, setExamTypeFilter] = useState("ทั้งหมด");
   const [termFilter, setTermFilter] = useState("ทั้งหมด");
@@ -111,77 +100,79 @@ export default function SheetsClient({
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {filtered.map((sheet) => (
-                <div
-                  key={sheet.id}
-                  className="bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow p-5 flex flex-col"
-                >
-                  {/* Header */}
-                  <div className="flex items-start justify-between mb-2">
-                    <div className="flex-1 min-w-0">
-                      <h3 className="font-semibold text-gray-800 truncate">{sheet.title}</h3>
-                      <div className="flex flex-wrap gap-1.5 mt-1.5">
-                        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700">
-                          {sheet.level}
-                        </span>
-                        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-purple-50 text-purple-700">
-                          {sheet.subject}
-                        </span>
-                        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-50 text-green-700">
-                          {sheet.examType} {sheet.term}
-                        </span>
+              {filtered.map((sheet) => {
+                const userRating = userId
+                  ? sheet.ratings.find((r) => r.userId === userId)?.score ?? null
+                  : null;
+
+                return (
+                  <div
+                    key={sheet.id}
+                    className="bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow p-5 flex flex-col"
+                  >
+                    <div className="flex items-start justify-between mb-2">
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-semibold text-gray-800 truncate">{sheet.title}</h3>
+                        <div className="flex flex-wrap gap-1.5 mt-1.5">
+                          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700">
+                            {sheet.level}
+                          </span>
+                          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-purple-50 text-purple-700">
+                            {sheet.subject}
+                          </span>
+                          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-50 text-green-700">
+                            {sheet.examType} {sheet.term}
+                          </span>
+                        </div>
                       </div>
                     </div>
-                  </div>
 
-                  {/* Description */}
-                  {sheet.description && (
-                    <p className="text-sm text-gray-500 mt-1 line-clamp-2">{sheet.description}</p>
-                  )}
-
-                  {/* Rating */}
-                  <div className="mt-3">
-                    {isLoggedIn ? (
-                      <StarRating
-                        sheetId={sheet.id}
-                        currentRating={sheet.userRating}
-                        averageRating={sheet.averageRating}
-                        totalRatings={sheet.totalRatings}
-                      />
-                    ) : (
-                      <div className="flex items-center gap-1 text-sm text-gray-500">
-                        <span className="text-yellow-400">★</span>
-                        {sheet.averageRating.toFixed(1)} ({sheet.totalRatings} รีวิว)
-                      </div>
+                    {sheet.description && (
+                      <p className="text-sm text-gray-500 mt-1 line-clamp-2">{sheet.description}</p>
                     )}
-                  </div>
 
-                  {/* Footer */}
-                  <div className="mt-auto pt-3 flex items-center justify-between border-t border-gray-50">
-                    <div className="flex items-center gap-1.5 text-xs text-gray-400">
-                      <User className="w-3.5 h-3.5" />
-                      <span>{sheet.uploader.name}</span>
-                      <span className="mx-1">·</span>
-                      <Calendar className="w-3.5 h-3.5" />
-                      <span>
-                        {new Date(sheet.createdAt).toLocaleDateString("th-TH", {
-                          day: "numeric",
-                          month: "short",
-                        })}
-                      </span>
+                    <div className="mt-3">
+                      {isLoggedIn ? (
+                        <StarRating
+                          sheetId={sheet.id}
+                          currentRating={userRating}
+                          averageRating={sheet.averageRating}
+                          totalRatings={sheet.totalRatings}
+                        />
+                      ) : (
+                        <div className="flex items-center gap-1 text-sm text-gray-500">
+                          <span className="text-yellow-400">★</span>
+                          {sheet.averageRating.toFixed(1)} ({sheet.totalRatings} รีวิว)
+                        </div>
+                      )}
                     </div>
-                    <a
-                      href={sheet.pdfUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1 text-xs text-blue-600 hover:text-blue-700 font-medium"
-                    >
-                      เปิด PDF
-                      <ExternalLink className="w-3 h-3" />
-                    </a>
+
+                    <div className="mt-auto pt-3 flex items-center justify-between border-t border-gray-50">
+                      <div className="flex items-center gap-1.5 text-xs text-gray-400">
+                        <User className="w-3.5 h-3.5" />
+                        <span>{sheet.uploader.name}</span>
+                        <span className="mx-1">·</span>
+                        <Calendar className="w-3.5 h-3.5" />
+                        <span>
+                          {new Date(sheet.createdAt).toLocaleDateString("th-TH", {
+                            day: "numeric",
+                            month: "short",
+                          })}
+                        </span>
+                      </div>
+                      <a
+                        href={sheet.pdfUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 text-xs text-blue-600 hover:text-blue-700 font-medium"
+                      >
+                        เปิด PDF
+                        <ExternalLink className="w-3 h-3" />
+                      </a>
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>

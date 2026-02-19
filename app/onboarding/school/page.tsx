@@ -4,6 +4,8 @@ import SchoolSearch from "@/app/components/SchoolSearch";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useMutation } from "@tanstack/react-query";
+import { useTRPC } from "@/trpc/client";
 
 interface School {
   id: string;
@@ -24,34 +26,32 @@ const gradeLevels = [
 
 export default function SchoolOnboarding() {
   const router = useRouter();
+  const trpc = useTRPC();
   const [selectedSchool, setSelectedSchool] = useState<School | null>(null);
   const [selectedGrade, setSelectedGrade] = useState<number | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const setSchoolMutation = useMutation(
+    trpc.users.setSchool.mutationOptions()
+  );
 
   const canSubmit = selectedSchool !== null && selectedGrade !== null;
 
   const handleSubmit = async () => {
     if (!canSubmit) return;
-    setIsSubmitting(true);
     try {
-      await fetch("/api/user/school", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          schoolId: selectedSchool.id,
-          gradeLevel: selectedGrade,
-        }),
+      await setSchoolMutation.mutateAsync({
+        schoolId: selectedSchool.id,
+        gradeLevel: selectedGrade,
       });
       router.push("/");
     } catch {
-      setIsSubmitting(false);
+      // mutation error handled by isPending state
     }
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-cyan-50 to-blue-100">
       <div className="max-w-2xl mx-auto px-4 py-12">
-        {/* Logo */}
         <div className="flex justify-center mb-8">
           <Image
             src="/assets/img/freedom.svg"
@@ -70,7 +70,6 @@ export default function SchoolOnboarding() {
             ช่วยให้เราแนะนำชีทที่เหมาะกับคุณ
           </p>
 
-          {/* School Search */}
           <div className="mb-8">
             <SchoolSearch
               onSelect={setSelectedSchool}
@@ -78,7 +77,6 @@ export default function SchoolOnboarding() {
             />
           </div>
 
-          {/* Grade Level Selection */}
           <div className="mb-8">
             <label className="block text-sm font-medium text-gray-700 mb-3">
               ระดับชั้น
@@ -115,13 +113,12 @@ export default function SchoolOnboarding() {
             </div>
           </div>
 
-          {/* Submit Button */}
           <button
             onClick={handleSubmit}
-            disabled={!canSubmit || isSubmitting}
+            disabled={!canSubmit || setSchoolMutation.isPending}
             className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-medium rounded-xl transition-colors duration-200 shadow-sm"
           >
-            {isSubmitting ? "กำลังบันทึก..." : "ดำเนินการต่อ"}
+            {setSchoolMutation.isPending ? "กำลังบันทึก..." : "ดำเนินการต่อ"}
           </button>
           {!canSubmit && (
             <p className="text-center text-sm text-red-400 mt-3">
