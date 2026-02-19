@@ -1,9 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getSessionCookie } from "better-auth/cookies";
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  const sessionCookie = request.cookies.get("__Secure-better-auth.session_token");
+  const sessionCookie = getSessionCookie(request);
+
   const isAuthenticated = !!sessionCookie;
 
   // Redirect authenticated users away from auth pages
@@ -28,7 +30,7 @@ export async function middleware(request: NextRequest) {
         `${request.nextUrl.origin}/api/auth/get-session`,
         {
           headers: { cookie: request.headers.get("cookie") || "" },
-        }
+        },
       );
 
       if (sessionRes.ok) {
@@ -37,9 +39,7 @@ export async function middleware(request: NextRequest) {
 
         // Suspended users: redirect to /suspended
         if (role === "suspended" && pathname !== "/suspended") {
-          return NextResponse.redirect(
-            new URL("/suspended", request.url)
-          );
+          return NextResponse.redirect(new URL("/suspended", request.url));
         }
 
         // Non-suspended users should not access /suspended
@@ -52,16 +52,18 @@ export async function middleware(request: NextRequest) {
           if (role !== "admin" && role !== "publisher") {
             return NextResponse.redirect(new URL("/", request.url));
           }
+
+          // Admin sub-routes: require admin role
+          if (pathname.startsWith("/dashboard/admin") && role !== "admin") {
+            return NextResponse.redirect(new URL("/dashboard", request.url));
+          }
         }
 
         // Onboarding check (skip for dashboard and suspended)
-        if (
-          !pathname.startsWith("/dashboard") &&
-          pathname !== "/suspended"
-        ) {
+        if (!pathname.startsWith("/dashboard") && pathname !== "/suspended") {
           if (!session.user?.schoolId || !session.user?.gradeLevel) {
             return NextResponse.redirect(
-              new URL("/onboarding/school", request.url)
+              new URL("/onboarding/school", request.url),
             );
           }
         }

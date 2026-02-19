@@ -1,21 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
-import { headers } from "next/headers";
-import { auth } from "@/lib/auth";
-import { getUserRole } from "@/lib/roles";
+import { requireAuth } from "@/lib/api-auth";
 import { prisma } from "@/lib/prisma";
 
 export async function POST(request: NextRequest) {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  const auth = await requireAuth();
+  if ("error" in auth) return auth.error;
 
-  if (!session) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
-  const role = getUserRole(session.user as Record<string, unknown>);
-
-  if (role !== "user") {
+  if (auth.role !== "user") {
     return NextResponse.json(
       { error: "ไม่สามารถส่งคำขอได้" },
       { status: 400 }
@@ -40,7 +31,7 @@ export async function POST(request: NextRequest) {
   }
 
   const existing = await prisma.publisherRequest.findFirst({
-    where: { userId: session.user.id, status: "pending" },
+    where: { userId: auth.session.user.id, status: "pending" },
   });
 
   if (existing) {
@@ -53,7 +44,7 @@ export async function POST(request: NextRequest) {
   await prisma.$transaction([
     prisma.publisherRequest.create({
       data: {
-        userId: session.user.id,
+        userId: auth.session.user.id,
         firstName,
         lastName,
         dateOfBirth: new Date(dateOfBirth),
@@ -61,7 +52,7 @@ export async function POST(request: NextRequest) {
       },
     }),
     prisma.user.update({
-      where: { id: session.user.id },
+      where: { id: auth.session.user.id },
       data: { role: "pending_publisher" },
     }),
   ]);

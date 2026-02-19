@@ -1,5 +1,4 @@
 import { headers } from "next/headers";
-import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { isAdmin, getUserRole } from "@/lib/roles";
 import { prisma } from "@/lib/prisma";
@@ -9,9 +8,7 @@ export default async function DashboardPage() {
     headers: await headers(),
   });
 
-  if (!session) redirect("/signin");
-
-  const role = getUserRole(session.user as Record<string, unknown>) ?? "user";
+  const role = getUserRole(session!.user as Record<string, unknown>) ?? "user";
   const admin = isAdmin(role);
 
   let totalUsers = 0;
@@ -29,7 +26,7 @@ export default async function DashboardPage() {
       {/* Welcome */}
       <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-6">
         <h1 className="text-2xl font-bold text-gray-800">
-          สวัสดี, {session.user.name}
+          สวัสดี, {session!.user.name}
         </h1>
         <p className="text-gray-500 mt-1">
           บทบาท:{" "}

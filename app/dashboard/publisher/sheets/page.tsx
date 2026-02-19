@@ -1,8 +1,6 @@
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { redirect } from "next/navigation";
-import { getUserRole } from "@/lib/roles";
 import PublisherSheetsClient from "./PublisherSheetsClient";
 
 export default async function PublisherSheetsPage() {
@@ -10,13 +8,8 @@ export default async function PublisherSheetsPage() {
     headers: await headers(),
   });
 
-  if (!session) redirect("/signin");
-
-  const role = getUserRole(session.user as Record<string, unknown>);
-  if (role !== "publisher" && role !== "admin") redirect("/dashboard");
-
   const sheets = await prisma.sheet.findMany({
-    where: { uploadedBy: session.user.id },
+    where: { uploadedBy: session!.user.id },
     include: { ratings: { select: { score: true } } },
     orderBy: { createdAt: "desc" },
   });

@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { headers } from "next/headers";
-import { auth } from "@/lib/auth";
-import { getUserRole } from "@/lib/roles";
+import { requirePublisherOrAdmin } from "@/lib/api-auth";
 import { prisma } from "@/lib/prisma";
 
 const VALID_LEVELS = ["ม.1", "ม.2", "ม.3", "ม.4", "ม.5", "ม.6"];
@@ -9,18 +7,8 @@ const VALID_EXAM_TYPES = ["กลางภาค", "ปลายภาค"];
 const VALID_TERMS = ["เทอม 1", "เทอม 2"];
 
 export async function POST(request: NextRequest) {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-
-  if (!session) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
-  const role = getUserRole(session.user as Record<string, unknown>);
-  if (role !== "publisher" && role !== "admin") {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-  }
+  const auth = await requirePublisherOrAdmin();
+  if ("error" in auth) return auth.error;
 
   const body = await request.json();
   const { title, description, subject, level, examType, term, pdfUrl, pdfKey } = body;
@@ -54,7 +42,7 @@ export async function POST(request: NextRequest) {
       term,
       pdfUrl,
       pdfKey,
-      uploadedBy: session.user.id,
+      uploadedBy: auth.session.user.id,
     },
   });
 

@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { headers } from "next/headers";
-import { auth } from "@/lib/auth";
+import { requireAuth } from "@/lib/api-auth";
 import { prisma } from "@/lib/prisma";
 
 export async function POST(
@@ -9,13 +8,8 @@ export async function POST(
 ) {
   const { id: sheetId } = await params;
 
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-
-  if (!session) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const auth = await requireAuth();
+  if ("error" in auth) return auth.error;
 
   const body = await request.json();
   const { score } = body;
@@ -35,13 +29,13 @@ export async function POST(
   await prisma.rating.upsert({
     where: {
       userId_sheetId: {
-        userId: session.user.id,
+        userId: auth.session.user.id,
         sheetId,
       },
     },
     update: { score },
     create: {
-      userId: session.user.id,
+      userId: auth.session.user.id,
       sheetId,
       score,
     },

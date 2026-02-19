@@ -1,22 +1,7 @@
-import { headers } from "next/headers";
-import { redirect } from "next/navigation";
-import { auth } from "@/lib/auth";
-import { isAdmin, getUserRole } from "@/lib/roles";
 import { prisma } from "@/lib/prisma";
 import RequestList from "./RequestList";
 
 export default async function AdminRequestsPage() {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-
-  if (!session) redirect("/dashboard");
-
-  const role = getUserRole(session.user as Record<string, unknown>);
-  if (!isAdmin(role)) {
-    redirect("/dashboard");
-  }
-
   const requests = await prisma.publisherRequest.findMany({
     where: { status: "pending" },
     include: {

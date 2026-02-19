@@ -1,24 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
-import { headers } from "next/headers";
-import { auth } from "@/lib/auth";
-import { getUserRole } from "@/lib/roles";
+import { requirePublisherOrAdmin } from "@/lib/api-auth";
 import { generatePresignedUploadUrl } from "@/lib/r2";
 
 const MAX_FILE_SIZE = 25 * 1024 * 1024; // 25MB
 
 export async function POST(request: NextRequest) {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-
-  if (!session) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
-  const role = getUserRole(session.user as Record<string, unknown>);
-  if (role !== "publisher" && role !== "admin") {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-  }
+  const auth = await requirePublisherOrAdmin();
+  if ("error" in auth) return auth.error;
 
   const body = await request.json();
   const { fileName, contentType, fileSize } = body;

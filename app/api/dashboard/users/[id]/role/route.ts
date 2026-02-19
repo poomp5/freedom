@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { headers } from "next/headers";
-import { auth } from "@/lib/auth";
-import { isAdmin, getUserRole } from "@/lib/roles";
+import { requireAdmin } from "@/lib/api-auth";
 import { prisma } from "@/lib/prisma";
 
 const VALID_ROLES = [
@@ -16,21 +14,12 @@ export async function PATCH(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-
-  const role = session
-    ? getUserRole(session.user as Record<string, unknown>)
-    : undefined;
-
-  if (!session || !isAdmin(role)) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
-  }
+  const auth = await requireAdmin();
+  if ("error" in auth) return auth.error;
 
   const { id } = await params;
 
-  if (id === session.user.id) {
+  if (id === auth.session.user.id) {
     return NextResponse.json(
       { error: "Cannot change your own role" },
       { status: 400 }

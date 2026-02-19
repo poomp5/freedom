@@ -1,7 +1,6 @@
 import { headers } from "next/headers";
-import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
-import { canAccessDashboard, getUserRole } from "@/lib/roles";
+import { getUserRole } from "@/lib/roles";
 import DashboardSidebar from "./components/DashboardSidebar";
 
 export const metadata = {
@@ -17,19 +16,13 @@ export default async function DashboardLayout({
     headers: await headers(),
   });
 
-  if (!session) {
-    redirect("/signin");
-  }
-
-  const role = getUserRole(session.user as Record<string, unknown>) ?? "user";
-
-  if (!canAccessDashboard(role)) {
-    redirect("/");
-  }
+  // Middleware handles redirect for unauthenticated/unauthorized users.
+  // Session is fetched here only for sidebar data.
+  const role = getUserRole(session!.user as Record<string, unknown>) ?? "user";
 
   return (
     <div className="min-h-screen bg-gray-50 flex">
-      <DashboardSidebar role={role} userName={session.user.name} />
+      <DashboardSidebar role={role} userName={session!.user.name} />
       <main className="flex-1 min-h-screen">{children}</main>
     </div>
   );

@@ -1,18 +1,12 @@
-import { auth } from "@/lib/auth";
+import { requireAuth } from "@/lib/api-auth";
 import { prisma } from "@/lib/prisma";
-import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(request: NextRequest) {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-
-  if (!session) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const auth = await requireAuth();
+  if ("error" in auth) return auth.error;
 
   const body = await request.json();
   const { schoolId, gradeLevel } = body;
@@ -42,7 +36,7 @@ export async function POST(request: NextRequest) {
   }
 
   await prisma.user.update({
-    where: { id: session.user.id },
+    where: { id: auth.session.user.id },
     data: {
       schoolId: schoolId || null,
       gradeLevel: gradeLevel || null,
