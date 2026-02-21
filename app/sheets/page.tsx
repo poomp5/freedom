@@ -10,7 +10,7 @@ export default async function SheetsPage() {
 
   const sheets = await prisma.sheet.findMany({
     include: {
-      uploader: { select: { id: true, name: true, image: true } },
+      uploader: { select: { id: true, name: true, image: true, socialIg: true, socialFacebook: true, socialLine: true, socialDiscord: true, socialX: true } },
       ratings: { select: { score: true, userId: true } },
     },
     orderBy: { createdAt: "desc" },
@@ -40,7 +40,16 @@ export default async function SheetsPage() {
       examType: sheet.examType,
       term: sheet.term,
       pdfUrl: sheet.pdfUrl,
-      uploader: sheet.uploader,
+      uploader: {
+        id: sheet.uploader.id,
+        name: sheet.uploader.name,
+        image: sheet.uploader.image,
+        socialIg: sheet.uploader.socialIg,
+        socialFacebook: sheet.uploader.socialFacebook,
+        socialLine: sheet.uploader.socialLine,
+        socialDiscord: sheet.uploader.socialDiscord,
+        socialX: sheet.uploader.socialX,
+      },
       averageRating,
       totalRatings,
       userRating,

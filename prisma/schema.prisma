@@ -33,6 +33,13 @@ model User {
   role       Role      @default(user)
   school     School?   @relation(fields: [schoolId], references: [id])
 
+  // Social media links
+  socialIg       String?
+  socialFacebook String?
+  socialLine     String?
+  socialDiscord  String?
+  socialX        String?
+
   sessions          Session[]
   accounts          Account[]
   publisherRequests PublisherRequest[]

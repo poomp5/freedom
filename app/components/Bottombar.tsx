@@ -7,7 +7,8 @@ export default function Bottombar() {
     const { data: session } = useSession();
     return (
       <div className="mt-6 block md:hidden fixed bottom-0 left-0 z-50 w-full h-16 bg-white border-t border-gray-200">
-        <div className="relative grid h-full grid-cols-6 mx-auto">
+        <div className="relative grid h-full grid-cols-5 mx-auto">
+          {/* หน้าหลัก */}
           <Link href="/" className="w-full">
             <button
               type="button"
@@ -27,69 +28,8 @@ export default function Bottombar() {
               </span>
             </button>
           </Link>
-          <Link href="https://www.instagram.com/act.freedom" className="w-full">
-            <button
-              type="button"
-              className="w-full h-full inline-flex flex-col items-center justify-center hover:bg-gray-50 group px-1"
-            >
-              <svg
-                className="w-6 h-6 mb-1 text-gray-500 group-hover:text-blue-600"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <rect
-                  x="2"
-                  y="2"
-                  width="20"
-                  height="20"
-                  rx="5"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                />
-                <circle
-                  cx="12"
-                  cy="12"
-                  r="4"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                />
-                <circle cx="17" cy="7" r="1.5" fill="currentColor" />
-              </svg>
 
-              <span className="text-xs text-gray-500 group-hover:text-blue-600">
-                ติดต่อ
-              </span>
-            </button>
-          </Link>
-          <Link href="/select" className="w-full">
-            <button
-              type="button"
-              className="absolute left-1/2 -translate-x-1/2 -translate-y-3 w-16 h-16 inline-flex flex-col items-center justify-center bg-blue-600 hover:bg-blue-800 group rounded-full shadow-lg"
-            >
-              <svg
-                className="h-full w-full p-3 mb-1 text-white hover:text-white"
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                <path d="M3 19a9 9 0 0 1 9 0a9 9 0 0 1 9 0" />
-                <path d="M3 6a9 9 0 0 1 9 0a9 9 0 0 1 9 0" />
-                <path d="M3 6l0 13" />
-                <path d="M12 6l0 13" />
-                <path d="M21 6l0 13" />
-              </svg>
-            </button>
-          </Link>
+          {/* ชีทชุมชน */}
           <Link href="/sheets" className="w-full">
             <button
               type="button"
@@ -108,6 +48,34 @@ export default function Bottombar() {
               </span>
             </button>
           </Link>
+
+          {/* ปุ่มกลาง — ชีทรวม */}
+          <Link href="/select" className="w-full">
+            <button
+              type="button"
+              className="absolute left-1/2 -translate-x-1/2 -translate-y-3 w-16 h-16 inline-flex flex-col items-center justify-center bg-blue-600 hover:bg-blue-800 group rounded-full shadow-lg"
+            >
+              <svg
+                className="h-full w-full p-3 text-white"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                <path d="M3 19a9 9 0 0 1 9 0a9 9 0 0 1 9 0" />
+                <path d="M3 6a9 9 0 0 1 9 0a9 9 0 0 1 9 0" />
+                <path d="M3 6l0 13" />
+                <path d="M12 6l0 13" />
+                <path d="M21 6l0 13" />
+              </svg>
+            </button>
+          </Link>
+
+          {/* ยันต์ */}
           <Link href="/freedom" className="w-full">
             <button
               type="button"
@@ -115,24 +83,15 @@ export default function Bottombar() {
             >
               <svg
                 className="w-6 h-6 mb-1 text-gray-500 group-hover:text-blue-600"
-                width="24"
-                height="24"
                 viewBox="0 0 600 600"
                 fill="none"
                 stroke="currentColor"
-                strokeWidth="20"
+                strokeWidth="30"
                 strokeLinecap="round"
-                xmlns="http://www.w3.org/2000/svg"
               >
                 <rect x="50" y="50" width="500" height="500" />
                 <rect x="120" y="120" width="360" height="360" />
-                <rect
-                  x="200"
-                  y="200"
-                  width="200"
-                  height="200"
-                  transform="rotate(45 300 300)"
-                />
+                <rect x="200" y="200" width="200" height="200" transform="rotate(45 300 300)" />
                 <line x1="200" y1="200" x2="400" y2="400" />
                 <line x1="400" y1="200" x2="200" y2="400" />
                 <path d="M240 120 H360" />
@@ -148,13 +107,14 @@ export default function Bottombar() {
                 <line x1="50" y1="300" x2="80" y2="300" />
                 <line x1="520" y1="300" x2="550" y2="300" />
               </svg>
-
               <span className="text-xs text-gray-500 group-hover:text-blue-600">
                 ยันต์
               </span>
             </button>
           </Link>
-          <Link href={session ? "/donate" : "/signin"} className="w-full">
+
+          {/* โปรไฟล์ */}
+          <Link href={session ? "/profile" : "/signin"} className="w-full">
             <button
               type="button"
               className="w-full h-full inline-flex flex-col items-center justify-center hover:bg-gray-50 group px-1"

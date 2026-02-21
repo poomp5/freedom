@@ -24,7 +24,7 @@ export async function generatePresignedUploadUrl(
   contentType: string,
   fileSize: number
 ) {
-  const key = `sheets/${uuidv4()}/${fileName}`;
+  const key = `sheets/${uuidv4()}-${fileName}`;
 
   const command = new PutObjectCommand({
     Bucket: BUCKET,
