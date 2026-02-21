@@ -67,7 +67,7 @@ export default function UploadSheet({ onUploaded }: { onUploaded: () => void }) 
       const arrayBuffer = await selected.arrayBuffer();
       const pdfDoc = await PDFDocument.load(arrayBuffer);
       const compressedBytes = await pdfDoc.save();
-      const blob = new Blob([compressedBytes], { type: "application/pdf" });
+      const blob = new Blob([compressedBytes.buffer as ArrayBuffer], { type: "application/pdf" });
       setCompressedBlob(blob);
 
       const url = URL.createObjectURL(blob);
