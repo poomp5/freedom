@@ -16,7 +16,7 @@ export default function Navbar() {
 
     return (
         <>
-            <nav className="bg-white border-gray-200 relative z-50">
+            <nav className="bg-white border-gray-200 sticky top-0 z-50 shadow-sm">
                 <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
                     <Link href="/" className="flex items-center space-x-3">
                         <Image src="/assets/img/freedom.svg" className="h-12 w-full" width={0} height={0} alt="Freedom Logo" />
