@@ -5,45 +5,23 @@ import { FileText, User, Calendar, ExternalLink } from "lucide-react";
 import StarRating from "@/app/components/StarRating";
 import Navbar from "@/app/components/Navbar";
 import Bottombar from "@/app/components/Bottombar";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { useTRPC } from "@/trpc/client";
 
 const LEVELS = ["ทั้งหมด", "ม.1", "ม.2", "ม.3", "ม.4", "ม.5", "ม.6"];
 const EXAM_TYPES = ["ทั้งหมด", "กลางภาค", "ปลายภาค"];
 const TERMS = ["ทั้งหมด", "เทอม 1", "เทอม 2"];
 
-interface UploaderSocial {
-  id: string;
-  name: string;
-  image: string | null;
-  socialIg: string | null;
-  socialFacebook: string | null;
-  socialLine: string | null;
-  socialDiscord: string | null;
-  socialX: string | null;
-}
-
-interface SheetData {
-  id: string;
-  title: string;
-  description: string | null;
-  subject: string;
-  level: string;
-  examType: string;
-  term: string;
-  pdfUrl: string;
-  uploader: UploaderSocial;
-  averageRating: number;
-  totalRatings: number;
-  userRating: number | null;
-  createdAt: string;
-}
-
 export default function SheetsClient({
-  sheets,
   isLoggedIn,
+  userId,
 }: {
-  sheets: SheetData[];
   isLoggedIn: boolean;
+  userId: string | null;
 }) {
+  const trpc = useTRPC();
+  const { data: sheets } = useSuspenseQuery(trpc.sheets.list.queryOptions({}));
+
   const [searchQuery, setSearchQuery] = useState("");
   const [levelFilter, setLevelFilter] = useState("ทั้งหมด");
   const [examTypeFilter, setExamTypeFilter] = useState("ทั้งหมด");
@@ -159,6 +137,10 @@ export default function SheetsClient({
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {filtered.map((sheet) => {
                 const u = sheet.uploader;
+                const userRating = userId
+                  ? sheet.ratings.find((r) => r.userId === userId)?.score ?? null
+                  : null;
+
                 const socials = [
                   u.socialIg && { href: `https://instagram.com/${u.socialIg}`, label: "Instagram", icon: (
                     <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none">
@@ -216,17 +198,15 @@ export default function SheetsClient({
                       <ExternalLink className="w-4 h-4 text-gray-300 group-hover:text-blue-400 flex-shrink-0 ml-2 transition-colors" />
                     </div>
 
-                    {/* Description */}
                     {sheet.description && (
                       <p className="text-sm text-gray-500 mt-1 line-clamp-2">{sheet.description}</p>
                     )}
 
-                    {/* Rating */}
                     <div className="mt-3" onClick={(e) => e.preventDefault()}>
                       {isLoggedIn ? (
                         <StarRating
                           sheetId={sheet.id}
-                          currentRating={sheet.userRating}
+                          currentRating={userRating}
                           averageRating={sheet.averageRating}
                           totalRatings={sheet.totalRatings}
                         />

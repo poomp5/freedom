@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { X } from "lucide-react";
+import { useMutation } from "@tanstack/react-query";
+import { useTRPC } from "@/trpc/client";
 
 interface Props {
   isOpen: boolean;
@@ -9,13 +11,17 @@ interface Props {
 }
 
 export default function PublisherRequestModal({ isOpen, onClose }: Props) {
+  const trpc = useTRPC();
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [dateOfBirth, setDateOfBirth] = useState("");
   const [tel, setTel] = useState("");
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+
+  const createMutation = useMutation(
+    trpc.publisherRequests.create.mutationOptions()
+  );
 
   if (!isOpen) return null;
 
@@ -33,27 +39,19 @@ export default function PublisherRequestModal({ isOpen, onClose }: Props) {
       return;
     }
 
-    setLoading(true);
     try {
-      const res = await fetch("/api/publisher-request", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ firstName, lastName, dateOfBirth, tel }),
-      });
-
-      if (!res.ok) {
-        const data = await res.json();
-        setError(data.error || "เกิดข้อผิดพลาด");
-        return;
-      }
-
+      await createMutation.mutateAsync({ firstName, lastName, dateOfBirth, tel });
       setSuccess(true);
       setTimeout(() => {
         onClose();
         window.location.reload();
       }, 1500);
-    } finally {
-      setLoading(false);
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("เกิดข้อผิดพลาด");
+      }
     }
   };
 
@@ -152,10 +150,10 @@ export default function PublisherRequestModal({ isOpen, onClose }: Props) {
 
             <button
               type="submit"
-              disabled={loading}
+              disabled={createMutation.isPending}
               className="w-full py-2.5 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700 transition-colors disabled:opacity-50"
             >
-              {loading ? "กำลังส่ง..." : "ส่งคำขอ"}
+              {createMutation.isPending ? "กำลังส่ง..." : "ส่งคำขอ"}
             </button>
           </form>
         )}

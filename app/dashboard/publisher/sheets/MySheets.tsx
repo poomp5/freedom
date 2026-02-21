@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { Trash2, FileText, Star, Loader2 } from "lucide-react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useTRPC } from "@/trpc/client";
 
 interface SheetItem {
   id: string;
@@ -13,7 +15,7 @@ interface SheetItem {
   pdfUrl: string;
   averageRating: number;
   totalRatings: number;
-  createdAt: string;
+  createdAt: Date;
 }
 
 export default function MySheets({
@@ -21,23 +23,30 @@ export default function MySheets({
 }: {
   initialSheets: SheetItem[];
 }) {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
   const [sheets, setSheets] = useState(initialSheets);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+
+  const deleteMutation = useMutation(
+    trpc.sheets.delete.mutationOptions({
+      onSuccess: () => {
+        queryClient.invalidateQueries({
+          queryKey: trpc.sheets.mySheets.queryKey(),
+        });
+      },
+    })
+  );
 
   const handleDelete = async (id: string) => {
     if (!confirm("ต้องการลบชีทนี้หรือไม่?")) return;
 
     setDeletingId(id);
     try {
-      const res = await fetch(`/api/sheets/${id}`, { method: "DELETE" });
-      if (res.ok) {
-        setSheets((prev) => prev.filter((s) => s.id !== id));
-      } else {
-        const data = await res.json();
-        alert(data.error || "ลบไม่สำเร็จ");
-      }
-    } catch {
-      alert("เกิดข้อผิดพลาด");
+      await deleteMutation.mutateAsync({ id });
+      setSheets((prev) => prev.filter((s) => s.id !== id));
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "ลบไม่สำเร็จ");
     } finally {
       setDeletingId(null);
     }

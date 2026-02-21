@@ -2,39 +2,44 @@
 
 import { useState } from "react";
 import { Check, X } from "lucide-react";
+import { useSuspenseQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useTRPC } from "@/trpc/client";
 
-interface PublisherRequest {
-  id: string;
-  firstName: string;
-  lastName: string;
-  dateOfBirth: string;
-  tel: string;
-  status: string;
-  createdAt: string;
-  user: {
-    id: string;
-    name: string;
-    email: string;
-    image: string | null;
-  };
-}
-
-export default function RequestList({
-  requests: initialRequests,
-}: {
-  requests: PublisherRequest[];
-}) {
-  const [requests, setRequests] = useState(initialRequests);
+export default function RequestList() {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+  const { data: requests } = useSuspenseQuery(
+    trpc.publisherRequests.listPending.queryOptions()
+  );
   const [loading, setLoading] = useState<string | null>(null);
+
+  const approveMutation = useMutation(
+    trpc.publisherRequests.approve.mutationOptions({
+      onSuccess: () => {
+        queryClient.invalidateQueries({
+          queryKey: trpc.publisherRequests.listPending.queryKey(),
+        });
+      },
+    })
+  );
+
+  const rejectMutation = useMutation(
+    trpc.publisherRequests.reject.mutationOptions({
+      onSuccess: () => {
+        queryClient.invalidateQueries({
+          queryKey: trpc.publisherRequests.listPending.queryKey(),
+        });
+      },
+    })
+  );
 
   const handleAction = async (id: string, action: "approve" | "reject") => {
     setLoading(id);
     try {
-      const res = await fetch(`/api/dashboard/requests/${id}/${action}`, {
-        method: "POST",
-      });
-      if (res.ok) {
-        setRequests((prev) => prev.filter((r) => r.id !== id));
+      if (action === "approve") {
+        await approveMutation.mutateAsync({ id });
+      } else {
+        await rejectMutation.mutateAsync({ id });
       }
     } finally {
       setLoading(null);
