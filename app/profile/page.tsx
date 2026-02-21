@@ -225,7 +225,6 @@ export default function ProfilePage() {
             </svg>
           </button>
 
-          {/* Social Media */}
           <button
             onClick={openSocialModal}
             className="w-full bg-white rounded-2xl shadow-sm border border-gray-100 p-4 flex items-center gap-4 hover:shadow-md hover:border-blue-200 transition-all duration-200 text-left"

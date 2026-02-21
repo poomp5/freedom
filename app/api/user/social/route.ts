@@ -1,15 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
-import { requireAuth } from "@/lib/api-auth";
+import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { headers } from "next/headers";
 
 export const dynamic = "force-dynamic";
 
 export async function GET() {
-  const auth = await requireAuth();
-  if ("error" in auth) return auth.error;
+  const session = await auth.api.getSession({ headers: await headers() });
+  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const user = await prisma.user.findUnique({
-    where: { id: auth.session.user.id },
+    where: { id: session.user.id },
     select: {
       socialIg: true,
       socialFacebook: true,
@@ -23,14 +24,14 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
-  const auth = await requireAuth();
-  if ("error" in auth) return auth.error;
+  const session = await auth.api.getSession({ headers: await headers() });
+  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const body = await request.json();
   const { socialIg, socialFacebook, socialLine, socialDiscord, socialX } = body;
 
   await prisma.user.update({
-    where: { id: auth.session.user.id },
+    where: { id: session.user.id },
     data: {
       socialIg: socialIg?.trim() || null,
       socialFacebook: socialFacebook?.trim() || null,
