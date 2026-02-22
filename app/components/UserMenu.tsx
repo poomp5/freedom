@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { signOut, useSession } from "@/lib/auth-client";
+import { User, LayoutDashboard, BadgePlus, Clock3, LogOut } from "lucide-react";
 import PublisherRequestModal from "./PublisherRequestModal";
 
 export default function UserMenu() {
@@ -88,9 +89,10 @@ export default function UserMenu() {
 
             <Link
               href="/profile"
-              className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+              className="flex items-center gap-2 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
               onClick={() => setIsOpen(false)}
             >
+              <User className="w-4 h-4" />
               โปรไฟล์
             </Link>
 
@@ -98,9 +100,10 @@ export default function UserMenu() {
             {(role === "admin" || role === "publisher") && (
               <Link
                 href="/dashboard"
-                className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                className="flex items-center gap-2 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
                 onClick={() => setIsOpen(false)}
               >
+                <LayoutDashboard className="w-4 h-4" />
                 แดชบอร์ด
               </Link>
             )}
@@ -111,22 +114,25 @@ export default function UserMenu() {
                   setIsOpen(false);
                   setShowRequestModal(true);
                 }}
-                className="w-full text-left px-4 py-2.5 text-sm text-blue-600 hover:bg-blue-50 transition-colors"
+                className="w-full flex items-center gap-2 text-left px-4 py-2.5 text-sm text-blue-600 hover:bg-blue-50 transition-colors"
               >
+                <BadgePlus className="w-4 h-4" />
                 สมัครเป็นผู้เผยแพร่
               </button>
             )}
 
             {role === "pending_publisher" && (
-              <div className="px-4 py-2.5 text-sm text-gray-400">
+              <div className="px-4 py-2.5 text-sm text-gray-400 flex items-center gap-2">
+                <Clock3 className="w-4 h-4" />
                 รอการอนุมัติ
               </div>
             )}
 
             <button
               onClick={handleSignOut}
-              className="w-full text-left px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors"
+              className="w-full flex items-center gap-2 text-left px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors"
             >
+              <LogOut className="w-4 h-4" />
               ออกจากระบบ
             </button>
           </div>
