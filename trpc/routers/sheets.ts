@@ -62,6 +62,8 @@ export const sheetsRouter = createTRPCRouter({
           examType: sheet.examType,
           term: sheet.term,
           pdfUrl: sheet.pdfUrl,
+          isFree: sheet.isFree,
+          price: sheet.price,
           uploader: sheet.uploader,
           averageRating,
           totalRatings,
@@ -97,6 +99,8 @@ export const sheetsRouter = createTRPCRouter({
         examType: sheet.examType,
         term: sheet.term,
         pdfUrl: sheet.pdfUrl,
+        isFree: sheet.isFree,
+        price: sheet.price,
         averageRating,
         totalRatings,
         createdAt: sheet.createdAt,
@@ -115,9 +119,33 @@ export const sheetsRouter = createTRPCRouter({
         term: z.enum(VALID_TERMS as [string, ...string[]]),
         pdfUrl: z.url(),
         pdfKey: z.string().min(1),
+        isFree: z.boolean().default(true),
+        price: z.number().int().min(1).optional(),
       })
     )
     .mutation(async ({ ctx, input }) => {
+      // If paid sheet, require price and publisher bank account
+      if (!input.isFree) {
+        if (!input.price || input.price <= 0) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "กรุณาระบุราคาชีท",
+          });
+        }
+
+        const user = await prisma.user.findUnique({
+          where: { id: ctx.auth.user.id },
+          select: { paymentMethod: true, bankAccountNumber: true, promptPayNumber: true },
+        });
+
+        if (!user?.paymentMethod || (!user.bankAccountNumber && !user.promptPayNumber)) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "กรุณาตั้งค่าบัญชีธนาคารก่อนเผยแพร่ชีทแบบเสียเงิน",
+          });
+        }
+      }
+
       const sheet = await prisma.sheet.create({
         data: {
           title: input.title,
@@ -129,6 +157,8 @@ export const sheetsRouter = createTRPCRouter({
           pdfUrl: input.pdfUrl,
           pdfKey: input.pdfKey,
           uploadedBy: ctx.auth.user.id,
+          isFree: input.isFree,
+          price: input.isFree ? null : input.price,
         },
       });
 
@@ -215,6 +245,8 @@ export const sheetsRouter = createTRPCRouter({
           examType: sheet.examType,
           term: sheet.term,
           pdfUrl: sheet.pdfUrl,
+          isFree: sheet.isFree,
+          price: sheet.price,
           uploader: sheet.uploader,
           averageRating,
           totalRatings,

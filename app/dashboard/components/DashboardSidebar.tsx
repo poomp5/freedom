@@ -15,6 +15,8 @@ import {
   LogOut,
   Menu,
   X,
+  Building2,
+  DollarSign,
 } from "lucide-react";
 
 interface SidebarProps {
@@ -55,6 +57,22 @@ export default function DashboardSidebar({ role, userName }: SidebarProps) {
       document.body.style.overflow = originalOverflow;
     };
   }, [mobileOpen]);
+
+  const publisherItems: MenuItem[] =
+    role === "publisher" || role === "admin"
+      ? [
+          {
+            label: "ตั้งค่าบัญชี",
+            href: "/dashboard/publisher/settings",
+            icon: <Building2 size={20} />,
+          },
+          {
+            label: "รายได้",
+            href: "/dashboard/publisher/earnings",
+            icon: <DollarSign size={20} />,
+          },
+        ]
+      : [];
 
   const userItems: MenuItem[] = [
     {
@@ -160,6 +178,31 @@ export default function DashboardSidebar({ role, userName }: SidebarProps) {
               </p>
             )}
             {adminItems.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors ${
+                  isActive(item.href)
+                    ? "bg-blue-50 text-blue-700"
+                    : "text-gray-600 hover:bg-gray-100 hover:text-gray-800"
+                } ${compact ? "justify-center" : ""}`}
+                title={compact ? item.label : undefined}
+              >
+                {item.icon}
+                {!compact && <span>{item.label}</span>}
+              </Link>
+            ))}
+          </div>
+        )}
+
+        {publisherItems.length > 0 && (
+          <div className="space-y-1">
+            {!compact && (
+              <p className="px-3 text-[11px] font-semibold uppercase tracking-wide text-gray-400">
+                ผู้เผยแพร่
+              </p>
+            )}
+            {publisherItems.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}

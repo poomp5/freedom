@@ -95,6 +95,64 @@ export const usersRouter = createTRPCRouter({
       });
     }),
 
+  setBankAccount: protectedProcedure
+    .input(
+      z.object({
+        paymentMethod: z.enum(["bank", "promptpay"]),
+        bankProvider: z.string().optional(),
+        bankAccountNumber: z.string().optional(),
+        bankAccountName: z.string().optional(),
+        promptPayNumber: z.string().optional(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      if (input.paymentMethod === "bank") {
+        if (!input.bankProvider || !input.bankAccountNumber || !input.bankAccountName) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "กรุณากรอกข้อมูลธนาคารให้ครบ",
+          });
+        }
+      }
+
+      if (input.paymentMethod === "promptpay") {
+        if (!input.promptPayNumber) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "กรุณากรอกหมายเลขพร้อมเพย์",
+          });
+        }
+      }
+
+      await prisma.user.update({
+        where: { id: ctx.auth.user.id },
+        data: {
+          paymentMethod: input.paymentMethod,
+          bankProvider: input.paymentMethod === "bank" ? input.bankProvider : null,
+          bankAccountNumber: input.paymentMethod === "bank" ? input.bankAccountNumber : null,
+          bankAccountName: input.paymentMethod === "bank" ? input.bankAccountName : null,
+          promptPayNumber: input.paymentMethod === "promptpay" ? input.promptPayNumber : null,
+        },
+      });
+
+      return { success: true };
+    }),
+
+  getBankAccount: protectedProcedure.query(async ({ ctx }) => {
+    const user = await prisma.user.findUnique({
+      where: { id: ctx.auth.user.id },
+      select: {
+        paymentMethod: true,
+        bankProvider: true,
+        bankAccountNumber: true,
+        bankAccountName: true,
+        promptPayNumber: true,
+      },
+    });
+
+    return user;
+  }),
+
   updateRole: adminProcedure
     .input(
       z.object({

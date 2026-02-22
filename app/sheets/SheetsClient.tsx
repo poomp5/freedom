@@ -1,11 +1,12 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { FileText, User, Calendar, ExternalLink } from "lucide-react";
+import { FileText, User, Calendar, ExternalLink, Lock } from "lucide-react";
 import StarRating from "@/app/components/StarRating";
 import Navbar from "@/app/components/Navbar";
 import Bottombar from "@/app/components/Bottombar";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import PurchaseModal from "@/app/components/PurchaseModal";
+import { useSuspenseQuery, useQueryClient } from "@tanstack/react-query";
 import { useTRPC } from "@/trpc/client";
 
 const LEVELS = ["ทั้งหมด", "ม.1", "ม.2", "ม.3", "ม.4", "ม.5", "ม.6"];
@@ -20,6 +21,7 @@ export default function SheetsClient({
   userId: string | null;
 }) {
   const trpc = useTRPC();
+  const queryClient = useQueryClient();
   const { data: sheets } = useSuspenseQuery(trpc.sheets.list.queryOptions({}));
 
   const [searchQuery, setSearchQuery] = useState("");
@@ -27,6 +29,14 @@ export default function SheetsClient({
   const [examTypeFilter, setExamTypeFilter] = useState("ทั้งหมด");
   const [termFilter, setTermFilter] = useState("ทั้งหมด");
   const [subjectFilter, setSubjectFilter] = useState("ทั้งหมด");
+  const [purchaseSheet, setPurchaseSheet] = useState<{
+    id: string;
+    title: string;
+    price: number;
+  } | null>(null);
+
+  // Track purchased sheet IDs client-side for immediate UI update
+  const [purchasedIds, setPurchasedIds] = useState<Set<string>>(new Set());
 
   const subjects = useMemo(() => {
     const set = new Set(sheets.map((s) => s.subject));
@@ -171,16 +181,33 @@ export default function SheetsClient({
                   ) },
                 ].filter(Boolean) as { href: string; label: string; icon: React.ReactNode }[];
 
+                const isPaid = !sheet.isFree && sheet.price;
+                const alreadyPurchased = purchasedIds.has(sheet.id);
+
+                const handleCardClick = () => {
+                  if (!isPaid || alreadyPurchased) {
+                    window.open(sheet.pdfUrl, "_blank", "noopener,noreferrer");
+                  } else if (isLoggedIn) {
+                    setPurchaseSheet({
+                      id: sheet.id,
+                      title: sheet.title,
+                      price: sheet.price!,
+                    });
+                  } else {
+                    window.location.href = "/auth/login";
+                  }
+                };
+
                 return (
                   <div
                     key={sheet.id}
                     role="link"
                     tabIndex={0}
-                    onClick={() => window.open(sheet.pdfUrl, "_blank", "noopener,noreferrer")}
+                    onClick={handleCardClick}
                     onKeyDown={(e) => {
                       if (e.key === "Enter" || e.key === " ") {
                         e.preventDefault();
-                        window.open(sheet.pdfUrl, "_blank", "noopener,noreferrer");
+                        handleCardClick();
                       }
                     }}
                     className="bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md hover:border-blue-200 transition-all duration-200 p-5 flex flex-col group cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
@@ -199,9 +226,27 @@ export default function SheetsClient({
                           <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-50 text-green-700">
                             {sheet.examType} {sheet.term}
                           </span>
+                          {isPaid && !alreadyPurchased ? (
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-amber-50 text-amber-700">
+                              <Lock className="w-3 h-3" />
+                              ฿{sheet.price}
+                            </span>
+                          ) : isPaid && alreadyPurchased ? (
+                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-50 text-green-700">
+                              ซื้อแล้ว
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700">
+                              ฟรี
+                            </span>
+                          )}
                         </div>
                       </div>
-                      <ExternalLink className="w-4 h-4 text-gray-300 group-hover:text-blue-400 flex-shrink-0 ml-2 transition-colors" />
+                      {isPaid && !alreadyPurchased ? (
+                        <Lock className="w-4 h-4 text-amber-400 flex-shrink-0 ml-2" />
+                      ) : (
+                        <ExternalLink className="w-4 h-4 text-gray-300 group-hover:text-blue-400 flex-shrink-0 ml-2 transition-colors" />
+                      )}
                     </div>
 
                     {sheet.description && (
@@ -290,6 +335,20 @@ export default function SheetsClient({
         </div>
       </div>
       <Bottombar />
+
+      {/* Purchase Modal */}
+      {purchaseSheet && (
+        <PurchaseModal
+          sheetId={purchaseSheet.id}
+          sheetTitle={purchaseSheet.title}
+          price={purchaseSheet.price}
+          onClose={() => setPurchaseSheet(null)}
+          onSuccess={() => {
+            setPurchasedIds((prev) => new Set([...prev, purchaseSheet.id]));
+            queryClient.invalidateQueries({ queryKey: trpc.sheets.list.queryOptions({}).queryKey });
+          }}
+        />
+      )}
     </>
   );
 }

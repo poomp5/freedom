@@ -5,6 +5,7 @@ import { usersRouter } from "./users";
 import { publisherRequestsRouter } from "./publisher-requests";
 import { dashboardRouter } from "./dashboard";
 import { uploadRouter } from "./upload";
+import { paymentsRouter } from "./payments";
 
 export const appRouter = createTRPCRouter({
   sheets: sheetsRouter,
@@ -13,6 +14,7 @@ export const appRouter = createTRPCRouter({
   publisherRequests: publisherRequestsRouter,
   dashboard: dashboardRouter,
   upload: uploadRouter,
+  payments: paymentsRouter,
 });
 
 export type AppRouter = typeof appRouter;

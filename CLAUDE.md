@@ -53,14 +53,27 @@ Package manager is **Bun** (`bun.lockb`). No test framework is configured.
 - `app/dashboard/` — Authenticated dashboard area with sidebar navigation (`DashboardSidebar.tsx`)
 - `app/dashboard/admin/users/` — Admin user management page with `UserTable.tsx` (expandable rows showing uploaded sheets per user)
 - `app/dashboard/admin/sheets/` — Admin sheet management
+- `app/dashboard/publisher/settings/` — Publisher bank account setup (bank transfer or PromptPay)
+- `app/dashboard/publisher/earnings/` — Publisher earnings dashboard with transaction history
+
+## Paid Sheets & Payments
+
+- Sheets can be free (`isFree: true`) or paid (`isFree: false`, `price` in THB)
+- Publishers must set up bank account before creating paid sheets
+- Buyers pay to the platform's bank account, upload transfer slip (image) or QR payload
+- Slip verification via SlipOK API (`lib/slipok.ts`) — POST to `https://suba.rdcw.co.th/v2/inquiry`
+- 10% platform commission on each transaction, publishers receive 90%
+- `Transaction` model tracks all payment attempts (pending/verified/rejected/failed)
+- `SheetAccess` model grants per-user access to purchased sheets
+- `PurchaseModal` component handles the buyer purchase flow in the sheets listing page
 
 ## tRPC & Data Layer
 
 - **tRPC** with `@trpc/server` v11 + `@tanstack/react-query` for data fetching
-- Routers live in `trpc/routers/` — key routers: `users.ts`, `sheets.ts`, `dashboard.ts`
+- Routers live in `trpc/routers/` — key routers: `users.ts`, `sheets.ts`, `dashboard.ts`, `payments.ts`
 - Procedure types: `protectedProcedure` (any logged-in user), `adminProcedure` (admin only), `publisherOrAdminProcedure`
 - Client-side: use `useTRPC()` hook from `@/trpc/client` to get typed query/mutation options, then pass to `useSuspenseQuery`, `useQuery`, `useMutation`
-- **Prisma** ORM with `@/lib/prisma` singleton — models include `User`, `Sheet`, `School`, ratings
+- **Prisma** ORM with `@/lib/prisma` singleton — models include `User`, `Sheet`, `School`, `Rating`, `Transaction`, `SheetAccess`
 - Sheet queries commonly include `ratings: { select: { score: true } }` and compute `averageRating`/`totalRatings` in the router
 - Use `_count` on relations (e.g., `_count: { select: { sheets: true } }`) for efficient counting
 

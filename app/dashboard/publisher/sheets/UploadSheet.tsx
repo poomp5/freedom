@@ -1,9 +1,10 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { Upload, FileText, X, Loader2, CheckCircle } from "lucide-react";
-import { useMutation } from "@tanstack/react-query";
+import { Upload, FileText, X, Loader2, CheckCircle, AlertTriangle } from "lucide-react";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useTRPC } from "@/trpc/client";
+import Link from "next/link";
 
 const SUBJECTS = [
   "คณิตศาสตร์",
@@ -35,12 +36,17 @@ export default function UploadSheet({ onUploaded }: { onUploaded: () => void }) 
   const [level, setLevel] = useState("");
   const [examType, setExamType] = useState("");
   const [term, setTerm] = useState("");
+  const [isFree, setIsFree] = useState(true);
+  const [price, setPrice] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const [compressedBlob, setCompressedBlob] = useState<Blob | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [status, setStatus] = useState<UploadStatus>("idle");
   const [error, setError] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const { data: bankAccount } = useQuery(trpc.users.getBankAccount.queryOptions());
+  const hasBankAccount = !!(bankAccount?.paymentMethod && (bankAccount.bankAccountNumber || bankAccount.promptPayNumber));
 
   const presignMutation = useMutation(trpc.upload.presign.mutationOptions());
   const createSheetMutation = useMutation(trpc.sheets.create.mutationOptions());
@@ -106,6 +112,11 @@ export default function UploadSheet({ onUploaded }: { onUploaded: () => void }) 
       return;
     }
 
+    if (!isFree && (!price || parseInt(price) <= 0)) {
+      setError("กรุณาระบุราคาชีท");
+      return;
+    }
+
     if (!compressedBlob || !file) {
       setError("กรุณาเลือกไฟล์ PDF");
       return;
@@ -142,6 +153,8 @@ export default function UploadSheet({ onUploaded }: { onUploaded: () => void }) 
         term,
         pdfUrl: publicUrl,
         pdfKey: key,
+        isFree,
+        price: isFree ? undefined : parseInt(price),
       });
 
       setStatus("done");
@@ -153,6 +166,8 @@ export default function UploadSheet({ onUploaded }: { onUploaded: () => void }) 
         setLevel("");
         setExamType("");
         setTerm("");
+        setIsFree(true);
+        setPrice("");
         clearFile();
         setStatus("idle");
         onUploaded();
@@ -164,6 +179,9 @@ export default function UploadSheet({ onUploaded }: { onUploaded: () => void }) 
   };
 
   const isSubmitting = status === "uploading" || status === "saving" || status === "compressing";
+  const priceNum = parseInt(price) || 0;
+  const commission = Math.round(priceNum * 0.1);
+  const publisherEarnings = priceNum - commission;
 
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
@@ -271,6 +289,77 @@ export default function UploadSheet({ onUploaded }: { onUploaded: () => void }) 
           </div>
         </div>
 
+        {/* Free/Paid Toggle */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            ประเภทชีท
+          </label>
+          <div className="flex gap-3">
+            <button
+              type="button"
+              onClick={() => { setIsFree(true); setPrice(""); }}
+              className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium border transition-colors ${
+                isFree
+                  ? "bg-green-50 border-green-300 text-green-700"
+                  : "bg-white border-gray-300 text-gray-500 hover:bg-gray-50"
+              }`}
+            >
+              ฟรี
+            </button>
+            <button
+              type="button"
+              onClick={() => setIsFree(false)}
+              className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium border transition-colors ${
+                !isFree
+                  ? "bg-amber-50 border-amber-300 text-amber-700"
+                  : "bg-white border-gray-300 text-gray-500 hover:bg-gray-50"
+              }`}
+            >
+              เสียเงิน
+            </button>
+          </div>
+        </div>
+
+        {/* Price Input (shown when paid) */}
+        {!isFree && (
+          <div className="space-y-2">
+            {!hasBankAccount && (
+              <div className="flex items-start gap-2 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2.5">
+                <AlertTriangle className="w-4 h-4 text-amber-500 mt-0.5 flex-shrink-0" />
+                <div className="text-sm">
+                  <p className="text-amber-700 font-medium">ยังไม่ได้ตั้งค่าบัญชีรับเงิน</p>
+                  <p className="text-amber-600 mt-0.5">
+                    กรุณา{" "}
+                    <Link href="/dashboard/publisher/settings" className="underline font-medium">
+                      ตั้งค่าบัญชีธนาคาร
+                    </Link>{" "}
+                    ก่อนเผยแพร่ชีทแบบเสียเงิน
+                  </p>
+                </div>
+              </div>
+            )}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                ราคา (บาท) <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="number"
+                min="1"
+                value={price}
+                onChange={(e) => setPrice(e.target.value)}
+                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="เช่น 29"
+              />
+            </div>
+            {priceNum > 0 && (
+              <p className="text-xs text-gray-500">
+                คุณจะได้รับ <span className="font-medium text-green-600">{publisherEarnings} บาท</span>{" "}
+                (หักค่าคอมมิชชัน 10% = {commission} บาท)
+              </p>
+            )}
+          </div>
+        )}
+
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
             ไฟล์ PDF <span className="text-red-500">*</span>
@@ -331,7 +420,7 @@ export default function UploadSheet({ onUploaded }: { onUploaded: () => void }) 
 
         <button
           type="submit"
-          disabled={isSubmitting || status === "done"}
+          disabled={isSubmitting || status === "done" || (!isFree && !hasBankAccount)}
           className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-medium py-2.5 px-4 rounded-lg transition-colors text-sm"
         >
           {status === "compressing" && (

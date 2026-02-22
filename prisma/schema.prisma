@@ -44,11 +44,20 @@ model User {
   socialX        String?
   mainContact    String? // "ig" | "facebook" | "line" | "discord" | "x"
 
+  // Publisher bank account info
+  bankProvider      String?
+  bankAccountNumber String?
+  bankAccountName   String?
+  promptPayNumber   String?
+  paymentMethod     String? // "bank" | "promptpay"
+
   sessions          Session[]
   accounts          Account[]
   publisherRequests PublisherRequest[]
   sheets            Sheet[]
   ratings           Rating[]
+  transactions      Transaction[]
+  sheetAccess       SheetAccess[]
 }
 
 model PublisherRequest {
@@ -132,8 +141,12 @@ model Sheet {
   pdfUrl      String
   pdfKey      String
   uploadedBy  String
+  isFree      Boolean  @default(true)
+  price       Int?     // Price in THB (null = free)
   uploader    User     @relation(fields: [uploadedBy], references: [id], onDelete: Cascade)
   ratings     Rating[]
+  transactions Transaction[]
+  sheetAccess  SheetAccess[]
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -152,5 +165,48 @@ model Rating {
   updatedAt DateTime @updatedAt
 
   @@unique([userId, sheetId])
+  @@index([sheetId])
+}
+
+// ─── Payment & Transactions ───
+
+model Transaction {
+  id                   String    @id @default(cuid())
+  buyerId              String
+  sheetId              String
+  amount               Int       // Total paid in THB
+  commission           Int       // Platform commission (10%)
+  publisherAmount      Int       // Publisher receives (90%)
+  slipImageUrl         String?
+  slipImageKey         String?
+  qrPayload            String?
+  status               String    @default("pending") // pending, verified, rejected, failed
+  slipVerificationData Json?
+  verifiedAt           DateTime?
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+
+  buyer       User          @relation(fields: [buyerId], references: [id], onDelete: Cascade)
+  sheet       Sheet         @relation(fields: [sheetId], references: [id], onDelete: Cascade)
+  sheetAccess SheetAccess?
+
+  @@index([buyerId])
+  @@index([sheetId])
+  @@index([status])
+}
+
+model SheetAccess {
+  id            String      @id @default(cuid())
+  userId        String
+  sheetId       String
+  transactionId String      @unique
+  grantedAt     DateTime    @default(now())
+
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sheet       Sheet       @relation(fields: [sheetId], references: [id], onDelete: Cascade)
+  transaction Transaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, sheetId])
+  @@index([userId])
   @@index([sheetId])
 }
