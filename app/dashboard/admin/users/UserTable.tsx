@@ -179,7 +179,7 @@ export default function UserTable({
             </thead>
             <tbody>
               {filtered.map((user) => {
-                const sheetCount = user._count.sheets;
+                const sheetCount = user._count?.sheets ?? 0;
                 const isExpanded = expandedUserId === user.id;
                 return (
                   <>
