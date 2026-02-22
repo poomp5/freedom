@@ -5,6 +5,7 @@ import {
   baseProcedure,
   protectedProcedure,
   publisherOrAdminProcedure,
+  adminProcedure,
 } from "../init";
 import { prisma } from "@/lib/prisma";
 import { deleteFromR2 } from "@/lib/r2";
@@ -153,6 +154,101 @@ export const sheetsRouter = createTRPCRouter({
       await prisma.sheet.delete({ where: { id: input.id } });
 
       return { success: true };
+    }),
+
+  allSheets: adminProcedure
+    .input(
+      z
+        .object({
+          search: z.string().optional(),
+          level: z.string().optional(),
+          examType: z.string().optional(),
+          term: z.string().optional(),
+        })
+        .optional()
+    )
+    .query(async ({ input }) => {
+      const where: Record<string, unknown> = {};
+      if (input?.level) where.level = input.level;
+      if (input?.examType) where.examType = input.examType;
+      if (input?.term) where.term = input.term;
+      if (input?.search) {
+        where.OR = [
+          { title: { contains: input.search, mode: "insensitive" } },
+          { subject: { contains: input.search, mode: "insensitive" } },
+          {
+            uploader: {
+              name: { contains: input.search, mode: "insensitive" },
+            },
+          },
+        ];
+      }
+
+      const sheets = await prisma.sheet.findMany({
+        where,
+        include: {
+          uploader: {
+            select: { id: true, name: true, username: true, image: true },
+          },
+          ratings: { select: { score: true } },
+        },
+        orderBy: { createdAt: "desc" },
+      });
+
+      return sheets.map((sheet) => {
+        const totalRatings = sheet.ratings.length;
+        const averageRating =
+          totalRatings > 0
+            ? Math.round(
+                (sheet.ratings.reduce((sum, r) => sum + r.score, 0) /
+                  totalRatings) *
+                  10
+              ) / 10
+            : 0;
+
+        return {
+          id: sheet.id,
+          title: sheet.title,
+          description: sheet.description,
+          subject: sheet.subject,
+          level: sheet.level,
+          examType: sheet.examType,
+          term: sheet.term,
+          pdfUrl: sheet.pdfUrl,
+          uploader: sheet.uploader,
+          averageRating,
+          totalRatings,
+          createdAt: sheet.createdAt,
+        };
+      });
+    }),
+
+  update: adminProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        title: z.string().min(1).optional(),
+        description: z.string().optional(),
+        subject: z.string().min(1).optional(),
+        level: z.enum(VALID_LEVELS as [string, ...string[]]).optional(),
+        examType: z.enum(VALID_EXAM_TYPES as [string, ...string[]]).optional(),
+        term: z.enum(VALID_TERMS as [string, ...string[]]).optional(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const { id, ...data } = input;
+
+      const sheet = await prisma.sheet.findUnique({ where: { id } });
+      if (!sheet) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "ไม่พบชีท" });
+      }
+
+      const updated = await prisma.sheet.update({
+        where: { id },
+        data,
+      });
+
+      return updated;
     }),
 
   rate: protectedProcedure

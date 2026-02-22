@@ -6,14 +6,29 @@ export const dashboardRouter = createTRPCRouter({
     const isAdmin = ctx.role === "admin";
 
     if (!isAdmin) {
-      return { isAdmin: false, totalUsers: 0, pendingRequests: 0 };
+      return {
+        isAdmin: false,
+        totalUsers: 0,
+        pendingRequests: 0,
+        totalSheets: 0,
+        totalPublishers: 0,
+      };
     }
 
-    const [totalUsers, pendingRequests] = await Promise.all([
-      prisma.user.count(),
-      prisma.publisherRequest.count({ where: { status: "pending" } }),
-    ]);
+    const [totalUsers, pendingRequests, totalSheets, totalPublishers] =
+      await Promise.all([
+        prisma.user.count(),
+        prisma.publisherRequest.count({ where: { status: "pending" } }),
+        prisma.sheet.count(),
+        prisma.user.count({ where: { role: "publisher" } }),
+      ]);
 
-    return { isAdmin: true, totalUsers, pendingRequests };
+    return {
+      isAdmin: true,
+      totalUsers,
+      pendingRequests,
+      totalSheets,
+      totalPublishers,
+    };
   }),
 });

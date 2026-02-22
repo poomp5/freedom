@@ -54,10 +54,46 @@ export const usersRouter = createTRPCRouter({
         role: true,
         image: true,
         createdAt: true,
+        _count: { select: { sheets: true } },
       },
       orderBy: { createdAt: "desc" },
     });
   }),
+
+  getUserSheets: adminProcedure
+    .input(z.object({ userId: z.string() }))
+    .query(async ({ input }) => {
+      const sheets = await prisma.sheet.findMany({
+        where: { uploadedBy: input.userId },
+        include: { ratings: { select: { score: true } } },
+        orderBy: { createdAt: "desc" },
+      });
+
+      return sheets.map((sheet) => {
+        const totalRatings = sheet.ratings.length;
+        const averageRating =
+          totalRatings > 0
+            ? Math.round(
+                (sheet.ratings.reduce((sum, r) => sum + r.score, 0) /
+                  totalRatings) *
+                  10
+              ) / 10
+            : 0;
+
+        return {
+          id: sheet.id,
+          title: sheet.title,
+          subject: sheet.subject,
+          level: sheet.level,
+          examType: sheet.examType,
+          term: sheet.term,
+          pdfUrl: sheet.pdfUrl,
+          averageRating,
+          totalRatings,
+          createdAt: sheet.createdAt,
+        };
+      });
+    }),
 
   updateRole: adminProcedure
     .input(

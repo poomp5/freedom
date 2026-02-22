@@ -8,6 +8,7 @@ import {
   Home,
   Users,
   FileCheck,
+  FileText,
   Upload,
   ChevronLeft,
   ChevronRight,
@@ -65,6 +66,11 @@ export default function DashboardSidebar({ role, userName }: SidebarProps) {
         label: "คำขอผู้เผยแพร่",
         href: "/dashboard/admin/requests",
         icon: <FileCheck size={20} />,
+      },
+      {
+        label: "จัดการชีท",
+        href: "/dashboard/admin/sheets",
+        icon: <FileText size={20} />,
       }
     );
   }

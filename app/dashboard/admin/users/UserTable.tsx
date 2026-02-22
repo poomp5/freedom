@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Search } from "lucide-react";
-import { useSuspenseQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { Search, ChevronDown, ChevronRight, Star, FileText } from "lucide-react";
+import { useSuspenseQuery, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTRPC } from "@/trpc/client";
 
 const ROLES = ["user", "admin", "publisher", "suspended", "pending_publisher"] as const;
@@ -23,6 +23,85 @@ const ROLE_COLORS: Record<string, string> = {
   pending_publisher: "bg-orange-100 text-orange-700",
 };
 
+function UserSheetRows({ userId }: { userId: string }) {
+  const trpc = useTRPC();
+  const { data: sheets, isLoading } = useQuery(
+    trpc.users.getUserSheets.queryOptions({ userId })
+  );
+
+  if (isLoading) {
+    return (
+      <tr>
+        <td colSpan={6} className="px-8 py-4 bg-gray-50 text-center text-gray-400 text-sm">
+          กำลังโหลด...
+        </td>
+      </tr>
+    );
+  }
+
+  if (!sheets || sheets.length === 0) {
+    return (
+      <tr>
+        <td colSpan={6} className="px-8 py-4 bg-gray-50 text-center text-gray-400 text-sm">
+          ไม่มีชีท
+        </td>
+      </tr>
+    );
+  }
+
+  return (
+    <>
+      <tr className="bg-gray-50">
+        <td colSpan={6} className="px-0 py-0">
+          <div className="ml-8 mr-4 my-3 rounded-xl border border-gray-200 overflow-hidden bg-white">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-gray-100 bg-gray-50/50">
+                  <th className="text-left px-4 py-2 font-medium text-gray-500 text-xs">ชื่อชีท</th>
+                  <th className="text-left px-4 py-2 font-medium text-gray-500 text-xs">วิชา</th>
+                  <th className="text-left px-4 py-2 font-medium text-gray-500 text-xs">ระดับ</th>
+                  <th className="text-left px-4 py-2 font-medium text-gray-500 text-xs">ประเภท</th>
+                  <th className="text-left px-4 py-2 font-medium text-gray-500 text-xs">คะแนน</th>
+                  <th className="text-left px-4 py-2 font-medium text-gray-500 text-xs">วันที่</th>
+                </tr>
+              </thead>
+              <tbody>
+                {sheets.map((sheet) => (
+                  <tr key={sheet.id} className="border-b border-gray-50 last:border-0">
+                    <td className="px-4 py-2">
+                      <a
+                        href={sheet.pdfUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-600 hover:underline flex items-center gap-1"
+                      >
+                        <FileText size={14} />
+                        {sheet.title}
+                      </a>
+                    </td>
+                    <td className="px-4 py-2 text-gray-600">{sheet.subject}</td>
+                    <td className="px-4 py-2 text-gray-600">ม.{sheet.level}</td>
+                    <td className="px-4 py-2 text-gray-600">{sheet.examType} / เทอม {sheet.term}</td>
+                    <td className="px-4 py-2 text-gray-600">
+                      <span className="flex items-center gap-1">
+                        <Star size={14} className="text-yellow-500" />
+                        {sheet.averageRating} ({sheet.totalRatings})
+                      </span>
+                    </td>
+                    <td className="px-4 py-2 text-gray-400 text-xs">
+                      {new Date(sheet.createdAt).toLocaleDateString("th-TH")}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </td>
+      </tr>
+    </>
+  );
+}
+
 export default function UserTable({
   currentUserId,
 }: {
@@ -33,6 +112,7 @@ export default function UserTable({
   const { data: users } = useSuspenseQuery(trpc.users.list.queryOptions());
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState<string | null>(null);
+  const [expandedUserId, setExpandedUserId] = useState<string | null>(null);
 
   const updateRoleMutation = useMutation(
     trpc.users.updateRole.mutationOptions({
@@ -63,6 +143,11 @@ export default function UserTable({
     }
   };
 
+  const toggleExpand = (userId: string, sheetCount: number) => {
+    if (sheetCount === 0) return;
+    setExpandedUserId((prev) => (prev === userId ? null : userId));
+  };
+
   return (
     <div>
       <div className="relative mb-4">
@@ -84,47 +169,75 @@ export default function UserTable({
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-gray-100">
+                <th className="w-8"></th>
                 <th className="text-left px-4 py-3 font-medium text-gray-500">ชื่อ</th>
                 <th className="text-left px-4 py-3 font-medium text-gray-500">อีเมล</th>
+                <th className="text-left px-4 py-3 font-medium text-gray-500">ชีท</th>
                 <th className="text-left px-4 py-3 font-medium text-gray-500">บทบาท</th>
                 <th className="text-left px-4 py-3 font-medium text-gray-500">เปลี่ยนบทบาท</th>
               </tr>
             </thead>
             <tbody>
-              {filtered.map((user) => (
-                <tr key={user.id} className="border-b border-gray-50 hover:bg-gray-50">
-                  <td className="px-4 py-3 font-medium text-gray-800">{user.name}</td>
-                  <td className="px-4 py-3 text-gray-500">{user.email}</td>
-                  <td className="px-4 py-3">
-                    <span
-                      className={`px-2 py-1 rounded-lg text-xs font-medium ${ROLE_COLORS[user.role ?? "user"] || "bg-gray-100 text-gray-700"}`}
+              {filtered.map((user) => {
+                const sheetCount = user._count.sheets;
+                const isExpanded = expandedUserId === user.id;
+                return (
+                  <>
+                    <tr
+                      key={user.id}
+                      className={`border-b border-gray-50 hover:bg-gray-50 ${sheetCount > 0 ? "cursor-pointer" : ""}`}
+                      onClick={() => toggleExpand(user.id, sheetCount)}
                     >
-                      {ROLE_LABELS[user.role ?? "user"] || user.role}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3">
-                    {user.id === currentUserId ? (
-                      <span className="text-xs text-gray-400">คุณ</span>
-                    ) : (
-                      <select
-                        value={user.role ?? "user"}
-                        onChange={(e) => handleRoleChange(user.id, e.target.value)}
-                        disabled={loading === user.id}
-                        className="text-sm border border-gray-200 rounded-lg px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
-                      >
-                        {ROLES.map((r) => (
-                          <option key={r} value={r}>
-                            {ROLE_LABELS[r]}
-                          </option>
-                        ))}
-                      </select>
-                    )}
-                  </td>
-                </tr>
-              ))}
+                      <td className="pl-3 py-3 text-gray-400">
+                        {sheetCount > 0 ? (
+                          isExpanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />
+                        ) : null}
+                      </td>
+                      <td className="px-4 py-3 font-medium text-gray-800">{user.name}</td>
+                      <td className="px-4 py-3 text-gray-500">{user.email}</td>
+                      <td className="px-4 py-3 text-gray-600">
+                        {sheetCount > 0 ? (
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 text-xs font-medium">
+                            <FileText size={12} />
+                            {sheetCount}
+                          </span>
+                        ) : (
+                          <span className="text-gray-300 text-xs">0</span>
+                        )}
+                      </td>
+                      <td className="px-4 py-3">
+                        <span
+                          className={`px-2 py-1 rounded-lg text-xs font-medium ${ROLE_COLORS[user.role ?? "user"] || "bg-gray-100 text-gray-700"}`}
+                        >
+                          {ROLE_LABELS[user.role ?? "user"] || user.role}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
+                        {user.id === currentUserId ? (
+                          <span className="text-xs text-gray-400">คุณ</span>
+                        ) : (
+                          <select
+                            value={user.role ?? "user"}
+                            onChange={(e) => handleRoleChange(user.id, e.target.value)}
+                            disabled={loading === user.id}
+                            className="text-sm border border-gray-200 rounded-lg px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
+                          >
+                            {ROLES.map((r) => (
+                              <option key={r} value={r}>
+                                {ROLE_LABELS[r]}
+                              </option>
+                            ))}
+                          </select>
+                        )}
+                      </td>
+                    </tr>
+                    {isExpanded && <UserSheetRows userId={user.id} />}
+                  </>
+                );
+              })}
               {filtered.length === 0 && (
                 <tr>
-                  <td colSpan={4} className="px-4 py-8 text-center text-gray-400">
+                  <td colSpan={6} className="px-4 py-8 text-center text-gray-400">
                     ไม่พบผู้ใช้
                   </td>
                 </tr>
