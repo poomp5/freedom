@@ -3,7 +3,9 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useQuery } from "@tanstack/react-query";
 import { signOut } from "@/lib/auth-client";
+import { useTRPC } from "@/trpc/client";
 import {
   Home,
   Users,
@@ -31,9 +33,14 @@ interface MenuItem {
 }
 
 export default function DashboardSidebar({ role, userName }: SidebarProps) {
+  const trpc = useTRPC();
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { data: pendingPublisherRequests = [] } = useQuery({
+    ...trpc.publisherRequests.listPending.queryOptions(),
+    enabled: role === "admin",
+  });
 
   useEffect(() => {
     const saved = localStorage.getItem("sidebar-collapsed");
@@ -190,6 +197,18 @@ export default function DashboardSidebar({ role, userName }: SidebarProps) {
               >
                 {item.icon}
                 {!compact && <span>{item.label}</span>}
+                {item.href === "/dashboard/admin/requests" &&
+                  pendingPublisherRequests.length > 0 && (
+                    <span
+                      className={`ml-auto inline-flex min-w-5 items-center justify-center rounded-full px-1.5 py-0.5 text-[11px] font-semibold ${
+                        isActive(item.href)
+                          ? "bg-blue-100 text-blue-700"
+                          : "bg-red-100 text-red-700"
+                      } ${compact ? "ml-0" : ""}`}
+                    >
+                      {pendingPublisherRequests.length}
+                    </span>
+                  )}
               </Link>
             ))}
           </div>

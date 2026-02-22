@@ -289,7 +289,7 @@ async function main() {
           term: sheet.term,
           pdfUrl: publicUrl,
           pdfKey: key,
-          uploadedBy: sheet.byName ? adminUser.id : freedomUser.id,
+          uploadedBy: freedomUser.id,
         },
       });
       console.log(`   📝 DB record created`);
