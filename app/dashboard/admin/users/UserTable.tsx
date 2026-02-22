@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import { Search, ChevronDown, ChevronRight, Star, FileText } from "lucide-react";
 import { useSuspenseQuery, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTRPC } from "@/trpc/client";
@@ -182,9 +182,8 @@ export default function UserTable({
                 const sheetCount = user._count?.sheets ?? 0;
                 const isExpanded = expandedUserId === user.id;
                 return (
-                  <>
+                  <Fragment key={user.id}>
                     <tr
-                      key={user.id}
                       className={`border-b border-gray-50 hover:bg-gray-50 ${sheetCount > 0 ? "cursor-pointer" : ""}`}
                       onClick={() => toggleExpand(user.id, sheetCount)}
                     >
@@ -232,7 +231,7 @@ export default function UserTable({
                       </td>
                     </tr>
                     {isExpanded && <UserSheetRows userId={user.id} />}
-                  </>
+                  </Fragment>
                 );
               })}
               {filtered.length === 0 && (
