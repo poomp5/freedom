@@ -14,7 +14,8 @@ import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { PrismaClient } from "@prisma/client";
 import { PrismaNeon } from "@prisma/adapter-neon";
 import { readFileSync } from "fs";
-import { join } from "path";
+import { join, dirname } from "path";
+import { fileURLToPath } from "url";
 import * as dotenv from "dotenv";
 
 dotenv.config();
@@ -51,7 +52,8 @@ const s3 = new S3Client({
   forcePathStyle: true,
 });
 
-const PUBLIC_DIR = join(import.meta.dir, "..", "public");
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const PUBLIC_DIR = join(__dirname, "..", "public");
 
 // All sheet metadata extracted from existing page files
 const SHEETS_DATA = [

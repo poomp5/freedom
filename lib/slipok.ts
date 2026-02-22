@@ -28,7 +28,7 @@ export async function verifySlipByImage(
   contentType: string
 ): Promise<SlipVerificationResult> {
   const formData = new FormData();
-  const blob = new Blob([imageBuffer], { type: contentType });
+  const blob = new Blob([new Uint8Array(imageBuffer)], { type: contentType });
   formData.append("file", blob, "slip.jpg");
 
   const res = await fetch(SLIPOK_API_URL, {
