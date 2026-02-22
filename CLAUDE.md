@@ -47,3 +47,25 @@ Package manager is **Bun** (`bun.lockb`). No test framework is configured.
 - **SmartLink** component handles both internal and external links
 - **Path alias** `@/*` maps to project root (configured in `tsconfig.json`)
 - External images allowed from `promptpay.io` (payment QR codes) in `next.config.mjs`
+
+## Dashboard & Admin
+
+- `app/dashboard/` — Authenticated dashboard area with sidebar navigation (`DashboardSidebar.tsx`)
+- `app/dashboard/admin/users/` — Admin user management page with `UserTable.tsx` (expandable rows showing uploaded sheets per user)
+- `app/dashboard/admin/sheets/` — Admin sheet management
+
+## tRPC & Data Layer
+
+- **tRPC** with `@trpc/server` v11 + `@tanstack/react-query` for data fetching
+- Routers live in `trpc/routers/` — key routers: `users.ts`, `sheets.ts`, `dashboard.ts`
+- Procedure types: `protectedProcedure` (any logged-in user), `adminProcedure` (admin only), `publisherOrAdminProcedure`
+- Client-side: use `useTRPC()` hook from `@/trpc/client` to get typed query/mutation options, then pass to `useSuspenseQuery`, `useQuery`, `useMutation`
+- **Prisma** ORM with `@/lib/prisma` singleton — models include `User`, `Sheet`, `School`, ratings
+- Sheet queries commonly include `ratings: { select: { score: true } }` and compute `averageRating`/`totalRatings` in the router
+- Use `_count` on relations (e.g., `_count: { select: { sheets: true } }`) for efficient counting
+
+## Common Pitfalls
+
+- **Optional chaining on Prisma `_count`**: When adding `_count` to an existing query, always use optional chaining (`user._count?.sheets ?? 0`) in the client because stale cached data from React Query may not include the new field yet
+- **`stopPropagation` on nested interactive elements**: When table rows are clickable (e.g., expandable rows), add `onClick={(e) => e.stopPropagation()}` on nested interactive elements like `<select>` dropdowns to prevent row click handlers from firing
+- **Lazy loading with `useQuery`**: For expandable/conditional data fetching, use `useQuery` (not `useSuspenseQuery`) so the query only runs when the component mounts (e.g., when a row is expanded)
