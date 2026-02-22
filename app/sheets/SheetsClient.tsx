@@ -172,12 +172,18 @@ export default function SheetsClient({
                 ].filter(Boolean) as { href: string; label: string; icon: React.ReactNode }[];
 
                 return (
-                  <a
+                  <div
                     key={sheet.id}
-                    href={sheet.pdfUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md hover:border-blue-200 transition-all duration-200 p-5 flex flex-col group"
+                    role="link"
+                    tabIndex={0}
+                    onClick={() => window.open(sheet.pdfUrl, "_blank", "noopener,noreferrer")}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        window.open(sheet.pdfUrl, "_blank", "noopener,noreferrer");
+                      }
+                    }}
+                    className="bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md hover:border-blue-200 transition-all duration-200 p-5 flex flex-col group cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                   >
                     {/* Header */}
                     <div className="flex items-start justify-between mb-2">
@@ -202,7 +208,7 @@ export default function SheetsClient({
                       <p className="text-sm text-gray-500 mt-1 line-clamp-2">{sheet.description}</p>
                     )}
 
-                    <div className="mt-3" onClick={(e) => e.preventDefault()}>
+                    <div className="mt-3" onClick={(e) => e.stopPropagation()}>
                       {isLoggedIn ? (
                         <StarRating
                           sheetId={sheet.id}
@@ -276,7 +282,7 @@ export default function SheetsClient({
                         );
                       })()}
                     </div>
-                  </a>
+                  </div>
                 );
               })}
             </div>
