@@ -199,7 +199,7 @@ const SHEETS_DATA = [
 
 async function main() {
   // Find or create a system admin user to attribute existing sheets to
-  let adminUser = await prisma.user.findFirst({
+  const adminUser = await prisma.user.findFirst({
     where: { role: "admin" },
   });
 
@@ -208,7 +208,24 @@ async function main() {
     process.exit(1);
   }
 
+  // Find or create a "Freedom" system account for sheets with no author
+  const FREEDOM_ID = "freedom-system";
+  let freedomUser = await prisma.user.findUnique({ where: { id: FREEDOM_ID } });
+  if (!freedomUser) {
+    freedomUser = await prisma.user.create({
+      data: {
+        id: FREEDOM_ID,
+        name: "Freedom",
+        email: "system@freedom.act.th",
+        emailVerified: true,
+        role: "admin",
+      },
+    });
+    console.log(`✅ Created "Freedom" system account (${freedomUser.id})`);
+  }
+
   console.log(`Using admin user: ${adminUser.name} (${adminUser.id})`);
+  console.log(`Using Freedom account for uncredited sheets: ${freedomUser.id}`);
   console.log(`Found ${SHEETS_DATA.length} sheets to process.\n`);
 
   let uploaded = 0;
@@ -270,7 +287,7 @@ async function main() {
           term: sheet.term,
           pdfUrl: publicUrl,
           pdfKey: key,
-          uploadedBy: adminUser.id,
+          uploadedBy: sheet.byName ? adminUser.id : freedomUser.id,
         },
       });
       console.log(`   📝 DB record created`);
