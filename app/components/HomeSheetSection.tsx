@@ -35,9 +35,13 @@ export default function HomeSheetSection() {
   // If user has a grade, show sheets for that level; otherwise show m3 default
   const targetLevel = levelLabel ?? "ม.3";
 
+  // Map basePath → examType + term filters
+  const pathExamType = basePath.startsWith("midterm") ? "กลางภาค" : "ปลายภาค";
+  const pathTerm = basePath.endsWith("1") ? "เทอม 1" : "เทอม 2";
+
   const sheets = useMemo(() => {
-    return allSheets.filter(s => s.level === targetLevel && s.examType === "กลางภาค" && s.term === "เทอม 2");
-  }, [targetLevel]);
+    return allSheets.filter(s => s.level === targetLevel && s.examType === pathExamType && s.term === pathTerm);
+  }, [targetLevel, pathExamType, pathTerm]);
 
   const levelNum = gradeLevel ?? 3;
   const mPrefix = `m${levelNum}`;
@@ -94,11 +98,11 @@ export default function HomeSheetSection() {
           <div className="w-full overflow-hidden rounded-2xl shadow-lg border border-blue-100 bg-white">
             <div className="py-12 text-center text-gray-400 text-sm">ไม่พบชีทในหมวดนี้</div>
             <PaginationFooter
-              leftArrow={{ label: "เทอม 1", href: `/${mPrefix}/midterm1` }}
-              rightArrow={{ label: "เทอม 2", href: `/${mPrefix}/midterm2` }}
+              leftArrow={{ label: "เทอม 1", href: `/${mPrefix}/${basePath.endsWith("1") ? basePath : basePath.replace("2", "1")}` }}
+              rightArrow={{ label: "เทอม 2", href: `/${mPrefix}/${basePath.endsWith("2") ? basePath : basePath.replace("1", "2")}` }}
               links={[
-                { label: "กลางภาค", href: `/${mPrefix}/midterm2`, isActive: true },
-                { label: "ปลายภาค", href: `/${mPrefix}/final2`, isActive: false },
+                { label: "กลางภาค", href: `/${mPrefix}/${pathTerm === "เทอม 1" ? "midterm1" : "midterm2"}`, isActive: pathExamType === "กลางภาค" },
+                { label: "ปลายภาค", href: `/${mPrefix}/${pathTerm === "เทอม 1" ? "final1" : "final2"}`, isActive: pathExamType === "ปลายภาค" },
               ]}
             />
           </div>
@@ -131,11 +135,11 @@ export default function HomeSheetSection() {
               </table>
             </div>
             <PaginationFooter
-              leftArrow={{ label: "เทอม 1", href: `/${mPrefix}/midterm1` }}
-              rightArrow={{ label: "เทอม 2", href: `/${mPrefix}/midterm2` }}
+              leftArrow={{ label: "เทอม 1", href: `/${mPrefix}/${basePath.endsWith("1") ? basePath : basePath.replace("2", "1")}` }}
+              rightArrow={{ label: "เทอม 2", href: `/${mPrefix}/${basePath.endsWith("2") ? basePath : basePath.replace("1", "2")}` }}
               links={[
-                { label: "กลางภาค", href: `/${mPrefix}/midterm2`, isActive: true },
-                { label: "ปลายภาค", href: `/${mPrefix}/final2`, isActive: false },
+                { label: "กลางภาค", href: `/${mPrefix}/${pathTerm === "เทอม 1" ? "midterm1" : "midterm2"}`, isActive: pathExamType === "กลางภาค" },
+                { label: "ปลายภาค", href: `/${mPrefix}/${pathTerm === "เทอม 1" ? "final1" : "final2"}`, isActive: pathExamType === "ปลายภาค" },
               ]}
             />
           </div>
