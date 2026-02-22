@@ -47,6 +47,15 @@ export default function DashboardSidebar({ role, userName }: SidebarProps) {
     setMobileOpen(false);
   }, [pathname]);
 
+  useEffect(() => {
+    if (!mobileOpen) return;
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = originalOverflow;
+    };
+  }, [mobileOpen]);
+
   const menuItems: MenuItem[] = [
     {
       label: "หน้าหลัก",
@@ -96,25 +105,43 @@ export default function DashboardSidebar({ role, userName }: SidebarProps) {
     return pathname.startsWith(href);
   };
 
-  const sidebarContent = (
+  const renderSidebarContent = ({
+    compact,
+    mobile = false,
+  }: {
+    compact: boolean;
+    mobile?: boolean;
+  }) => (
     <div className="flex flex-col h-full">
       {/* Header */}
       <div className="p-4 border-b border-gray-200 flex items-center justify-between">
-        {!collapsed && (
+        {!compact && (
           <Link href="/" className="text-lg font-bold text-blue-600">
             FREEDOM
           </Link>
         )}
-        <button
-          onClick={() => setCollapsed(!collapsed)}
-          className="hidden lg:flex p-1.5 rounded-lg hover:bg-gray-100 text-gray-500"
-        >
-          {collapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
-        </button>
+        <div className="flex items-center">
+          {mobile ? (
+            <button
+              onClick={() => setMobileOpen(false)}
+              className="p-1.5 rounded-lg hover:bg-gray-100"
+              aria-label="ปิดเมนูแดชบอร์ด"
+            >
+              <X size={18} />
+            </button>
+          ) : (
+            <button
+              onClick={() => setCollapsed(!collapsed)}
+              className="hidden lg:flex p-1.5 rounded-lg hover:bg-gray-100 text-gray-500"
+            >
+              {compact ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
+            </button>
+          )}
+        </div>
       </div>
 
       {/* User info */}
-      {!collapsed && (
+      {!compact && (
         <div className="px-4 py-3 border-b border-gray-100">
           <p className="text-sm font-medium text-gray-800 truncate">
             {userName}
@@ -133,11 +160,11 @@ export default function DashboardSidebar({ role, userName }: SidebarProps) {
               isActive(item.href)
                 ? "bg-blue-50 text-blue-700"
                 : "text-gray-600 hover:bg-gray-100 hover:text-gray-800"
-            } ${collapsed ? "justify-center" : ""}`}
-            title={collapsed ? item.label : undefined}
+            } ${compact ? "justify-center" : ""}`}
+            title={compact ? item.label : undefined}
           >
             {item.icon}
-            {!collapsed && <span>{item.label}</span>}
+            {!compact && <span>{item.label}</span>}
           </Link>
         ))}
       </nav>
@@ -147,12 +174,12 @@ export default function DashboardSidebar({ role, userName }: SidebarProps) {
         <button
           onClick={handleSignOut}
           className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-red-600 hover:bg-red-50 transition-colors w-full ${
-            collapsed ? "justify-center" : ""
+            compact ? "justify-center" : ""
           }`}
-          title={collapsed ? "ออกจากระบบ" : undefined}
+          title={compact ? "ออกจากระบบ" : undefined}
         >
           <LogOut size={20} />
-          {!collapsed && <span>ออกจากระบบ</span>}
+          {!compact && <span>ออกจากระบบ</span>}
         </button>
       </div>
     </div>
@@ -163,32 +190,29 @@ export default function DashboardSidebar({ role, userName }: SidebarProps) {
       {/* Mobile hamburger button */}
       <button
         onClick={() => setMobileOpen(true)}
-        className="lg:hidden fixed top-4 left-4 z-50 p-2 bg-white rounded-xl shadow-md border border-gray-200"
+        className="lg:hidden fixed top-3 left-3 z-50 h-10 px-3 inline-flex items-center gap-2 bg-white/95 backdrop-blur border border-gray-200 rounded-full shadow-lg"
+        aria-label="เปิดเมนูแดชบอร์ด"
       >
         <Menu size={20} />
+        <span className="text-sm font-medium text-gray-700">เมนู</span>
       </button>
 
       {/* Mobile overlay */}
-      {mobileOpen && (
-        <div
-          className="lg:hidden fixed inset-0 bg-black/40 z-40"
-          onClick={() => setMobileOpen(false)}
-        />
-      )}
+      <div
+        className={`lg:hidden fixed inset-0 z-40 transition-colors duration-300 ${
+          mobileOpen ? "bg-black/45" : "bg-black/0 pointer-events-none"
+        }`}
+        onClick={() => setMobileOpen(false)}
+        aria-hidden={!mobileOpen}
+      />
 
       {/* Mobile sidebar */}
       <div
-        className={`lg:hidden fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-xl transform transition-transform duration-200 ${
+        className={`lg:hidden fixed inset-y-0 left-0 z-50 w-[84vw] max-w-80 bg-white/95 backdrop-blur border-r border-gray-200 rounded-r-2xl shadow-2xl transform transition-transform duration-300 ease-out ${
           mobileOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
-        <button
-          onClick={() => setMobileOpen(false)}
-          className="absolute top-4 right-4 p-1 rounded-lg hover:bg-gray-100"
-        >
-          <X size={20} />
-        </button>
-        {sidebarContent}
+        {renderSidebarContent({ compact: false, mobile: true })}
       </div>
 
       {/* Desktop sidebar */}
@@ -197,7 +221,7 @@ export default function DashboardSidebar({ role, userName }: SidebarProps) {
           collapsed ? "w-16" : "w-64"
         }`}
       >
-        {sidebarContent}
+        {renderSidebarContent({ compact: collapsed })}
       </div>
     </>
   );
