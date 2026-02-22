@@ -56,39 +56,39 @@ export default function DashboardSidebar({ role, userName }: SidebarProps) {
     };
   }, [mobileOpen]);
 
-  const menuItems: MenuItem[] = [
+  const userItems: MenuItem[] = [
     {
       label: "หน้าหลัก",
       href: "/dashboard",
       icon: <Home size={20} />,
     },
+    {
+      label: "อัปโหลดชีท",
+      href: "/dashboard/publisher/sheets",
+      icon: <Upload size={20} />,
+    },
   ];
 
-  if (role === "admin") {
-    menuItems.push(
-      {
-        label: "จัดการผู้ใช้",
-        href: "/dashboard/admin/users",
-        icon: <Users size={20} />,
-      },
-      {
-        label: "คำขอผู้เผยแพร่",
-        href: "/dashboard/admin/requests",
-        icon: <FileCheck size={20} />,
-      },
-      {
-        label: "จัดการชีท",
-        href: "/dashboard/admin/sheets",
-        icon: <FileText size={20} />,
-      }
-    );
-  }
-
-  menuItems.push({
-    label: "อัปโหลดชีท",
-    href: "/dashboard/publisher/sheets",
-    icon: <Upload size={20} />,
-  });
+  const adminItems: MenuItem[] =
+    role === "admin"
+      ? [
+          {
+            label: "จัดการผู้ใช้",
+            href: "/dashboard/admin/users",
+            icon: <Users size={20} />,
+          },
+          {
+            label: "คำขอผู้เผยแพร่",
+            href: "/dashboard/admin/requests",
+            icon: <FileCheck size={20} />,
+          },
+          {
+            label: "จัดการชีท",
+            href: "/dashboard/admin/sheets",
+            icon: <FileText size={20} />,
+          },
+        ]
+      : [];
 
   const handleSignOut = async () => {
     await signOut({
@@ -151,22 +151,54 @@ export default function DashboardSidebar({ role, userName }: SidebarProps) {
       )}
 
       {/* Navigation */}
-      <nav className="flex-1 p-3 space-y-1">
-        {menuItems.map((item) => (
-          <Link
-            key={item.href}
-            href={item.href}
-            className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors ${
-              isActive(item.href)
-                ? "bg-blue-50 text-blue-700"
-                : "text-gray-600 hover:bg-gray-100 hover:text-gray-800"
-            } ${compact ? "justify-center" : ""}`}
-            title={compact ? item.label : undefined}
-          >
-            {item.icon}
-            {!compact && <span>{item.label}</span>}
-          </Link>
-        ))}
+      <nav className="flex-1 p-3 space-y-3">
+        {adminItems.length > 0 && (
+          <div className="space-y-1">
+            {!compact && (
+              <p className="px-3 text-[11px] font-semibold uppercase tracking-wide text-gray-400">
+                Admin
+              </p>
+            )}
+            {adminItems.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors ${
+                  isActive(item.href)
+                    ? "bg-blue-50 text-blue-700"
+                    : "text-gray-600 hover:bg-gray-100 hover:text-gray-800"
+                } ${compact ? "justify-center" : ""}`}
+                title={compact ? item.label : undefined}
+              >
+                {item.icon}
+                {!compact && <span>{item.label}</span>}
+              </Link>
+            ))}
+          </div>
+        )}
+
+        <div className="space-y-1">
+          {!compact && (
+            <p className="px-3 text-[11px] font-semibold uppercase tracking-wide text-gray-400">
+              ผู้ใช้งาน
+            </p>
+          )}
+          {userItems.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors ${
+                isActive(item.href)
+                  ? "bg-blue-50 text-blue-700"
+                  : "text-gray-600 hover:bg-gray-100 hover:text-gray-800"
+              } ${compact ? "justify-center" : ""}`}
+              title={compact ? item.label : undefined}
+            >
+              {item.icon}
+              {!compact && <span>{item.label}</span>}
+            </Link>
+          ))}
+        </div>
       </nav>
 
       {/* Sign out */}
