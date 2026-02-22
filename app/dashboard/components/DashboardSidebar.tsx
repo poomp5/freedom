@@ -193,7 +193,7 @@ export default function DashboardSidebar({ role, userName }: SidebarProps) {
 
       {/* Desktop sidebar */}
       <div
-        className={`hidden lg:block bg-white border-r border-gray-200 transition-all duration-200 ${
+        className={`hidden lg:block sticky top-0 h-screen self-start bg-white border-r border-gray-200 transition-all duration-200 ${
           collapsed ? "w-16" : "w-64"
         }`}
       >
