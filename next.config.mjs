@@ -6,6 +6,7 @@ const nextConfig = {
       { protocol: "https", hostname: "lh3.googleusercontent.com" },
       { protocol: "https", hostname: "**.r2.cloudflarestorage.com" },
       { protocol: "https", hostname: "**.r2.dev" },
+      { protocol: "https", hostname: "cdn.pranakorn.dev" },
       ...(process.env.R2_PUBLIC_URL
         ? [{ protocol: "https", hostname: new URL(process.env.R2_PUBLIC_URL).hostname }]
         : []),

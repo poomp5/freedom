@@ -31,6 +31,7 @@ export default function UploadSheet({ onUploaded }: { onUploaded: () => void }) 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [subject, setSubject] = useState("");
+  const [customSubject, setCustomSubject] = useState("");
   const [level, setLevel] = useState("");
   const [examType, setExamType] = useState("");
   const [term, setTerm] = useState("");
@@ -99,7 +100,8 @@ export default function UploadSheet({ onUploaded }: { onUploaded: () => void }) 
     e.preventDefault();
     setError("");
 
-    if (!title || !subject || !level || !examType || !term) {
+    const finalSubject = subject === "อื่นๆ" ? customSubject.trim() : subject;
+    if (!title || !finalSubject || !level || !examType || !term) {
       setError("กรุณากรอกข้อมูลให้ครบ");
       return;
     }
@@ -134,7 +136,7 @@ export default function UploadSheet({ onUploaded }: { onUploaded: () => void }) 
       await createSheetMutation.mutateAsync({
         title,
         description,
-        subject,
+        subject: subject === "อื่นๆ" ? customSubject.trim() : subject,
         level,
         examType,
         term,
@@ -147,6 +149,7 @@ export default function UploadSheet({ onUploaded }: { onUploaded: () => void }) 
         setTitle("");
         setDescription("");
         setSubject("");
+        setCustomSubject("");
         setLevel("");
         setExamType("");
         setTerm("");
@@ -200,7 +203,7 @@ export default function UploadSheet({ onUploaded }: { onUploaded: () => void }) 
             </label>
             <select
               value={subject}
-              onChange={(e) => setSubject(e.target.value)}
+              onChange={(e) => { setSubject(e.target.value); setCustomSubject(""); }}
               className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
               <option value="">เลือกวิชา</option>
@@ -208,6 +211,15 @@ export default function UploadSheet({ onUploaded }: { onUploaded: () => void }) 
                 <option key={s} value={s}>{s}</option>
               ))}
             </select>
+            {subject === "อื่นๆ" && (
+              <input
+                type="text"
+                value={customSubject}
+                onChange={(e) => setCustomSubject(e.target.value)}
+                className="mt-1.5 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="ระบุชื่อวิชา"
+              />
+            )}
           </div>
 
           <div>

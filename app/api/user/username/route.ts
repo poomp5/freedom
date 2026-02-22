@@ -11,14 +11,7 @@ export async function GET() {
 
   const user = await prisma.user.findUnique({
     where: { id: session.user.id },
-    select: {
-      socialIg: true,
-      socialFacebook: true,
-      socialLine: true,
-      socialDiscord: true,
-      socialX: true,
-      mainContact: true,
-    },
+    select: { username: true },
   });
 
   return NextResponse.json(user ?? {});
@@ -29,18 +22,19 @@ export async function POST(request: NextRequest) {
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const body = await request.json();
-  const { socialIg, socialFacebook, socialLine, socialDiscord, socialX, mainContact } = body;
+  const username = body.username?.trim() || null;
+
+  if (username) {
+    // Check uniqueness
+    const existing = await prisma.user.findUnique({ where: { username } });
+    if (existing && existing.id !== session.user.id) {
+      return NextResponse.json({ error: "username_taken" }, { status: 409 });
+    }
+  }
 
   await prisma.user.update({
     where: { id: session.user.id },
-    data: {
-      socialIg: socialIg?.trim() || null,
-      socialFacebook: socialFacebook?.trim() || null,
-      socialLine: socialLine?.trim() || null,
-      socialDiscord: socialDiscord?.trim() || null,
-      socialX: socialX?.trim() || null,
-      mainContact: mainContact || null,
-    },
+    data: { username },
   });
 
   return NextResponse.json({ success: true });

@@ -35,7 +35,7 @@ export const sheetsRouter = createTRPCRouter({
       const sheets = await prisma.sheet.findMany({
         where,
         include: {
-          uploader: { select: { id: true, name: true, image: true, socialIg: true, socialFacebook: true, socialLine: true, socialDiscord: true, socialX: true } },
+          uploader: { select: { id: true, name: true, username: true, image: true, socialIg: true, socialFacebook: true, socialLine: true, socialDiscord: true, socialX: true, mainContact: true } },
           ratings: { select: { score: true, userId: true } },
         },
         orderBy: { createdAt: "desc" },

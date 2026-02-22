@@ -26,6 +26,14 @@ const gradeLevels = [
   { level: 6, label: "ม.6", color: "from-fuchsia-500 to-pink-600" },
 ];
 
+const CONTACT_OPTIONS = [
+  { value: "ig", label: "Instagram" },
+  { value: "facebook", label: "Facebook" },
+  { value: "line", label: "Line" },
+  { value: "discord", label: "Discord" },
+  { value: "x", label: "X (Twitter)" },
+];
+
 export default function ProfilePage() {
   const { data: session, isPending } = useSession();
   const router = useRouter();
@@ -39,20 +47,47 @@ export default function ProfilePage() {
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
 
+  // Current school/grade info
+  const [currentGrade, setCurrentGrade] = useState<number | null>(null);
+  const [currentSchool, setCurrentSchool] = useState<{ id: string; name: string; province: string } | null>(null);
+
   const [showSocialModal, setShowSocialModal] = useState(false);
   const [socialIg, setSocialIg] = useState("");
   const [socialFacebook, setSocialFacebook] = useState("");
   const [socialLine, setSocialLine] = useState("");
   const [socialDiscord, setSocialDiscord] = useState("");
   const [socialX, setSocialX] = useState("");
+  const [mainContact, setMainContact] = useState("");
   const [isSavingSocial, setIsSavingSocial] = useState(false);
   const [saveSocialSuccess, setSaveSocialSuccess] = useState(false);
+
+  // Username
+  const [showUsernameModal, setShowUsernameModal] = useState(false);
+  const [usernameInput, setUsernameInput] = useState("");
+  const [currentUsername, setCurrentUsername] = useState<string | null>(null);
+  const [isSavingUsername, setIsSavingUsername] = useState(false);
+  const [usernameError, setUsernameError] = useState("");
+  const [saveUsernameSuccess, setSaveUsernameSuccess] = useState(false);
 
   useEffect(() => {
     if (!isPending && !session) {
       router.push("/signin");
     }
   }, [session, isPending, router]);
+
+  // Fetch current school/grade and username on mount
+  useEffect(() => {
+    if (!session) return;
+    fetch("/api/user/school").then(r => r.ok ? r.json() : null).then(data => {
+      if (!data) return;
+      setCurrentGrade(data.gradeLevel ?? null);
+      setCurrentSchool(data.school ?? null);
+    }).catch(() => {});
+    fetch("/api/user/username").then(r => r.ok ? r.json() : null).then(data => {
+      if (!data) return;
+      setCurrentUsername(data.username ?? null);
+    }).catch(() => {});
+  }, [session]);
 
   if (isPending || !session) {
     return (
@@ -75,6 +110,7 @@ export default function ProfilePage() {
       setSocialLine(data.socialLine ?? "");
       setSocialDiscord(data.socialDiscord ?? "");
       setSocialX(data.socialX ?? "");
+      setMainContact(data.mainContact ?? "");
     }
   };
 
@@ -84,7 +120,7 @@ export default function ProfilePage() {
       await fetch("/api/user/social", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ socialIg, socialFacebook, socialLine, socialDiscord, socialX }),
+        body: JSON.stringify({ socialIg, socialFacebook, socialLine, socialDiscord, socialX, mainContact }),
       });
       setSaveSocialSuccess(true);
       setTimeout(() => {
@@ -116,7 +152,6 @@ export default function ProfilePage() {
       }
     } finally {
       setIsUploadingAvatar(false);
-      // reset input ให้ pick ไฟล์ซ้ำได้
       e.target.value = "";
     }
   };
@@ -133,6 +168,8 @@ export default function ProfilePage() {
           gradeLevel: selectedGrade,
         }),
       });
+      if (selectedGrade) setCurrentGrade(selectedGrade);
+      if (selectedSchool) setCurrentSchool({ id: selectedSchool.id, name: selectedSchool.name, province: selectedSchool.province });
       setSaveSuccess(true);
       setTimeout(() => {
         setSaveSuccess(false);
@@ -144,6 +181,45 @@ export default function ProfilePage() {
       setIsSaving(false);
     }
   };
+
+  const openEditModal = () => {
+    setSelectedGrade(currentGrade);
+    setSelectedSchool(currentSchool ? { id: currentSchool.id, name: currentSchool.name, province: currentSchool.province, district: "", schoolType: "" } : null);
+    setShowEditModal(true);
+  };
+
+  const openUsernameModal = () => {
+    setUsernameInput(currentUsername ?? "");
+    setUsernameError("");
+    setSaveUsernameSuccess(false);
+    setShowUsernameModal(true);
+  };
+
+  const handleSaveUsername = async () => {
+    setIsSavingUsername(true);
+    setUsernameError("");
+    try {
+      const res = await fetch("/api/user/username", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username: usernameInput }),
+      });
+      if (res.status === 409) {
+        setUsernameError("ชื่อผู้ใช้นี้ถูกใช้แล้ว");
+        return;
+      }
+      setCurrentUsername(usernameInput.trim() || null);
+      setSaveUsernameSuccess(true);
+      setTimeout(() => {
+        setSaveUsernameSuccess(false);
+        setShowUsernameModal(false);
+      }, 1200);
+    } finally {
+      setIsSavingUsername(false);
+    }
+  };
+
+  const gradeLevelLabel = gradeLevels.find(g => g.level === currentGrade)?.label;
 
   return (
     <div>
@@ -200,27 +276,64 @@ export default function ProfilePage() {
               />
             </div>
             <h1 className="text-2xl font-bold text-gray-700">{user.name}</h1>
+            {currentUsername && (
+              <p className="text-blue-500 text-sm mt-0.5">@{currentUsername}</p>
+            )}
             <p className="text-gray-400 text-sm mt-1">{user.email}</p>
+            {/* Current grade/school badge */}
+            {(gradeLevelLabel || currentSchool) && (
+              <div className="flex flex-wrap gap-2 mt-3 justify-center">
+                {gradeLevelLabel && (
+                  <span className="px-3 py-1 bg-blue-100 text-blue-700 text-xs font-medium rounded-full">{gradeLevelLabel}</span>
+                )}
+                {currentSchool && (
+                  <span className="px-3 py-1 bg-gray-100 text-gray-600 text-xs rounded-full truncate max-w-[200px]">{currentSchool.name}</span>
+                )}
+              </div>
+            )}
           </div>
         </div>
 
         {/* Action Cards */}
         <div className="max-w-md mx-auto px-4 -mt-8 space-y-3">
-          {/* อัปเดตข้อมูล */}
+          {/* Username */}
           <button
-            onClick={() => setShowEditModal(true)}
+            onClick={openUsernameModal}
             className="w-full bg-white rounded-2xl shadow-sm border border-gray-100 p-4 flex items-center gap-4 hover:shadow-md hover:border-blue-200 transition-all duration-200 text-left"
           >
             <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center flex-shrink-0">
               <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </svg>
+            </div>
+            <div className="min-w-0">
+              <p className="font-semibold text-gray-800">ชื่อผู้ใช้</p>
+              <p className="text-sm text-gray-500 truncate">{currentUsername ? `@${currentUsername}` : "ยังไม่ได้ตั้ง"}</p>
+            </div>
+            <svg className="w-5 h-5 text-gray-400 ml-auto flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+
+          {/* อัปเดตข้อมูล */}
+          <button
+            onClick={openEditModal}
+            className="w-full bg-white rounded-2xl shadow-sm border border-gray-100 p-4 flex items-center gap-4 hover:shadow-md hover:border-blue-200 transition-all duration-200 text-left"
+          >
+            <div className="w-12 h-12 bg-indigo-100 rounded-xl flex items-center justify-center flex-shrink-0">
+              <svg className="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
               </svg>
             </div>
-            <div>
+            <div className="min-w-0">
               <p className="font-semibold text-gray-800">อัปเดตข้อมูลส่วนตัว</p>
-              <p className="text-sm text-gray-500">โรงเรียน, ระดับชั้น</p>
+              <p className="text-sm text-gray-500 truncate">
+                {gradeLevelLabel && currentSchool
+                  ? `${gradeLevelLabel} · ${currentSchool.name}`
+                  : gradeLevelLabel || (currentSchool ? currentSchool.name : "โรงเรียน, ระดับชั้น")}
+              </p>
             </div>
-            <svg className="w-5 h-5 text-gray-400 ml-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-5 h-5 text-gray-400 ml-auto flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
             </svg>
           </button>
@@ -247,31 +360,18 @@ export default function ProfilePage() {
           <Link href="/freedom" className="block">
             <div className="w-full bg-white rounded-2xl shadow-sm border border-gray-100 p-4 flex items-center gap-4 hover:shadow-md hover:border-blue-200 transition-all duration-200">
               <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center flex-shrink-0">
-                <svg
-                  className="w-6 h-6 text-purple-600"
-                  viewBox="0 0 600 600"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="30"
-                  strokeLinecap="round"
-                >
+                <svg className="w-6 h-6 text-purple-600" viewBox="0 0 600 600" fill="none" stroke="currentColor" strokeWidth="30" strokeLinecap="round">
                   <rect x="50" y="50" width="500" height="500" />
                   <rect x="120" y="120" width="360" height="360" />
                   <rect x="200" y="200" width="200" height="200" transform="rotate(45 300 300)" />
                   <line x1="200" y1="200" x2="400" y2="400" />
                   <line x1="400" y1="200" x2="200" y2="400" />
-                  <path d="M240 120 H360" />
-                  <path d="M240 120 Q300 160 360 120" />
-                  <path d="M240 480 H360" />
-                  <path d="M240 480 Q300 440 360 480" />
-                  <path d="M120 240 V360" />
-                  <path d="M120 240 Q160 300 120 360" />
-                  <path d="M480 240 V360" />
-                  <path d="M480 240 Q440 300 480 360" />
-                  <line x1="300" y1="50" x2="300" y2="80" />
-                  <line x1="300" y1="520" x2="300" y2="550" />
-                  <line x1="50" y1="300" x2="80" y2="300" />
-                  <line x1="520" y1="300" x2="550" y2="300" />
+                  <path d="M240 120 H360" /><path d="M240 120 Q300 160 360 120" />
+                  <path d="M240 480 H360" /><path d="M240 480 Q300 440 360 480" />
+                  <path d="M120 240 V360" /><path d="M120 240 Q160 300 120 360" />
+                  <path d="M480 240 V360" /><path d="M480 240 Q440 300 480 360" />
+                  <line x1="300" y1="50" x2="300" y2="80" /><line x1="300" y1="520" x2="300" y2="550" />
+                  <line x1="50" y1="300" x2="80" y2="300" /><line x1="520" y1="300" x2="550" y2="300" />
                 </svg>
               </div>
               <div>
@@ -279,7 +379,7 @@ export default function ProfilePage() {
                 <p className="text-sm text-gray-500">บูชาแล้วสอบผ่านทุกวิชา</p>
               </div>
               <svg className="w-5 h-5 text-gray-400 ml-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
               </svg>
             </div>
           </Link>
@@ -320,6 +420,46 @@ export default function ProfilePage() {
           </button>
         </div>
       </main>
+
+      {/* Username Modal */}
+      {showUsernameModal && (
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center">
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setShowUsernameModal(false)} />
+          <div className="relative bg-white w-full sm:max-w-md sm:rounded-2xl rounded-t-2xl p-6 shadow-2xl">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-bold text-gray-800">ชื่อผู้ใช้</h2>
+              <button onClick={() => setShowUsernameModal(false)} className="text-gray-400 hover:text-gray-600">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">ชื่อผู้ใช้ (username)</label>
+              <div className="flex items-center border border-gray-300 rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-blue-500">
+                <span className="px-3 py-2.5 text-gray-400 text-sm bg-gray-50 border-r border-gray-300">@</span>
+                <input
+                  type="text"
+                  value={usernameInput}
+                  onChange={(e) => setUsernameInput(e.target.value.replace(/[^a-zA-Z0-9_.]/g, ""))}
+                  placeholder="your_username"
+                  className="flex-1 px-3 py-2.5 text-sm focus:outline-none"
+                  maxLength={30}
+                />
+              </div>
+              <p className="text-xs text-gray-400 mt-1">ตัวอักษร a-z, 0-9, _ และ . เท่านั้น</p>
+              {usernameError && <p className="text-xs text-red-500 mt-1">{usernameError}</p>}
+            </div>
+            <button
+              onClick={handleSaveUsername}
+              disabled={isSavingUsername}
+              className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-semibold rounded-xl transition-colors duration-200"
+            >
+              {saveUsernameSuccess ? "บันทึกแล้ว!" : isSavingUsername ? "กำลังบันทึก..." : "บันทึก"}
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Edit Info Modal */}
       {showEditModal && (
@@ -383,8 +523,7 @@ export default function ProfilePage() {
               </button>
             </div>
 
-            <div className="space-y-4 mb-6">
-              {/* Instagram */}
+            <div className="space-y-4 mb-5">
               <div>
                 <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-1.5">
                   <svg className="w-4 h-4 text-pink-500" viewBox="0 0 24 24" fill="none">
@@ -394,16 +533,8 @@ export default function ProfilePage() {
                   </svg>
                   Instagram
                 </label>
-                <input
-                  type="text"
-                  value={socialIg}
-                  onChange={(e) => setSocialIg(e.target.value)}
-                  placeholder="username (ไม่ต้องใส่ @)"
-                  className="w-full px-3 py-2.5 rounded-xl border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
+                <input type="text" value={socialIg} onChange={(e) => setSocialIg(e.target.value)} placeholder="username (ไม่ต้องใส่ @)" className="w-full px-3 py-2.5 rounded-xl border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
               </div>
-
-              {/* Facebook */}
               <div>
                 <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-1.5">
                   <svg className="w-4 h-4 text-blue-600" viewBox="0 0 24 24" fill="currentColor">
@@ -411,16 +542,8 @@ export default function ProfilePage() {
                   </svg>
                   Facebook
                 </label>
-                <input
-                  type="text"
-                  value={socialFacebook}
-                  onChange={(e) => setSocialFacebook(e.target.value)}
-                  placeholder="ชื่อหรือ URL โปรไฟล์"
-                  className="w-full px-3 py-2.5 rounded-xl border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
+                <input type="text" value={socialFacebook} onChange={(e) => setSocialFacebook(e.target.value)} placeholder="ชื่อหรือ URL โปรไฟล์" className="w-full px-3 py-2.5 rounded-xl border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
               </div>
-
-              {/* Line */}
               <div>
                 <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-1.5">
                   <svg className="w-4 h-4 text-green-500" viewBox="0 0 24 24" fill="currentColor">
@@ -428,16 +551,8 @@ export default function ProfilePage() {
                   </svg>
                   Line
                 </label>
-                <input
-                  type="text"
-                  value={socialLine}
-                  onChange={(e) => setSocialLine(e.target.value)}
-                  placeholder="Line ID"
-                  className="w-full px-3 py-2.5 rounded-xl border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
+                <input type="text" value={socialLine} onChange={(e) => setSocialLine(e.target.value)} placeholder="Line ID" className="w-full px-3 py-2.5 rounded-xl border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
               </div>
-
-              {/* Discord */}
               <div>
                 <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-1.5">
                   <svg className="w-4 h-4 text-indigo-500" viewBox="0 0 24 24" fill="currentColor">
@@ -445,16 +560,8 @@ export default function ProfilePage() {
                   </svg>
                   Discord
                 </label>
-                <input
-                  type="text"
-                  value={socialDiscord}
-                  onChange={(e) => setSocialDiscord(e.target.value)}
-                  placeholder="username หรือ server invite link"
-                  className="w-full px-3 py-2.5 rounded-xl border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
+                <input type="text" value={socialDiscord} onChange={(e) => setSocialDiscord(e.target.value)} placeholder="username หรือ server invite link" className="w-full px-3 py-2.5 rounded-xl border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
               </div>
-
-              {/* X (Twitter) */}
               <div>
                 <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-1.5">
                   <svg className="w-4 h-4 text-gray-900" viewBox="0 0 24 24" fill="currentColor">
@@ -462,14 +569,41 @@ export default function ProfilePage() {
                   </svg>
                   X (Twitter)
                 </label>
-                <input
-                  type="text"
-                  value={socialX}
-                  onChange={(e) => setSocialX(e.target.value)}
-                  placeholder="username (ไม่ต้องใส่ @)"
-                  className="w-full px-3 py-2.5 rounded-xl border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
+                <input type="text" value={socialX} onChange={(e) => setSocialX(e.target.value)} placeholder="username (ไม่ต้องใส่ @)" className="w-full px-3 py-2.5 rounded-xl border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
               </div>
+            </div>
+
+            {/* Main Contact Selector */}
+            <div className="mb-6 p-4 bg-blue-50 rounded-xl border border-blue-100">
+              <label className="block text-sm font-medium text-gray-700 mb-1">ช่องทางติดต่อหลัก</label>
+              <p className="text-xs text-gray-500 mb-3">ปุ่ม &quot;ติดต่อเจ้าของชีท&quot; จะใช้ช่องทางนี้</p>
+              <div className="flex flex-wrap gap-2">
+                <button
+                  onClick={() => setMainContact("")}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${mainContact === "" ? "bg-gray-600 text-white" : "bg-white text-gray-600 border border-gray-300 hover:bg-gray-50"}`}
+                >
+                  ไม่ระบุ
+                </button>
+                {CONTACT_OPTIONS.filter(o => {
+                  if (o.value === "ig") return socialIg.trim();
+                  if (o.value === "facebook") return socialFacebook.trim();
+                  if (o.value === "line") return socialLine.trim();
+                  if (o.value === "discord") return socialDiscord.trim();
+                  if (o.value === "x") return socialX.trim();
+                  return false;
+                }).map(o => (
+                  <button
+                    key={o.value}
+                    onClick={() => setMainContact(o.value)}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${mainContact === o.value ? "bg-blue-600 text-white" : "bg-white text-gray-600 border border-gray-300 hover:bg-blue-50"}`}
+                  >
+                    {o.label}
+                  </button>
+                ))}
+              </div>
+              {!socialIg.trim() && !socialFacebook.trim() && !socialLine.trim() && !socialDiscord.trim() && !socialX.trim() && (
+                <p className="text-xs text-gray-400 mt-2">กรอก social media ด้านบนก่อนเพื่อเลือกช่องทางหลัก</p>
+              )}
             </div>
 
             <button

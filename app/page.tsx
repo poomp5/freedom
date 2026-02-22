@@ -3,55 +3,7 @@ import Image from "next/image";
 import Bottombar from "./components/Bottombar";
 import Navbar from "./components/Navbar";
 import Countdown from "./components/Countdown";
-import PaginationFooter from "./components/PaginationFooter";
-import SheetRow from "@/app/components/SheetRow";
-
-const examType = "สอบปลายภาค" as const;
-
-const sheets = [
-  {
-    subject: "คณิตศาสตร์",
-    filename: "/m3/midterm2/math.pdf",
-    icon: "/assets/img/icon/math.png",
-    date: "17/11/2024",
-    term: "ม.3 เทอม 2",
-  },
-  {
-    subject: "วิทยาศาสตร์",
-    filename: "/m3/midterm2/sci.pdf",
-    icon: "/assets/img/icon/sci.png",
-    date: "17/11/2024",
-    term: "ม.3 เทอม 2",
-  },
-  {
-    subject: "ภาษาไทย",
-    filename: "/m3/midterm2/thai.pdf",
-    icon: "/assets/img/icon/thai.png",
-    date: "17/11/2024",
-    term: "ม.3 เทอม 2",
-  },
-  {
-    subject: "สังคมศึกษา",
-    filename: "/m3/midterm2/social.pdf",
-    icon: "/assets/img/icon/social.png",
-    date: "17/11/2024",
-    term: "ม.3 เทอม 2",
-  },
-  {
-    subject: "ประวัติศาสตร์",
-    filename: "/m3/midterm2/history.pdf",
-    icon: "/assets/img/icon/history.png",
-    date: "17/11/2024",
-    term: "ม.3 เทอม 2",
-  },
-  {
-    subject: "ภาษาอังกฤษ",
-    filename: "/m3/midterm2/eng.pdf",
-    icon: "/assets/img/icon/english.png",
-    date: "17/11/2024",
-    term: "ม.3 เทอม 2",
-  },
-];
+import HomeSheetSection from "./components/HomeSheetSection";
 
 
 export default function Home() {
@@ -81,7 +33,7 @@ export default function Home() {
                 </div>
 
                 <h1 className="mb-4 text-4xl md:text-5xl lg:text-7xl font-extrabold tracking-tight leading-none bg-gradient-to-r from-blue-600 via-blue-500 to-cyan-500 bg-clip-text text-transparent">
-                  {examType}
+                  สอบปลายภาค
                 </h1>
                 <p className="mb-6 text-lg text-gray-500 max-w-xl mx-auto lg:mx-0">
                   ฟรีด้อม รวมชีทสรุปทุกวิชา
@@ -145,42 +97,7 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Table Section */}
-        <section className="py-12 bg-gradient-to-b from-white to-blue-50/50">
-          <div className="px-4 mx-auto max-w-screen-xl md:mb-[4vh] mb-[12vh]">
-            <div className="mb-6">
-              <h2 className="text-2xl font-bold text-gray-800">ชีทสรุป ม.3</h2>
-              <p className="text-gray-500">เลือกชีทที่ต้องการแล้วกดโหลดได้เลย</p>
-            </div>
-            <div className="w-full overflow-hidden rounded-2xl shadow-lg border border-blue-100 bg-white">
-              <div className="w-full overflow-x-auto">
-                <table className="w-full whitespace-no-wrap">
-                  <thead>
-                    <tr className="text-xs font-semibold tracking-wide text-left text-blue-600 uppercase border-b border-blue-100 bg-gradient-to-r from-blue-50 to-cyan-50">
-                      <th className="px-4 py-4">ชื่อวิชา</th>
-                      <th className="px-4 py-4 whitespace-nowrap">รายละเอียด</th>
-                      <th className="px-4 py-4">ไฟล์</th>
-                      <th className="px-2 py-4">วันที่</th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-white divide-y divide-blue-50">
-                    {sheets.map((sheet, i) => (
-                      <SheetRow key={i} {...sheet} examType={examType} />
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-              <PaginationFooter
-                leftArrow={{ label: "เทอม 1", href: "/m3/midterm1" }}
-                rightArrow={{ label: "เทอม 2", href: "/m3/midterm2" }}
-                links={[
-                  { label: "กลางภาค", href: "/m3/midterm1", isActive: false },
-                  { label: "ปลายภาค", href: "/m3/final1", isActive: true },
-                ]}
-              />
-            </div>
-          </div>
-        </section>
+        <HomeSheetSection />
       </main>
     </div>
   );

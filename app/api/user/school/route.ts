@@ -12,12 +12,9 @@ export async function GET() {
   const user = await prisma.user.findUnique({
     where: { id: session.user.id },
     select: {
-      socialIg: true,
-      socialFacebook: true,
-      socialLine: true,
-      socialDiscord: true,
-      socialX: true,
-      mainContact: true,
+      gradeLevel: true,
+      schoolId: true,
+      school: { select: { id: true, name: true, province: true } },
     },
   });
 
@@ -29,17 +26,13 @@ export async function POST(request: NextRequest) {
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const body = await request.json();
-  const { socialIg, socialFacebook, socialLine, socialDiscord, socialX, mainContact } = body;
+  const { schoolId, gradeLevel } = body;
 
   await prisma.user.update({
     where: { id: session.user.id },
     data: {
-      socialIg: socialIg?.trim() || null,
-      socialFacebook: socialFacebook?.trim() || null,
-      socialLine: socialLine?.trim() || null,
-      socialDiscord: socialDiscord?.trim() || null,
-      socialX: socialX?.trim() || null,
-      mainContact: mainContact || null,
+      ...(schoolId !== undefined && { schoolId: schoolId || null }),
+      ...(gradeLevel !== undefined && { gradeLevel: gradeLevel || null }),
     },
   });
 

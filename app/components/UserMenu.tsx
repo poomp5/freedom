@@ -86,6 +86,14 @@ export default function UserMenu() {
               </p>
             </div>
 
+            <Link
+              href="/profile"
+              className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+              onClick={() => setIsOpen(false)}
+            >
+              โปรไฟล์
+            </Link>
+
             {/* Role-based menu items */}
             {(role === "admin" || role === "publisher") && (
               <Link
