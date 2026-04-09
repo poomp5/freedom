@@ -1,6 +1,6 @@
 /**
  * Bulk upload all PDFs from public/m1-m6 to Cloudflare R2
- * AND create Sheet records in the database so they appear on /sheets.
+ * AND create Sheet records in the database so they appear on /freedom.
  *
  * Usage:
  *   bun run scripts/upload-to-r2.ts
