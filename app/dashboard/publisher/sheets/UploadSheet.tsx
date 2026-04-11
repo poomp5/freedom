@@ -65,6 +65,11 @@ export default function UploadSheet({ onUploaded }: { onUploaded: () => void }) 
       return;
     }
 
+    if (selected.size === 0) {
+      setError("ไฟล์ PDF ว่างเปล่า กรุณาเลือกไฟล์ใหม่");
+      return;
+    }
+
     setError("");
     setFile(selected);
     setStatus("compressing");
@@ -74,7 +79,10 @@ export default function UploadSheet({ onUploaded }: { onUploaded: () => void }) 
       const arrayBuffer = await selected.arrayBuffer();
       const pdfDoc = await PDFDocument.load(arrayBuffer);
       const compressedBytes = await pdfDoc.save();
-      const blob = new Blob([compressedBytes.buffer as ArrayBuffer], { type: "application/pdf" });
+      const blob = new Blob([compressedBytes], { type: "application/pdf" });
+      if (blob.size === 0) {
+        throw new Error("ไฟล์ PDF หลังบีบอัดว่างเปล่า");
+      }
       setCompressedBlob(blob);
 
       const url = URL.createObjectURL(blob);
@@ -119,6 +127,11 @@ export default function UploadSheet({ onUploaded }: { onUploaded: () => void }) 
 
     if (!compressedBlob || !file) {
       setError("กรุณาเลือกไฟล์ PDF");
+      return;
+    }
+
+    if (compressedBlob.size === 0) {
+      setError("ไฟล์ PDF ว่างเปล่า กรุณาเลือกไฟล์ใหม่");
       return;
     }
 

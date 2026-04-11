@@ -1,5 +1,4 @@
 import { z } from "zod/v4";
-import { TRPCError } from "@trpc/server";
 import { createTRPCRouter, publisherOrAdminProcedure, protectedProcedure } from "../init";
 import { generatePresignedUploadUrl } from "@/lib/r2";
 
@@ -14,7 +13,7 @@ export const uploadRouter = createTRPCRouter({
         contentType: z.literal("application/pdf", {
           message: "รองรับเฉพาะไฟล์ PDF เท่านั้น",
         }),
-        fileSize: z.number().max(MAX_FILE_SIZE, "ไฟล์มีขนาดเกิน 25MB"),
+        fileSize: z.number().min(1, "ไฟล์ PDF ว่างเปล่า").max(MAX_FILE_SIZE, "ไฟล์มีขนาดเกิน 25MB"),
       })
     )
     .mutation(async ({ input }) => {
@@ -33,7 +32,7 @@ export const uploadRouter = createTRPCRouter({
         contentType: z.enum(["image/jpeg", "image/png", "image/webp"], {
           message: "รองรับเฉพาะไฟล์ JPEG, PNG, หรือ WebP",
         }),
-        fileSize: z.number().max(MAX_SLIP_SIZE, "ไฟล์สลิปมีขนาดเกิน 5MB"),
+        fileSize: z.number().min(1, "ไฟล์สลิปว่างเปล่า").max(MAX_SLIP_SIZE, "ไฟล์สลิปมีขนาดเกิน 5MB"),
       })
     )
     .mutation(async ({ input }) => {
