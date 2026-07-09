@@ -80,7 +80,9 @@ export default function UploadSheet({ onUploaded }: { onUploaded: () => void }) 
       const arrayBuffer = await selected.arrayBuffer();
       const pdfDoc = await PDFDocument.load(arrayBuffer);
       const compressedBytes = await pdfDoc.save();
-      const blob = new Blob([compressedBytes], { type: "application/pdf" });
+      const compressedBuffer = new ArrayBuffer(compressedBytes.byteLength);
+      new Uint8Array(compressedBuffer).set(compressedBytes);
+      const blob = new Blob([compressedBuffer], { type: "application/pdf" });
       if (blob.size === 0) {
         throw new Error("ไฟล์ PDF หลังบีบอัดว่างเปล่า");
       }

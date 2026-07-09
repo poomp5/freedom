@@ -89,6 +89,7 @@ export default function Home() {
                     src="/assets/img/freedom-avatar.png"
                     alt="Freedom Avatar"
                     fill
+                    sizes="384px"
                     className="object-contain drop-shadow-2xl"
                     priority
                   />
