@@ -5,10 +5,14 @@ import Navbar from "./components/Navbar";
 import Countdown from "./components/Countdown";
 import HomeSheetSection from "./components/HomeSheetSection";
 import CommunityUpdates from "./components/CommunityUpdates";
+import { HydrateClient, prefetch, trpc } from "@/trpc/server";
 
 
-export default function Home() {
+export default async function Home() {
+  await prefetch(trpc.settings.getCountdown.queryOptions());
+
   return (
+    <HydrateClient>
     <div>
       <Navbar />
       <Bottombar />
@@ -103,5 +107,6 @@ export default function Home() {
         <HomeSheetSection />
       </main>
     </div>
+    </HydrateClient>
   );
 }

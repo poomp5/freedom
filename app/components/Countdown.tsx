@@ -56,35 +56,145 @@ function getTimeLeft(targetTimestamp: number): TimeLeft | null {
   };
 }
 
+function CountdownSkeleton() {
+  return (
+    <div className="mt-2 kanit text-gray-600 font-bold text-center lg:text-left max-w-screen-sm md:max-w-screen-xl">
+      <ul className="inline-flex space-x-2 md:space-x-8">
+        {["DAYS", "HOURS", "MINUTES", "SECONDS"].map((label) => (
+          <li key={label} className="inline-block rounded-lg p-3">
+            <span className="inline-block w-10 h-10 bg-gray-100 animate-pulse rounded" />
+            <div className="mt-2 font-semibold text-gray-500">{label}</div>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
 export default function Countdown() {
   const trpc = useTRPC();
   const [fallbackTargetTimestamp] = useState(getFallbackTargetTimestamp);
-  const [timeLeft, setTimeLeft] = useState<TimeLeft | null>(() =>
-    getTimeLeft(fallbackTargetTimestamp)
-  );
-  const [isCountdownOver, setIsCountdownOver] = useState(
-    () => getTimeLeft(fallbackTargetTimestamp) === null
-  );
-  const { data: countdownSetting } = useQuery(
+  const [timeLeft, setTimeLeft] = useState<TimeLeft | null>(null);
+  const [isCountdownOver, setIsCountdownOver] = useState(false);
+  const { data: countdownSetting, isPending } = useQuery(
     trpc.settings.getCountdown.queryOptions()
   );
 
-  const targetTimestamp = countdownSetting?.targetAt
+  const isReady = !isPending;
+  const targetTimestamp = isReady
+    ? countdownSetting?.targetAt
+      ? new Date(countdownSetting.targetAt).getTime()
+      : fallbackTargetTimestamp
+    : null;
+
+  const dbTargetTimestamp = countdownSetting?.targetAt
     ? new Date(countdownSetting.targetAt).getTime()
-    : fallbackTargetTimestamp;
+    : null;
+
+  // #region agent log
+  useEffect(() => {
+    if (!isReady || targetTimestamp === null) return;
+
+    fetch("http://127.0.0.1:7645/ingest/6c303bc5-ee2f-407a-bde7-e362c1a5a85e", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Debug-Session-Id": "90ed45",
+      },
+      body: JSON.stringify({
+        sessionId: "90ed45",
+        runId: "post-fix",
+        hypothesisId: "A,C,E",
+        location: "Countdown.tsx:targetTimestamp",
+        message: "target source comparison",
+        data: {
+          isReady,
+          hasDbData: !!countdownSetting?.targetAt,
+          fallbackTargetTimestamp,
+          dbTargetTimestamp,
+          activeTargetTimestamp: targetTimestamp,
+          fallbackIsPast: getTimeLeft(fallbackTargetTimestamp) === null,
+          dbIsPast: dbTargetTimestamp
+            ? getTimeLeft(dbTargetTimestamp) === null
+            : null,
+          activeIsPast: getTimeLeft(targetTimestamp) === null,
+          isCountdownOver,
+        },
+        timestamp: Date.now(),
+      }),
+    }).catch(() => {});
+  }, [
+    isReady,
+    countdownSetting?.targetAt,
+    targetTimestamp,
+    fallbackTargetTimestamp,
+    dbTargetTimestamp,
+    isCountdownOver,
+  ]);
+  // #endregion
 
   useEffect(() => {
-    const id = setInterval(() => {
-      const nextTimeLeft = getTimeLeft(targetTimestamp);
-      if (!nextTimeLeft) {
-        setIsCountdownOver(true);
-        setTimeLeft(null);
-        clearInterval(id);
-        return;
-      }
+    if (targetTimestamp === null) return;
 
-      setIsCountdownOver(false);
+    const tick = () => {
+      const nextTimeLeft = getTimeLeft(targetTimestamp);
+      const over = nextTimeLeft === null;
+      setIsCountdownOver(over);
       setTimeLeft(nextTimeLeft);
+      return nextTimeLeft;
+    };
+
+    // #region agent log
+    const initialTimeLeft = tick();
+    fetch("http://127.0.0.1:7645/ingest/6c303bc5-ee2f-407a-bde7-e362c1a5a85e", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Debug-Session-Id": "90ed45",
+      },
+      body: JSON.stringify({
+        sessionId: "90ed45",
+        runId: "post-fix",
+        hypothesisId: "B",
+        location: "Countdown.tsx:useEffect",
+        message: "immediate sync on target change",
+        data: {
+          targetTimestamp,
+          hasTimeLeft: initialTimeLeft !== null,
+          computedIsPast: initialTimeLeft === null,
+        },
+        timestamp: Date.now(),
+      }),
+    }).catch(() => {});
+    // #endregion
+
+    if (initialTimeLeft === null) return;
+
+    const id = setInterval(() => {
+      const nextTimeLeft = tick();
+      // #region agent log
+      fetch("http://127.0.0.1:7645/ingest/6c303bc5-ee2f-407a-bde7-e362c1a5a85e", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Debug-Session-Id": "90ed45",
+        },
+        body: JSON.stringify({
+          sessionId: "90ed45",
+          runId: "post-fix",
+          hypothesisId: "B,D",
+          location: "Countdown.tsx:interval",
+          message: "interval tick",
+          data: {
+            targetTimestamp,
+            hasTimeLeft: nextTimeLeft !== null,
+            willSetOver: nextTimeLeft === null,
+          },
+          timestamp: Date.now(),
+        }),
+      }).catch(() => {});
+      // #endregion
+      if (nextTimeLeft === null) clearInterval(id);
     }, 1000);
 
     return () => clearInterval(id);
@@ -96,6 +206,14 @@ export default function Countdown() {
     ) : (
       String(v).padStart(2, "0")
     );
+
+  if (!isReady) {
+    return (
+      <div className="flex flex-col items-center lg:items-start">
+        <CountdownSkeleton />
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col items-center lg:items-start">

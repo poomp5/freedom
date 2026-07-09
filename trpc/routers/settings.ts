@@ -16,8 +16,35 @@ export const settingsRouter = createTRPCRouter({
         where: { id: DEFAULT_COUNTDOWN_ID },
       });
 
+      const targetAt = setting?.targetAt ?? getFallbackTargetAt();
+      // #region agent log
+      try {
+        const fs = await import("fs");
+        const now = Date.now();
+        const targetTs = targetAt.getTime();
+        fs.appendFileSync(
+          "/Users/poomp5/Documents/GitHub/freedom/.cursor/debug-90ed45.log",
+          JSON.stringify({
+            sessionId: "90ed45",
+            runId: "post-fix",
+            hypothesisId: "A,E",
+            location: "settings.ts:getCountdown",
+            message: "server countdown response",
+            data: {
+              source: setting?.targetAt ? "db" : "server-fallback",
+              targetAt: targetAt.toISOString(),
+              targetTs,
+              isPast: targetTs <= now,
+              serverFallback: getFallbackTargetAt().toISOString(),
+            },
+            timestamp: now,
+          }) + "\n"
+        );
+      } catch {}
+      // #endregion
+
       return {
-        targetAt: setting?.targetAt ?? getFallbackTargetAt(),
+        targetAt,
         updatedAt: setting?.updatedAt ?? null,
       };
     } catch (error) {
