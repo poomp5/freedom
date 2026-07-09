@@ -19,6 +19,7 @@ import {
   X,
   Building2,
   DollarSign,
+  Settings,
 } from "lucide-react";
 
 interface SidebarProps {
@@ -44,7 +45,10 @@ export default function DashboardSidebar({ role, userName }: SidebarProps) {
 
   useEffect(() => {
     const saved = localStorage.getItem("sidebar-collapsed");
-    if (saved !== null) setCollapsed(JSON.parse(saved));
+    if (saved !== null) {
+      const id = window.setTimeout(() => setCollapsed(JSON.parse(saved)), 0);
+      return () => window.clearTimeout(id);
+    }
   }, []);
 
   useEffect(() => {
@@ -53,7 +57,8 @@ export default function DashboardSidebar({ role, userName }: SidebarProps) {
 
   // Close mobile menu on route change
   useEffect(() => {
-    setMobileOpen(false);
+    const id = window.setTimeout(() => setMobileOpen(false), 0);
+    return () => window.clearTimeout(id);
   }, [pathname]);
 
   useEffect(() => {
@@ -111,6 +116,11 @@ export default function DashboardSidebar({ role, userName }: SidebarProps) {
             label: "จัดการชีท",
             href: "/dashboard/admin/sheets",
             icon: <FileText size={20} />,
+          },
+          {
+            label: "ตั้งค่าเว็บ",
+            href: "/dashboard/admin/settings",
+            icon: <Settings size={20} />,
           },
         ]
       : [];

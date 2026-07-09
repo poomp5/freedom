@@ -21,11 +21,12 @@ const SUBJECTS = [
   "อื่นๆ",
 ];
 
-const LEVELS = ["ม.1", "ม.2", "ม.3", "ม.4", "ม.5", "ม.6"];
+const LEVELS = ["ม.1", "ม.2", "ม.3", "ม.4", "ม.5", "ม.6"] as const;
 const EXAM_TYPES = ["กลางภาค", "ปลายภาค"];
 const TERMS = ["เทอม 1", "เทอม 2"];
 
 type UploadStatus = "idle" | "compressing" | "uploading" | "saving" | "done" | "error";
+type Level = (typeof LEVELS)[number];
 
 export default function UploadSheet({ onUploaded }: { onUploaded: () => void }) {
   const trpc = useTRPC();
@@ -33,7 +34,7 @@ export default function UploadSheet({ onUploaded }: { onUploaded: () => void }) 
   const [description, setDescription] = useState("");
   const [subject, setSubject] = useState("");
   const [customSubject, setCustomSubject] = useState("");
-  const [level, setLevel] = useState("");
+  const [level, setLevel] = useState<Level | "">("");
   const [examType, setExamType] = useState("");
   const [term, setTerm] = useState("");
   const [isFree, setIsFree] = useState(true);
@@ -140,6 +141,8 @@ export default function UploadSheet({ onUploaded }: { onUploaded: () => void }) 
       setStatus("uploading");
       const { uploadUrl, publicUrl, key } = await presignMutation.mutateAsync({
         fileName: file.name,
+        level,
+        subject: finalSubject,
         contentType: "application/pdf" as const,
         fileSize: compressedBlob.size,
       });
@@ -160,7 +163,7 @@ export default function UploadSheet({ onUploaded }: { onUploaded: () => void }) 
       await createSheetMutation.mutateAsync({
         title,
         description,
-        subject: subject === "อื่นๆ" ? customSubject.trim() : subject,
+        subject: finalSubject,
         level,
         examType,
         term,
@@ -259,7 +262,7 @@ export default function UploadSheet({ onUploaded }: { onUploaded: () => void }) 
             </label>
             <select
               value={level}
-              onChange={(e) => setLevel(e.target.value)}
+              onChange={(e) => setLevel(e.target.value as Level | "")}
               className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
               <option value="">เลือกชั้น</option>

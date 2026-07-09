@@ -20,6 +20,7 @@ const PUBLIC_URL = process.env.R2_PUBLIC_URL!;
 
 const MAX_SIZE = 5 * 1024 * 1024; // 5MB
 const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
+const AVATAR_PREFIX = "freedom/avatar";
 
 export async function POST(request: NextRequest) {
   const session = await auth.api.getSession({ headers: await headers() });
@@ -41,7 +42,7 @@ export async function POST(request: NextRequest) {
   }
 
   const ext = file.name.split(".").pop() ?? "jpg";
-  const key = `avatars/${session.user.id}-${uuidv4()}.${ext}`;
+  const key = `${AVATAR_PREFIX}/${session.user.id}-${uuidv4()}.${ext}`;
 
   const buffer = Buffer.from(await file.arrayBuffer());
 

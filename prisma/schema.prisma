@@ -210,3 +210,12 @@ model SheetAccess {
   @@index([userId])
   @@index([sheetId])
 }
+
+// ─── Site Settings ───
+
+model CountdownSetting {
+  id        String   @id @default("default")
+  targetAt  DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

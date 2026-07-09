@@ -4,6 +4,7 @@ import Bottombar from "./components/Bottombar";
 import Navbar from "./components/Navbar";
 import Countdown from "./components/Countdown";
 import HomeSheetSection from "./components/HomeSheetSection";
+import CommunityUpdates from "./components/CommunityUpdates";
 
 
 export default function Home() {
@@ -36,7 +37,7 @@ export default function Home() {
                   สอบปลายภาค
                 </h1>
                 <p className="mb-6 text-lg text-gray-500 max-w-xl mx-auto lg:mx-0">
-                  ฟรีด้อม รวมชีทสรุปทุกวิชา
+                  ฟรีด้อม รวมชีทสรุปทุกวิชา พร้อมชีตใหม่จากชุมชน
                 </p>
 
                 <Countdown />
@@ -97,6 +98,7 @@ export default function Home() {
           </div>
         </section>
 
+        <CommunityUpdates />
         <HomeSheetSection />
       </main>
     </div>

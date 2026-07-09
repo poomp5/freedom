@@ -22,9 +22,10 @@ const PUBLIC_URL = process.env.R2_PUBLIC_URL!;
 export async function generatePresignedUploadUrl(
   fileName: string,
   contentType: string,
-  fileSize: number
+  fileSize: number,
+  folder = "freedom"
 ) {
-  const key = `freedom/${uuidv4()}-${fileName}`;
+  const key = `${folder}/${fileName}`;
 
   const command = new PutObjectCommand({
     Bucket: BUCKET,
@@ -37,6 +38,20 @@ export async function generatePresignedUploadUrl(
   const publicUrl = `${PUBLIC_URL}/${key}`;
 
   return { uploadUrl, publicUrl, key };
+}
+
+export async function generatePresignedUniqueUploadUrl(
+  fileName: string,
+  contentType: string,
+  fileSize: number,
+  folder = "freedom"
+) {
+  return generatePresignedUploadUrl(
+    `${uuidv4()}-${fileName}`,
+    contentType,
+    fileSize,
+    folder
+  );
 }
 
 export async function deleteFromR2(key: string) {

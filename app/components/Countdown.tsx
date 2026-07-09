@@ -1,5 +1,7 @@
 "use client";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useTRPC } from "@/trpc/client";
 import { EXAM_TARGET, TZ_OFFSET_HOURS } from "./config";
 
 interface TimeLeft {
@@ -9,71 +11,80 @@ interface TimeLeft {
   seconds: number;
 }
 
+const SECOND = 1000;
+const MINUTE = 60 * SECOND;
+const HOUR = 60 * MINUTE;
+const DAY = 24 * HOUR;
+
+function getFallbackTargetTimestamp() {
+  const makeTargetTimestampUTC = (y: number) =>
+    Date.UTC(
+      y,
+      EXAM_TARGET.month - 1,
+      EXAM_TARGET.day,
+      EXAM_TARGET.hour - TZ_OFFSET_HOURS,
+      EXAM_TARGET.minute,
+      EXAM_TARGET.second,
+      0
+    );
+
+  const nowUTC = Date.now();
+  let targetYear: number;
+
+  if (EXAM_TARGET.everyYear) {
+    const thisYear = new Date().getFullYear();
+    const thisYearTs = makeTargetTimestampUTC(thisYear);
+    targetYear = nowUTC > thisYearTs ? thisYear + 1 : thisYear;
+  } else {
+    // @ts-expect-error year may be absent by design
+    targetYear = EXAM_TARGET.year ?? new Date().getFullYear();
+  }
+
+  return makeTargetTimestampUTC(targetYear);
+}
+
+function getTimeLeft(targetTimestamp: number): TimeLeft | null {
+  const diff = targetTimestamp - Date.now();
+
+  if (diff <= 0) return null;
+
+  return {
+    days: Math.floor(diff / DAY),
+    hours: Math.floor((diff % DAY) / HOUR),
+    minutes: Math.floor((diff % HOUR) / MINUTE),
+    seconds: Math.floor((diff % MINUTE) / SECOND),
+  };
+}
+
 export default function Countdown() {
-  const [timeLeft, setTimeLeft] = useState<TimeLeft | null>(null);
-  const [isCountdownOver, setIsCountdownOver] = useState(false);
+  const trpc = useTRPC();
+  const [fallbackTargetTimestamp] = useState(getFallbackTargetTimestamp);
+  const [timeLeft, setTimeLeft] = useState<TimeLeft | null>(() =>
+    getTimeLeft(fallbackTargetTimestamp)
+  );
+  const [isCountdownOver, setIsCountdownOver] = useState(
+    () => getTimeLeft(fallbackTargetTimestamp) === null
+  );
+  const { data: countdownSetting } = useQuery(
+    trpc.settings.getCountdown.queryOptions()
+  );
 
-  // สร้าง timestamp ของเป้าหมายในรูป UTC จากเวลาไทย
-  const targetTimestamp = useMemo(() => {
-    const makeTargetTimestampUTC = (y: number) =>
-      Date.UTC(
-        y,
-        EXAM_TARGET.month - 1,
-        EXAM_TARGET.day,
-        EXAM_TARGET.hour - TZ_OFFSET_HOURS, // แปลงเวลาไทย -> UTC
-        EXAM_TARGET.minute,
-        EXAM_TARGET.second,
-        0
-      );
-
-    const nowUTC = Date.now();
-
-    // กำหนดปีเป้าหมาย
-    let targetYear: number;
-    if (EXAM_TARGET.everyYear) {
-      const thisYear = new Date().getFullYear();
-      const thisYearTs = makeTargetTimestampUTC(thisYear);
-      targetYear = nowUTC > thisYearTs ? thisYear + 1 : thisYear;
-    } else {
-      // ถ้าระบุปีตายตัว (เพิ่ม field year ใน EXAM_TARGET)
-      // @ts-expect-error year may be absent by design
-      targetYear = EXAM_TARGET.year ?? new Date().getFullYear();
-    }
-
-    return makeTargetTimestampUTC(targetYear);
-  }, []);
+  const targetTimestamp = countdownSetting?.targetAt
+    ? new Date(countdownSetting.targetAt).getTime()
+    : fallbackTargetTimestamp;
 
   useEffect(() => {
-    const SECOND = 1000;
-    const MINUTE = 60 * SECOND;
-    const HOUR = 60 * MINUTE;
-    const DAY = 24 * HOUR;
-
-    const tick = (): TimeLeft | null => {
-      const now = Date.now();
-      const diff = targetTimestamp - now;
-
-      if (diff <= 0) {
+    const id = setInterval(() => {
+      const nextTimeLeft = getTimeLeft(targetTimestamp);
+      if (!nextTimeLeft) {
         setIsCountdownOver(true);
-        return null;
+        setTimeLeft(null);
+        clearInterval(id);
+        return;
       }
 
-      return {
-        days: Math.floor(diff / DAY),
-        hours: Math.floor((diff % DAY) / HOUR),
-        minutes: Math.floor((diff % HOUR) / MINUTE),
-        seconds: Math.floor((diff % MINUTE) / SECOND),
-      };
-    };
-
-    // initial
-    const init = tick();
-    if (init) setTimeLeft(init);
-
-    const id = setInterval(() => {
-      const t = tick();
-      if (!t) clearInterval(id);
-      else setTimeLeft(t);
+      setIsCountdownOver(false);
+      setTimeLeft(nextTimeLeft);
     }, 1000);
 
     return () => clearInterval(id);
