@@ -2,6 +2,7 @@ import { z } from "zod/v4";
 import { TRPCError } from "@trpc/server";
 import {
   createTRPCRouter,
+  baseProcedure,
   protectedProcedure,
   adminProcedure,
 } from "../init";
@@ -93,6 +94,70 @@ export const usersRouter = createTRPCRouter({
           createdAt: sheet.createdAt,
         };
       });
+    }),
+
+  getPublicProfile: baseProcedure
+    .input(z.object({ username: z.string() }))
+    .query(async ({ input }) => {
+      const user = await prisma.user.findUnique({
+        where: { username: input.username },
+        select: {
+          id: true,
+          name: true,
+          username: true,
+          image: true,
+          gradeLevel: true,
+          createdAt: true,
+          school: { select: { name: true, province: true } },
+          socialIg: true,
+          socialFacebook: true,
+          socialLine: true,
+          socialDiscord: true,
+          socialX: true,
+          mainContact: true,
+          _count: { select: { sheets: true } },
+        },
+      });
+
+      if (!user) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "ไม่พบผู้ใช้นี้" });
+      }
+
+      const sheets = await prisma.sheet.findMany({
+        where: { uploadedBy: user.id },
+        include: { ratings: { select: { score: true } } },
+        orderBy: { createdAt: "desc" },
+      });
+
+      const sheetsWithRating = sheets.map((sheet) => {
+        const totalRatings = sheet.ratings.length;
+        const averageRating =
+          totalRatings > 0
+            ? Math.round(
+                (sheet.ratings.reduce((sum, r) => sum + r.score, 0) /
+                  totalRatings) *
+                  10
+              ) / 10
+            : 0;
+
+        return {
+          id: sheet.id,
+          title: sheet.title,
+          description: sheet.description,
+          subject: sheet.subject,
+          level: sheet.level,
+          examType: sheet.examType,
+          term: sheet.term,
+          pdfUrl: sheet.pdfUrl,
+          isFree: sheet.isFree,
+          price: sheet.price,
+          averageRating,
+          totalRatings,
+          createdAt: sheet.createdAt,
+        };
+      });
+
+      return { user, sheets: sheetsWithRating };
     }),
 
   setBankAccount: protectedProcedure

@@ -1,11 +1,13 @@
 "use client";
 
+import Link from "next/link";
 import { User, Calendar, ExternalLink, FileText, Eye } from "lucide-react";
 import StarRating from "@/app/components/StarRating";
 
 type SheetUploader = {
   id: string;
   name: string;
+  username: string | null;
   image: string | null;
   socialIg: string | null;
   socialFacebook: string | null;
@@ -173,7 +175,17 @@ export default function SheetCard({ sheet, isLoggedIn, userId }: SheetCardProps)
         <div className="mt-auto pt-3 flex items-center justify-between border-t border-gray-50">
           <div className="flex items-center gap-1.5 text-xs text-gray-400">
             <User className="w-3.5 h-3.5" />
-            <span>{u.name}</span>
+            {u.username ? (
+              <Link
+                href={`/u/${u.username}`}
+                onClick={(e) => e.stopPropagation()}
+                className="hover:text-blue-600 hover:underline"
+              >
+                @{u.username}
+              </Link>
+            ) : (
+              <span>{u.name}</span>
+            )}
             <span className="mx-1">·</span>
             <Calendar className="w-3.5 h-3.5" />
             <span>

@@ -1,112 +1,118 @@
 import Link from "next/link";
 import Image from "next/image";
+import { ArrowDown, ArrowRight, ArrowUpRight, BookOpen, Check, Heart, Sparkles, Upload, Users } from "lucide-react";
 import Bottombar from "./components/Bottombar";
 import Navbar from "./components/Navbar";
 import Countdown from "./components/Countdown";
 import HomeSheetSection from "./components/HomeSheetSection";
 import CommunityUpdates from "./components/CommunityUpdates";
+import { basePath } from "./components/config";
 import { HydrateClient, prefetch, trpc } from "@/trpc/server";
+import styles from "./page.module.css";
 
+const levels = [
+  { grade: 1, title: "เริ่มต้นบทใหม่", text: "ค่อย ๆ ปูพื้นฐาน ไปด้วยกัน" },
+  { grade: 2, title: "ต่อยอดความเข้าใจ", text: "ทบทวนให้แม่น พร้อมบทเรียนใหม่" },
+  { grade: 3, title: "พร้อมก้าวต่อไป", text: "เก็บเนื้อหา ม.ต้น ให้ครบก่อนสอบ" },
+  { grade: 4, title: "เปิดโลก ม.ปลาย", text: "วิชาใหม่แค่ไหน ก็เริ่มเข้าใจได้" },
+  { grade: 5, title: "เก็บทุกบทสำคัญ", text: "เติมความมั่นใจ ทีละวิชา" },
+  { grade: 6, title: "เข้าใกล้เป้าหมาย", text: "ทบทวนครั้งสำคัญ ก่อนก้าวต่อไป" },
+];
+const faqs = [
+  ["เริ่มหาชีทสรุปได้จากตรงไหน?", "เลือกระดับชั้น ม.1–ม.6 ของคุณ แล้วเลือกเทอมและการสอบที่ต้องการ หรือเข้าไปที่ชีทจากชุมชนเพื่อค้นหาตามวิชาได้เลย"],
+  ["ชีทสรุปอ่านฟรีไหม?", "ชีทในคลังสรุปของ Freedom เปิดให้ดาวน์โหลดฟรี ส่วนชีทจากชุมชนมีทั้งแบบฟรีและมีค่าใช้จ่าย โดยจะแสดงราคาไว้บนแต่ละชีท"],
+  ["อยากแบ่งปันชีทของตัวเอง ต้องทำอย่างไร?", "เข้าสู่ระบบ แล้วไปที่หน้าอัปโหลดชีท หากยังไม่ได้เป็นผู้เผยแพร่ สามารถส่งคำขอผ่านระบบก่อนเริ่มแบ่งปันผลงานได้"],
+];
 
 export default async function Home() {
   await prefetch(trpc.settings.getCountdown.queryOptions());
 
   return (
     <HydrateClient>
-    <div>
-      <Navbar />
-      <Bottombar />
-      <main className="h-full overflow-y-auto">
-        {/* Hero Section */}
-        <section className="relative overflow-hidden bg-gradient-to-br from-blue-50 via-white to-cyan-50">
-          {/* Background decorations */}
-          <div className="absolute inset-0 overflow-hidden pointer-events-none">
-            <div className="absolute -top-40 -left-40 w-80 h-80 bg-blue-200/40 rounded-full blur-3xl"></div>
-            <div className="absolute top-20 right-0 w-96 h-96 bg-cyan-200/30 rounded-full blur-3xl"></div>
-          </div>
-
-          <div className="relative py-12 px-4 mx-auto max-w-screen-xl lg:py-20">
-            <div className="flex flex-col-reverse lg:flex-row items-center justify-between gap-8 lg:gap-12">
-              {/* Left - Text Content */}
-              <div className="flex-1 text-center lg:text-left">
-                <div className="inline-flex items-center px-4 py-2 mb-6 bg-blue-100 text-blue-700 rounded-full text-sm font-medium">
-                  <span className="relative flex h-2 w-2 mr-2">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
-                  </span>
-                  เตรียมตัวสอบด้วยชีทสรุป
+      <div className={styles.landing}>
+        <Navbar />
+        <Bottombar />
+        <main>
+          <section className={styles.hero}>
+            <div className={`${styles.container} ${styles.heroGrid}`}>
+              <div className={styles.heroCopy}>
+                <span className={styles.eyebrow}><span className={styles.dot} /> พื้นที่เล็ก ๆ ของคนอยากเรียนรู้</span>
+                <h1>ฟรีด้อม<br /><span>พื้นที่แบ่งปัน</span></h1>
+                <p className={styles.heroLead}>ชีทดี ๆ จากเพื่อน ถึงเพื่อน</p>
+                <p className={styles.description}>รวมชีทสรุป ม.1–ม.6 และความรู้จากชุมชน Freedom<br className="hidden sm:block" /> ให้การทบทวนก่อนสอบง่ายขึ้น ในแบบของคุณ</p>
+                <div className={styles.perks}>
+                  {["ครบทั้ง ม.ต้น และ ม.ปลาย", "เลือกอ่านได้ทุกที่"].map(text => <span key={text}><Check size={15} />{text}</span>)}
                 </div>
-
-                <h1 className="mb-4 text-4xl md:text-5xl lg:text-7xl font-extrabold tracking-tight leading-none bg-gradient-to-r from-blue-600 via-blue-500 to-cyan-500 bg-clip-text text-transparent">
-                  สอบปลายภาค
-                </h1>
-                <p className="mb-6 text-lg text-gray-500 max-w-xl mx-auto lg:mx-0">
-                  ฟรีด้อม รวมชีทสรุปทุกวิชา พร้อมชีตใหม่จากชุมชน
-                </p>
-
-                <Countdown />
-
-                <div className="mt-8 flex flex-col space-y-3 sm:flex-row sm:space-y-0 sm:space-x-4 justify-center lg:justify-start">
-                  <Link
-                    href="/select"
-                    className="group inline-flex justify-center items-center py-3 px-6 text-base lg:py-4 lg:px-8 lg:text-lg font-semibold text-center text-white rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 shadow-lg shadow-blue-500/30 hover:shadow-xl hover:shadow-blue-500/40 transition-all duration-300 hover:-translate-y-1"
-                  >
-                    โหลดชีทสรุป
-                    <svg
-                      className="w-5 h-5 ms-2 transition-transform duration-300 group-hover:-translate-y-1"
-                      aria-hidden="true"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        stroke="currentColor"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M12 13V4M7 14H5a1 1 0 0 0-1 1v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4a1 1 0 0 0-1-1h-2m-1-5-4 5-4-5m9 8h.01"
-                      />
-                    </svg>
-                  </Link>
-                  <Link
-                    href="https://www.instagram.com/act.freedom"
-                    className="group inline-flex justify-center items-center py-3 px-6 text-base lg:py-4 lg:px-8 lg:text-lg font-semibold text-center text-gray-700 rounded-xl bg-white border-2 border-gray-200 hover:border-blue-300 hover:bg-blue-50 shadow-sm hover:shadow-md transition-all duration-300"
-                  >
-                    <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
-                    </svg>
-                    ติดตามพวกเรา
-                  </Link>
+                <div className={styles.actions}>
+                  <a href="#levels" className={styles.primary}>เริ่มหาชีทสรุป <ArrowDown size={18} /></a>
+                  <Link href="/sheets" className={styles.secondary}>สำรวจชีทจากชุมชน <ArrowUpRight size={18} /></Link>
                 </div>
               </div>
-
-              {/* Right - Avatar Image (hidden on mobile) */}
-              <div className="hidden lg:block flex-shrink-0 relative z-0">
-                <div className="relative w-96 h-96">
-                  {/* Glow effect behind image */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-blue-400 to-cyan-400 rounded-full blur-2xl opacity-30 animate-pulse"></div>
-                  {/* Decorative ring */}
-                  <div className="absolute inset-0 rounded-full border-4 border-blue-200/50"></div>
-                  <div className="absolute inset-4 rounded-full border-2 border-cyan-200/50"></div>
-                  {/* Image */}
-                  <Image
-                    src="/assets/img/freedom-avatar.png"
-                    alt="Freedom Avatar"
-                    fill
-                    sizes="384px"
-                    className="object-contain drop-shadow-2xl"
-                    priority
-                  />
+              <div className={styles.art}>
+                <span className={styles.artLabel}>A LITTLE NOTE, A BIG DIFFERENCE.</span>
+                <div className={styles.backSheet} aria-hidden="true" />
+                <div className={styles.noteSheet}>
+                  <div className={styles.noteTop}><BookOpen size={22} /><span>FREEDOM STUDY CLUB</span><Sparkles size={19} /></div>
+                  <p className={styles.noteHeading}>เรื่องยาก ๆ<br /><span>เข้าใจได้ :)</span></p>
+                  <div className={styles.noteLines} aria-hidden="true"><i /><i /><i /></div>
+                  <div className={styles.subjects}><span>คณิตศาสตร์</span><span>วิทยาศาสตร์</span><span>ภาษาอังกฤษ</span></div>
+                  <div className={styles.noteBottom}><span>สรุปไว้ให้แล้ว</span><ArrowUpRight size={24} /></div>
                 </div>
+                <div className={styles.sticker}><Sparkles size={17} /> อ่านนิด เข้าใจอีกหน่อย</div>
+                <div className={styles.mascot}><Image src="/assets/img/freedom-avatar.png" alt="มาสคอต Freedom เพื่อนช่วยอ่านหนังสือ" width={190} height={190} priority /></div>
+                <span className={styles.artCaption}>your next chapter starts here ↗</span>
               </div>
             </div>
-          </div>
-        </section>
+          </section>
 
-        <CommunityUpdates />
-        <HomeSheetSection />
-      </main>
-    </div>
+          <div className={styles.facts}>
+            <div className={styles.container}>
+              <div><strong>ม.1–ม.6</strong><span>เติบโตไปด้วยกันทุกชั้นปี</span></div>
+              <div><strong>ทุกเทอม</strong><span>ทั้งกลางภาคและปลายภาค</span></div>
+              <div><strong>เพื่อนช่วยเพื่อน</strong><span>ส่งต่อความรู้ผ่านชีทสรุป</span></div>
+              <div><strong>ทุกที่ ทุกเวลา</strong><span>ทบทวนในจังหวะของคุณ</span></div>
+            </div>
+          </div>
+
+          <section id="levels" className={`${styles.container} ${styles.section}`}>
+            <div className={styles.sectionHead}>
+              <div><span className={styles.kicker}>เริ่มจากห้องเรียนของคุณ</span><h2>วันนี้ อยากทบทวนอะไร?</h2><p>เลือกระดับชั้น แล้วไปเจอชีทที่ใช่กัน</p></div>
+              <Link href="/select" className={styles.textLink}>ดูชีทสรุปทั้งหมด <ArrowUpRight size={18} /></Link>
+            </div>
+            <div className={styles.levelGrid}>
+              {levels.map(({ grade, title, text }) => (
+                <Link href={`/m${grade}/${basePath}`} key={grade} className={styles.levelCard}>
+                  <div className={styles.cardTop}><span>0{grade}</span><ArrowUpRight size={20} /></div>
+                  <span className={styles.grade}>ม.{grade}</span>
+                  <div className={styles.cardFooter}>เปิดชีทสรุป <ArrowRight size={16} /></div>
+                </Link>
+              ))}
+            </div>
+          </section>
+
+          <section className={styles.communityIntro}>
+            <div className={styles.container}>
+              <div className={styles.sectionHead}><div><span className={styles.kicker}>ความรู้ดีขึ้น เมื่อเราแบ่งปัน</span><h2>อ่านเองก็ได้ แบ่งปันยิ่งดี</h2><p>เป็นทั้งคนเรียนรู้ และคนที่ช่วยให้เพื่อนเข้าใจมากขึ้น</p></div><Users size={42} strokeWidth={1.3} /></div>
+              <div className={styles.pathGrid}>
+                <Link href="/sheets" className={styles.readerCard}><BookOpen size={28} /><span className={styles.pathLabel}>FOR THE LEARNERS</span><h3>เจอสรุปที่เข้าใจ<br />ในสไตล์ของคุณ</h3><p>ค้นพบมุมมองใหม่ ๆ จากชีทที่เพื่อนและพี่ ๆ ตั้งใจสรุปไว้</p><span className={styles.textLink}>สำรวจชีทจากชุมชน <ArrowRight size={18} /></span></Link>
+                <Link href="/dashboard/publisher/sheets" className={styles.creatorCard}><Upload size={28} /><span className={styles.pathLabel}>FOR THE SHARERS</span><h3>สรุปที่คุณตั้งใจ<br />อาจช่วยใครได้อีกหลายคน</h3><p>ส่งต่อสิ่งที่รู้ แบ่งปันชีทของคุณให้ชุมชน Freedom</p><span className={styles.textLink}>เริ่มแบ่งปันชีท <ArrowRight size={18} /></span></Link>
+              </div>
+            </div>
+          </section>
+          <CommunityUpdates />
+          <section className={`${styles.container} ${styles.exam}`}>
+            <div><span className={styles.kicker}>ทีละบท ทีละนิด ก็พร้อมได้</span><h2>นับถอยหลังสู่วันสอบ</h2><p>วางแผนอ่านวันนี้ ให้วันสอบมั่นใจกว่าเดิม</p></div>
+            <div className={styles.countdown}><Countdown /></div>
+          </section>
+          <HomeSheetSection />
+          <section className={`${styles.container} ${styles.section} ${styles.faq}`}>
+            <div><span className={styles.kicker}>เผื่อคุณกำลังสงสัย</span><h2>คำถามที่พบบ่อย</h2><p>เริ่มต้นกับ Freedom ได้ง่าย ๆ</p></div>
+            <div>{faqs.map(([question, answer]) => <details key={question}><summary>{question}<span aria-hidden="true">+</span></summary><p>{answer}</p></details>)}</div>
+          </section>
+          <section className={styles.closing}><span className={styles.kicker}>LET’S GROW TOGETHER</span><h2>ก้าวต่อไป เริ่มจากชีทแรก</h2><p>หยิบสรุปที่ใช่ แล้วเริ่มเรียนรู้ไปด้วยกัน</p><Link href="/select" className={styles.primary}>ไปเลือกชีทกัน <ArrowRight size={18} /></Link></section>
+        </main>
+        <footer className={`${styles.container} ${styles.footer}`}><div><Link href="/" className={styles.wordmark}>freedom<span>®</span></Link><p>พื้นที่แบ่งปันความรู้ของพวกเรา</p></div><div><a href="https://www.instagram.com/act.freedom">Instagram <ArrowUpRight size={14} /></a><Link href="/donate">สนับสนุน Freedom <Heart size={14} /></Link></div><span>Made with care, shared with everyone.</span></footer>
+      </div>
     </HydrateClient>
   );
 }

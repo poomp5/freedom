@@ -1,17 +1,28 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { FileText, User, Calendar, ExternalLink, Lock } from "lucide-react";
+import Link from "next/link";
+import Image from "next/image";
+import { FileText, Calendar, Lock, SlidersHorizontal, Search, X, ChevronRight } from "lucide-react";
 import StarRating from "@/app/components/StarRating";
 import Navbar from "@/app/components/Navbar";
 import Bottombar from "@/app/components/Bottombar";
 import PurchaseModal from "@/app/components/PurchaseModal";
+import { getSubjectTheme } from "./subjectTheme";
+import { getSocialLinks, getContactHref } from "./socialIcons";
 import { useSuspenseQuery, useQueryClient } from "@tanstack/react-query";
 import { useTRPC } from "@/trpc/client";
 
-const LEVELS = ["ทั้งหมด", "ม.1", "ม.2", "ม.3", "ม.4", "ม.5", "ม.6"];
-const EXAM_TYPES = ["ทั้งหมด", "กลางภาค", "ปลายภาค"];
-const TERMS = ["ทั้งหมด", "เทอม 1", "เทอม 2"];
+const LEVELS = ["ม.1", "ม.2", "ม.3", "ม.4", "ม.5", "ม.6"];
+const EXAM_TYPES = ["กลางภาค", "ปลายภาค"];
+const TERMS = ["เทอม 1", "เทอม 2"];
+
+function toggleInSet(set: Set<string>, value: string) {
+  const next = new Set(set);
+  if (next.has(value)) next.delete(value);
+  else next.add(value);
+  return next;
+}
 
 export default function SheetsClient({
   isLoggedIn,
@@ -25,10 +36,11 @@ export default function SheetsClient({
   const { data: sheets } = useSuspenseQuery(trpc.sheets.list.queryOptions({}));
 
   const [searchQuery, setSearchQuery] = useState("");
-  const [levelFilter, setLevelFilter] = useState("ทั้งหมด");
-  const [examTypeFilter, setExamTypeFilter] = useState("ทั้งหมด");
-  const [termFilter, setTermFilter] = useState("ทั้งหมด");
-  const [subjectFilter, setSubjectFilter] = useState("ทั้งหมด");
+  const [levelFilters, setLevelFilters] = useState<Set<string>>(new Set());
+  const [examTypeFilters, setExamTypeFilters] = useState<Set<string>>(new Set());
+  const [termFilters, setTermFilters] = useState<Set<string>>(new Set());
+  const [subjectFilters, setSubjectFilters] = useState<Set<string>>(new Set());
+  const [showMobileFilters, setShowMobileFilters] = useState(false);
   const [purchaseSheet, setPurchaseSheet] = useState<{
     id: string;
     title: string;
@@ -40,301 +52,381 @@ export default function SheetsClient({
 
   const subjects = useMemo(() => {
     const set = new Set(sheets.map((s) => s.subject));
-    return ["ทั้งหมด", ...Array.from(set).sort()];
+    return Array.from(set).sort();
   }, [sheets]);
 
   const filtered = useMemo(() => {
     const q = searchQuery.trim().toLowerCase();
     return sheets.filter((s) => {
-      if (levelFilter !== "ทั้งหมด" && s.level !== levelFilter) return false;
-      if (examTypeFilter !== "ทั้งหมด" && s.examType !== examTypeFilter) return false;
-      if (termFilter !== "ทั้งหมด" && s.term !== termFilter) return false;
-      if (subjectFilter !== "ทั้งหมด" && s.subject !== subjectFilter) return false;
+      if (levelFilters.size > 0 && !levelFilters.has(s.level)) return false;
+      if (examTypeFilters.size > 0 && !examTypeFilters.has(s.examType)) return false;
+      if (termFilters.size > 0 && !termFilters.has(s.term)) return false;
+      if (subjectFilters.size > 0 && !subjectFilters.has(s.subject)) return false;
       if (q) {
         const hay = `${s.title} ${s.subject} ${s.description ?? ""} ${s.uploader.name}`.toLowerCase();
         if (!hay.includes(q)) return false;
       }
       return true;
     });
-  }, [sheets, levelFilter, examTypeFilter, termFilter, subjectFilter, searchQuery]);
+  }, [sheets, levelFilters, examTypeFilters, termFilters, subjectFilters, searchQuery]);
+
+  const activeFilterCount =
+    levelFilters.size + examTypeFilters.size + termFilters.size + subjectFilters.size;
+
+  const clearFilters = () => {
+    setLevelFilters(new Set());
+    setExamTypeFilters(new Set());
+    setTermFilters(new Set());
+    setSubjectFilters(new Set());
+  };
+
+  const filterPanel = (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h2 className="flex items-center gap-1.5 font-semibold text-gray-800">
+          <SlidersHorizontal className="w-4 h-4" />
+          ตัวกรอง
+        </h2>
+        {activeFilterCount > 0 && (
+          <button onClick={clearFilters} className="text-xs text-blue-600 hover:underline">
+            ล้างทั้งหมด
+          </button>
+        )}
+      </div>
+
+      <div>
+        <p className="text-sm font-medium text-gray-700 mb-2">ระดับชั้น</p>
+        <div className="space-y-1.5">
+          {LEVELS.map((level) => (
+            <label key={level} className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={levelFilters.has(level)}
+                onChange={() => setLevelFilters((prev) => toggleInSet(prev, level))}
+                className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+              />
+              {level}
+            </label>
+          ))}
+        </div>
+      </div>
+
+      <div>
+        <p className="text-sm font-medium text-gray-700 mb-2">ประเภทสอบ</p>
+        <div className="space-y-1.5">
+          {EXAM_TYPES.map((type) => (
+            <label key={type} className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={examTypeFilters.has(type)}
+                onChange={() => setExamTypeFilters((prev) => toggleInSet(prev, type))}
+                className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+              />
+              {type}
+            </label>
+          ))}
+        </div>
+      </div>
+
+      <div>
+        <p className="text-sm font-medium text-gray-700 mb-2">เทอม</p>
+        <div className="space-y-1.5">
+          {TERMS.map((term) => (
+            <label key={term} className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={termFilters.has(term)}
+                onChange={() => setTermFilters((prev) => toggleInSet(prev, term))}
+                className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+              />
+              {term}
+            </label>
+          ))}
+        </div>
+      </div>
+
+      {subjects.length > 0 && (
+        <div>
+          <p className="text-sm font-medium text-gray-700 mb-2">วิชา</p>
+          <div className="space-y-1.5 max-h-56 overflow-y-auto pr-1">
+            {subjects.map((subject) => (
+              <label key={subject} className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={subjectFilters.has(subject)}
+                  onChange={() => setSubjectFilters((prev) => toggleInSet(prev, subject))}
+                  className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                />
+                {subject}
+              </label>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
 
   return (
     <>
       <Navbar />
       <div className="min-h-screen bg-gray-50 pb-24 md:pb-8">
         <div className="max-w-screen-xl mx-auto px-4 py-6">
+          {/* Breadcrumb */}
+          <div className="flex items-center gap-1.5 text-sm text-gray-400 mb-3">
+            <Link href="/" className="hover:text-blue-600">หน้าแรก</Link>
+            <ChevronRight className="w-3.5 h-3.5" />
+            <span className="text-gray-600">ชีทจากชุมชน</span>
+          </div>
+
           <h1 className="text-2xl font-bold text-gray-800 mb-1">ชีทจากชุมชน</h1>
           <p className="text-sm text-gray-500 mb-6">
             ชีทสรุปจากผู้จัดทำในชุมชน Freedom
           </p>
 
-          {/* Search */}
-          <div className="relative mb-3">
-            <svg
-              className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
+          {/* Search + mobile filter toggle */}
+          <div className="flex gap-2 mb-6">
+            <button
+              onClick={() => setShowMobileFilters(true)}
+              className="lg:hidden relative flex-shrink-0 w-11 h-11 flex items-center justify-center rounded-xl border border-gray-300 bg-white text-gray-500 hover:bg-gray-50"
+              aria-label="เปิดตัวกรอง"
             >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z" />
-            </svg>
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="ค้นหาชื่อชีท, วิชา, ผู้อัปโหลด..."
-              className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-gray-300 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            {searchQuery && (
-              <button
-                onClick={() => setSearchQuery("")}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            )}
-          </div>
-
-          {/* Filters */}
-          <div className="flex flex-wrap gap-3 mb-6">
-            <select
-              value={levelFilter}
-              onChange={(e) => setLevelFilter(e.target.value)}
-              className="rounded-lg border border-gray-300 px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              {LEVELS.map((l) => (
-                <option key={l} value={l}>{l === "ทั้งหมด" ? "ระดับชั้น" : l}</option>
-              ))}
-            </select>
-            <select
-              value={examTypeFilter}
-              onChange={(e) => setExamTypeFilter(e.target.value)}
-              className="rounded-lg border border-gray-300 px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              {EXAM_TYPES.map((t) => (
-                <option key={t} value={t}>{t === "ทั้งหมด" ? "ประเภทสอบ" : t}</option>
-              ))}
-            </select>
-            <select
-              value={termFilter}
-              onChange={(e) => setTermFilter(e.target.value)}
-              className="rounded-lg border border-gray-300 px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              {TERMS.map((t) => (
-                <option key={t} value={t}>{t === "ทั้งหมด" ? "เทอม" : t}</option>
-              ))}
-            </select>
-            <select
-              value={subjectFilter}
-              onChange={(e) => setSubjectFilter(e.target.value)}
-              className="rounded-lg border border-gray-300 px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              {subjects.map((s) => (
-                <option key={s} value={s}>{s === "ทั้งหมด" ? "วิชา" : s}</option>
-              ))}
-            </select>
-          </div>
-
-          {/* Sheet grid */}
-          {filtered.length === 0 ? (
-            <div className="text-center py-16">
-              <FileText className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-              <p className="text-gray-400">ไม่พบชีท</p>
+              <SlidersHorizontal className="w-4 h-4" />
+              {activeFilterCount > 0 && (
+                <span className="absolute -top-1 -right-1 w-4 h-4 bg-blue-600 text-white text-[10px] font-semibold rounded-full flex items-center justify-center">
+                  {activeFilterCount}
+                </span>
+              )}
+            </button>
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="ค้นหาชื่อชีท, วิชา, ผู้อัปโหลด..."
+                className="w-full pl-9 pr-9 py-2.5 rounded-xl border border-gray-300 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery("")}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              )}
             </div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {filtered.map((sheet) => {
-                const u = sheet.uploader;
-                const userRating = userId
-                  ? sheet.ratings.find((r) => r.userId === userId)?.score ?? null
-                  : null;
+          </div>
 
-                const socials = [
-                  u.socialIg && { href: `https://instagram.com/${u.socialIg}`, label: "Instagram", icon: (
-                    <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none">
-                      <rect x="2" y="2" width="20" height="20" rx="5" stroke="currentColor" strokeWidth="2"/>
-                      <circle cx="12" cy="12" r="4" stroke="currentColor" strokeWidth="2"/>
-                      <circle cx="17" cy="7" r="1.5" fill="currentColor"/>
-                    </svg>
-                  ) },
-                  u.socialFacebook && { href: u.socialFacebook.startsWith("http") ? u.socialFacebook : `https://facebook.com/${u.socialFacebook}`, label: "Facebook", icon: (
-                    <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-                    </svg>
-                  ) },
-                  u.socialLine && { href: `https://line.me/ti/p/~${u.socialLine}`, label: "Line", icon: (
-                    <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.627-.63h2.386c.349 0 .63.285.63.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.627-.63.349 0 .631.285.631.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.281.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314"/>
-                    </svg>
-                  ) },
-                  u.socialDiscord && { href: u.socialDiscord.startsWith("http") ? u.socialDiscord : `https://discord.com/users/${u.socialDiscord}`, label: "Discord", icon: (
-                    <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057.1 18.08.112 18.1.128 18.11a19.91 19.91 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/>
-                    </svg>
-                  ) },
-                  u.socialX && { href: `https://x.com/${u.socialX}`, label: "X", icon: (
-                    <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-                    </svg>
-                  ) },
-                ].filter(Boolean) as { href: string; label: string; icon: React.ReactNode }[];
+          <div className="flex gap-6 items-start">
+            {/* Sidebar (desktop) */}
+            <aside className="hidden lg:block w-64 flex-shrink-0 bg-white rounded-2xl border border-gray-100 shadow-sm p-5 sticky top-4">
+              {filterPanel}
+            </aside>
 
-                const isPaid = !sheet.isFree && sheet.price;
-                const alreadyPurchased = purchasedIds.has(sheet.id);
+            {/* Sheet grid */}
+            <div className="flex-1 min-w-0">
+              <p className="text-sm text-gray-400 mb-4">พบ {filtered.length} รายการ</p>
 
-                const handleCardClick = () => {
-                  if (!isPaid || alreadyPurchased) {
-                    window.open(sheet.pdfUrl, "_blank", "noopener,noreferrer");
-                  } else if (isLoggedIn) {
-                    setPurchaseSheet({
-                      id: sheet.id,
-                      title: sheet.title,
-                      price: sheet.price!,
-                    });
-                  } else {
-                    window.location.href = "/auth/login";
-                  }
-                };
+              {filtered.length === 0 ? (
+                <div className="text-center py-16">
+                  <FileText className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+                  <p className="text-gray-400">ไม่พบชีท</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+                  {filtered.map((sheet) => {
+                    const u = sheet.uploader;
+                    const userRating = userId
+                      ? sheet.ratings.find((r) => r.userId === userId)?.score ?? null
+                      : null;
+                    const socials = getSocialLinks(u);
+                    const contactHref = getContactHref(u, u.mainContact as string | null);
+                    const theme = getSubjectTheme(sheet.subject);
 
-                return (
-                  <div
-                    key={sheet.id}
-                    role="link"
-                    tabIndex={0}
-                    onClick={handleCardClick}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" || e.key === " ") {
-                        e.preventDefault();
-                        handleCardClick();
+                    const isPaid = !sheet.isFree && sheet.price;
+                    const alreadyPurchased = purchasedIds.has(sheet.id);
+
+                    const handleCardClick = () => {
+                      if (!isPaid || alreadyPurchased) {
+                        window.open(sheet.pdfUrl, "_blank", "noopener,noreferrer");
+                      } else if (isLoggedIn) {
+                        setPurchaseSheet({
+                          id: sheet.id,
+                          title: sheet.title,
+                          price: sheet.price!,
+                        });
+                      } else {
+                        window.location.href = "/auth/login";
                       }
-                    }}
-                    className="bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md hover:border-blue-200 transition-all duration-200 p-5 flex flex-col group cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                  >
-                    {/* Header */}
-                    <div className="flex items-start justify-between mb-2">
-                      <div className="flex-1 min-w-0">
-                        <h3 className="font-semibold text-gray-800 truncate group-hover:text-blue-600 transition-colors">{sheet.title}</h3>
-                        <div className="flex flex-wrap gap-1.5 mt-1.5">
-                          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700">
-                            {sheet.level}
-                          </span>
-                          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-purple-50 text-purple-700">
-                            {sheet.subject}
-                          </span>
-                          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-50 text-green-700">
-                            {sheet.examType} {sheet.term}
-                          </span>
-                          {isPaid && !alreadyPurchased ? (
-                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-amber-50 text-amber-700">
+                    };
+
+                    return (
+                      <div
+                        key={sheet.id}
+                        role="link"
+                        tabIndex={0}
+                        onClick={handleCardClick}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" || e.key === " ") {
+                            e.preventDefault();
+                            handleCardClick();
+                          }
+                        }}
+                        className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md hover:border-blue-200 transition-all duration-200 flex flex-col group cursor-pointer overflow-hidden focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                      >
+                        {/* Banner */}
+                        <div className={`relative h-28 bg-gradient-to-br ${theme.gradient} flex items-center justify-center overflow-hidden`}>
+                          <FileText className="w-10 h-10 text-white/70" strokeWidth={1.5} />
+                          {isPaid && !alreadyPurchased && (
+                            <span className="absolute top-2 right-2 inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-white/90 text-amber-700">
                               <Lock className="w-3 h-3" />
                               ฿{sheet.price}
                             </span>
-                          ) : isPaid && alreadyPurchased ? (
-                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-50 text-green-700">
+                          )}
+                          {isPaid && alreadyPurchased && (
+                            <span className="absolute top-2 right-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-white/90 text-green-700">
                               ซื้อแล้ว
                             </span>
-                          ) : (
-                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700">
+                          )}
+                          {!isPaid && (
+                            <span className="absolute top-2 right-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-white/90 text-emerald-700">
                               ฟรี
                             </span>
                           )}
                         </div>
-                      </div>
-                      {isPaid && !alreadyPurchased ? (
-                        <Lock className="w-4 h-4 text-amber-400 flex-shrink-0 ml-2" />
-                      ) : (
-                        <ExternalLink className="w-4 h-4 text-gray-300 group-hover:text-blue-400 flex-shrink-0 ml-2 transition-colors" />
-                      )}
-                    </div>
 
-                    {sheet.description && (
-                      <p className="text-sm text-gray-500 mt-1 line-clamp-2">{sheet.description}</p>
-                    )}
+                        {/* Body */}
+                        <div className="p-4 flex flex-col flex-1">
+                          <div className={`inline-flex items-center gap-1 self-start px-2 py-0.5 rounded-full text-xs font-medium mb-1.5 ${theme.badge}`}>
+                            <FileText className="w-3 h-3" />
+                            {sheet.subject}
+                          </div>
+                          <h3 className="font-semibold text-gray-800 truncate group-hover:text-blue-600 transition-colors">
+                            {sheet.title}
+                          </h3>
+                          <p className="text-xs text-gray-400 mt-1">
+                            {sheet.level} · {sheet.examType} {sheet.term}
+                          </p>
 
-                    <div className="mt-3" onClick={(e) => e.stopPropagation()}>
-                      {isLoggedIn ? (
-                        <StarRating
-                          sheetId={sheet.id}
-                          currentRating={userRating}
-                          averageRating={sheet.averageRating}
-                          totalRatings={sheet.totalRatings}
-                        />
-                      ) : (
-                        <div className="flex items-center gap-1 text-sm text-gray-500">
-                          <span className="text-yellow-400">★</span>
-                          {sheet.averageRating.toFixed(1)} ({sheet.totalRatings} รีวิว)
-                        </div>
-                      )}
-                    </div>
+                          {sheet.description && (
+                            <p className="text-sm text-gray-500 mt-2 line-clamp-2">{sheet.description}</p>
+                          )}
 
-                    {/* Footer */}
-                    <div className="mt-auto pt-3 border-t border-gray-50 space-y-2">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-1.5 text-xs text-gray-400">
-                          <User className="w-3.5 h-3.5" />
-                          <span>{u.username ? `@${u.username}` : u.name}</span>
-                          <span className="mx-1">·</span>
-                          <Calendar className="w-3.5 h-3.5" />
-                          <span>
-                            {new Date(sheet.createdAt).toLocaleDateString("th-TH", {
-                              day: "numeric",
-                              month: "short",
-                            })}
-                          </span>
-                        </div>
-                        {socials.length > 0 && (
-                          <div className="flex items-center gap-1.5" onClick={(e) => e.stopPropagation()}>
-                            {socials.map((s) => (
+                          <div className="mt-3" onClick={(e) => e.stopPropagation()}>
+                            {isLoggedIn ? (
+                              <StarRating
+                                sheetId={sheet.id}
+                                currentRating={userRating}
+                                averageRating={sheet.averageRating}
+                                totalRatings={sheet.totalRatings}
+                              />
+                            ) : (
+                              <div className="flex items-center gap-1 text-sm text-gray-500">
+                                <span className="text-yellow-400">★</span>
+                                {sheet.averageRating.toFixed(1)} ({sheet.totalRatings} รีวิว)
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Footer */}
+                          <div className="mt-auto pt-3 border-t border-gray-50 space-y-2">
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-1.5 text-xs text-gray-400 min-w-0">
+                                {u.image ? (
+                                  <Image
+                                    src={u.image}
+                                    alt={u.name}
+                                    width={16}
+                                    height={16}
+                                    className="w-4 h-4 rounded-full object-cover flex-shrink-0"
+                                  />
+                                ) : (
+                                  <div className="w-4 h-4 rounded-full bg-blue-100 flex-shrink-0" />
+                                )}
+                                {u.username ? (
+                                  <Link
+                                    href={`/u/${u.username}`}
+                                    onClick={(e) => e.stopPropagation()}
+                                    className="truncate hover:text-blue-600 hover:underline"
+                                  >
+                                    @{u.username}
+                                  </Link>
+                                ) : (
+                                  <span className="truncate">{u.name}</span>
+                                )}
+                              </div>
+                              <div className="flex items-center gap-1 text-xs text-gray-400 flex-shrink-0">
+                                <Calendar className="w-3.5 h-3.5" />
+                                {new Date(sheet.createdAt).toLocaleDateString("th-TH", {
+                                  day: "numeric",
+                                  month: "short",
+                                })}
+                              </div>
+                            </div>
+
+                            {socials.length > 0 && (
+                              <div className="flex items-center gap-1.5" onClick={(e) => e.stopPropagation()}>
+                                {socials.map((s) => (
+                                  <a
+                                    key={s.label}
+                                    href={s.href}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    title={s.label}
+                                    className="text-gray-400 hover:text-gray-600 transition-colors"
+                                    onClick={(e) => e.stopPropagation()}
+                                  >
+                                    {s.icon}
+                                  </a>
+                                ))}
+                              </div>
+                            )}
+
+                            {contactHref && (
                               <a
-                                key={s.label}
-                                href={s.href}
+                                href={contactHref}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                title={s.label}
-                                className="text-gray-400 hover:text-gray-600 transition-colors"
                                 onClick={(e) => e.stopPropagation()}
+                                className="block w-full text-center text-xs font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-lg py-1.5 transition-colors"
                               >
-                                {s.icon}
+                                ติดต่อเจ้าของชีท
                               </a>
-                            ))}
+                            )}
                           </div>
-                        )}
+                        </div>
                       </div>
-                      {(() => {
-                        const mc = u.mainContact as string | null;
-                        if (!mc) return null;
-                        const contactHrefs: Record<string, string> = {
-                          ig: u.socialIg ? `https://instagram.com/${u.socialIg}` : "",
-                          facebook: u.socialFacebook ? (u.socialFacebook.startsWith("http") ? u.socialFacebook : `https://facebook.com/${u.socialFacebook}`) : "",
-                          line: u.socialLine ? `https://line.me/ti/p/~${u.socialLine}` : "",
-                          discord: u.socialDiscord ? (u.socialDiscord.startsWith("http") ? u.socialDiscord : `https://discord.com/users/${u.socialDiscord}`) : "",
-                          x: u.socialX ? `https://x.com/${u.socialX}` : "",
-                        };
-                        const href = contactHrefs[mc];
-                        if (!href) return null;
-                        return (
-                          <a
-                            href={href}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            onClick={(e) => e.stopPropagation()}
-                            className="block w-full text-center text-xs font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-lg py-1.5 transition-colors"
-                          >
-                            ติดต่อเจ้าของชีท
-                          </a>
-                        );
-                      })()}
-                    </div>
-                  </div>
-                );
-              })}
+                    );
+                  })}
+                </div>
+              )}
             </div>
-          )}
+          </div>
         </div>
       </div>
       <Bottombar />
+
+      {/* Mobile filter drawer */}
+      {showMobileFilters && (
+        <div className="fixed inset-0 z-50 lg:hidden flex">
+          <div className="absolute inset-0 bg-black/40" onClick={() => setShowMobileFilters(false)} />
+          <div className="relative ml-auto w-80 max-w-[85vw] h-full bg-white p-5 overflow-y-auto">
+            <div className="flex items-center justify-between mb-4">
+              <span className="font-semibold text-gray-800">ตัวกรอง</span>
+              <button onClick={() => setShowMobileFilters(false)} className="text-gray-400 hover:text-gray-600">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            {filterPanel}
+            <button
+              onClick={() => setShowMobileFilters(false)}
+              className="w-full mt-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition-colors"
+            >
+              ดูผลลัพธ์ ({filtered.length})
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Purchase Modal */}
       {purchaseSheet && (
