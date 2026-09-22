@@ -13,6 +13,7 @@ import {
   Files,
   GraduationCap,
   Lock,
+  Heart,
   MessageCircle,
   ShieldCheck,
 } from "lucide-react";
@@ -24,6 +25,8 @@ import Avatar from "@/app/components/Avatar";
 import StarRating from "@/app/components/StarRating";
 import PurchaseModal from "@/app/components/PurchaseModal";
 import SubjectCover from "../SubjectCover";
+import SheetComments from "./SheetComments";
+import DonateModal from "./DonateModal";
 import { getSubjectBadgeClass } from "../subjectCoverUtils";
 import { getSocialLinks, getContactHref } from "../socialIcons";
 
@@ -33,6 +36,7 @@ export default function SheetDetailClient({ id }: { id: string }) {
   const { data: session } = useSession();
   const { data: sheet } = useSuspenseQuery(trpc.sheets.getById.queryOptions({ id }));
   const [showPurchase, setShowPurchase] = useState(false);
+  const [showDonate, setShowDonate] = useState(false);
 
   const u = sheet.uploader;
   const socials = getSocialLinks(u);
@@ -84,8 +88,12 @@ export default function SheetDetailClient({ id }: { id: string }) {
           <div className="mt-4 grid grid-cols-1 gap-6 md:grid-cols-[1fr_320px]">
             {/* ── Left: cover + details ── */}
             <div className="space-y-6">
-              <div className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
-                <SubjectCover subject={sheet.subject} className="h-56 sm:h-72" />
+              <div className="overflow-hidden rounded-2xl border border-gray-100 bg-gray-50 p-3 shadow-sm sm:p-4">
+                <SubjectCover
+                  subject={sheet.subject}
+                  className="h-56 sm:h-72 rounded-xl"
+                  fit="contain"
+                />
               </div>
 
               <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
@@ -174,6 +182,10 @@ export default function SheetDetailClient({ id }: { id: string }) {
                   </div>
                 </div>
               )}
+              <SheetComments
+                sheetId={sheet.id}
+                currentUserId={session?.user?.id ?? null}
+              />
             </div>
 
             {/* ── Right: price + publisher (sticky) ── */}
@@ -285,6 +297,17 @@ export default function SheetDetailClient({ id }: { id: string }) {
                   </a>
                 )}
 
+                {u.donatePromptPay && (
+                  <button
+                    type="button"
+                    onClick={() => setShowDonate(true)}
+                    className="mt-3 flex w-full items-center justify-center gap-1.5 rounded-xl bg-pink-500 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-pink-600"
+                  >
+                    <Heart className="h-4 w-4" />
+                    สนับสนุนเจ้าของชีท
+                  </button>
+                )}
+
                 {u.username && (
                   <Link
                     href={`/u/${u.username}`}
@@ -298,6 +321,16 @@ export default function SheetDetailClient({ id }: { id: string }) {
           </div>
         </div>
       </main>
+
+      {showDonate && u.donatePromptPay && (
+        <DonateModal
+          promptPay={u.donatePromptPay}
+          name={u.name}
+          image={u.image}
+          seed={u.id}
+          onClose={() => setShowDonate(false)}
+        />
+      )}
 
       {showPurchase && isPaid && (
         <PurchaseModal

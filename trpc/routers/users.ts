@@ -54,6 +54,7 @@ export const usersRouter = createTRPCRouter({
         email: true,
         role: true,
         image: true,
+        donatePromptPay: true,
         createdAt: true,
         _count: { select: { sheets: true } },
       },
@@ -319,6 +320,38 @@ export const usersRouter = createTRPCRouter({
 
     return user;
   }),
+
+  /** Admin-side edit of a user's donation PromptPay number. */
+  setDonatePromptPay: adminProcedure
+    .input(
+      z.object({
+        userId: z.string(),
+        donatePromptPay: z.string(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const raw = input.donatePromptPay.trim();
+
+      // Empty clears it; otherwise it must be a 10-digit phone or 13-digit ID.
+      let value: string | null = null;
+      if (raw !== "") {
+        const digits = raw.replace(/\D/g, "");
+        if (digits.length !== 10 && digits.length !== 13) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "ต้องเป็นเบอร์โทร 10 หลัก หรือเลขบัตรประชาชน 13 หลัก",
+          });
+        }
+        value = digits;
+      }
+
+      await prisma.user.update({
+        where: { id: input.userId },
+        data: { donatePromptPay: value },
+      });
+
+      return { success: true, donatePromptPay: value };
+    }),
 
   updateRole: adminProcedure
     .input(

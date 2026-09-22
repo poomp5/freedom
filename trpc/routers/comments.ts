@@ -66,15 +66,10 @@ export const commentsRouter = createTRPCRouter({
         throw new TRPCError({ code: "NOT_FOUND", message: "ไม่พบความคิดเห็นนี้" });
       }
 
-      const me = await prisma.user.findUnique({
-        where: { id: ctx.auth.user.id },
-        select: { role: true },
-      });
-
       const canDelete =
         comment.userId === ctx.auth.user.id ||
         comment.sheet.uploadedBy === ctx.auth.user.id ||
-        me?.role === "admin";
+        ctx.role === "admin";
 
       if (!canDelete) {
         throw new TRPCError({ code: "FORBIDDEN", message: "ไม่มีสิทธิ์ลบความคิดเห็นนี้" });

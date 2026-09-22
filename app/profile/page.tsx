@@ -62,6 +62,12 @@ export default function ProfilePage() {
   const [saveSocialSuccess, setSaveSocialSuccess] = useState(false);
 
   // Username
+  const [showDonateModal, setShowDonateModal] = useState(false);
+  const [donatePromptPay, setDonatePromptPay] = useState("");
+  const [isSavingDonate, setIsSavingDonate] = useState(false);
+  const [saveDonateSuccess, setSaveDonateSuccess] = useState(false);
+  const [donateError, setDonateError] = useState("");
+
   const [showUsernameModal, setShowUsernameModal] = useState(false);
   const [usernameInput, setUsernameInput] = useState("");
   const [currentUsername, setCurrentUsername] = useState<string | null>(null);
@@ -99,6 +105,40 @@ export default function ProfilePage() {
 
   const user = session.user;
   const displayImage = avatarUrl ?? user.image;
+
+  const openDonateModal = async () => {
+    setShowDonateModal(true);
+    setDonateError("");
+    const res = await fetch("/api/user/donate");
+    if (res.ok) {
+      const data = await res.json();
+      setDonatePromptPay(data.donatePromptPay ?? "");
+    }
+  };
+
+  const handleSaveDonate = async () => {
+    setIsSavingDonate(true);
+    setDonateError("");
+    try {
+      const res = await fetch("/api/user/donate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ donatePromptPay }),
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        setDonateError(err.error ?? "บันทึกไม่สำเร็จ");
+        return;
+      }
+      setSaveDonateSuccess(true);
+      setTimeout(() => {
+        setSaveDonateSuccess(false);
+        setShowDonateModal(false);
+      }, 1200);
+    } finally {
+      setIsSavingDonate(false);
+    }
+  };
 
   const openSocialModal = async () => {
     setShowSocialModal(true);
@@ -352,6 +392,26 @@ export default function ProfilePage() {
               <p className="text-sm text-gray-500">IG, Facebook, Line, Discord, X</p>
             </div>
             <svg className="w-5 h-5 text-gray-400 ml-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+
+          <button
+            onClick={openDonateModal}
+            className="w-full bg-white rounded-2xl shadow-sm border border-gray-100 p-4 flex items-center gap-4 hover:shadow-md hover:border-pink-200 transition-all duration-200 text-left"
+          >
+            <div className="w-12 h-12 bg-pink-100 rounded-xl flex items-center justify-center flex-shrink-0">
+              <svg className="w-6 h-6 text-pink-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+              </svg>
+            </div>
+            <div className="min-w-0">
+              <p className="font-semibold text-gray-800">รับโดเนทพร้อมเพย์</p>
+              <p className="text-sm text-gray-500 truncate">
+                {donatePromptPay ? donatePromptPay : "เบอร์โทรหรือเลขบัตรประชาชน"}
+              </p>
+            </div>
+            <svg className="w-5 h-5 text-gray-400 ml-auto flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
             </svg>
           </button>
@@ -613,6 +673,59 @@ export default function ProfilePage() {
             >
               {saveSocialSuccess ? "บันทึกแล้ว!" : isSavingSocial ? "กำลังบันทึก..." : "บันทึก"}
             </button>
+          </div>
+        </div>
+      )}
+
+      {showDonateModal && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+          onClick={() => setShowDonateModal(false)}
+        >
+          <div
+            className="w-full max-w-md rounded-2xl bg-white p-5 shadow-xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h2 className="mb-1 text-lg font-bold text-gray-800">รับโดเนทพร้อมเพย์</h2>
+            <p className="mb-4 text-sm text-gray-500">
+              ใส่เบอร์โทร 10 หลัก หรือเลขบัตรประชาชน 13 หลัก
+              ปุ่มสนับสนุนจะขึ้นบนหน้าชีทของคุณ
+            </p>
+
+            <input
+              type="text"
+              inputMode="numeric"
+              value={donatePromptPay}
+              onChange={(e) => setDonatePromptPay(e.target.value)}
+              placeholder="0812345678 หรือ 1234567890123"
+              className="w-full rounded-xl border border-gray-300 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+
+            {donateError && (
+              <p className="mt-2 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">
+                {donateError}
+              </p>
+            )}
+
+            <p className="mt-2 text-xs text-gray-400">
+              เว้นว่างไว้เพื่อปิดการรับโดเนท
+            </p>
+
+            <div className="mt-4 flex gap-2">
+              <button
+                onClick={() => setShowDonateModal(false)}
+                className="flex-1 rounded-xl border border-gray-300 py-3 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-50"
+              >
+                ยกเลิก
+              </button>
+              <button
+                onClick={handleSaveDonate}
+                disabled={isSavingDonate}
+                className="flex-1 rounded-xl bg-blue-600 py-3 px-4 font-semibold text-white transition-colors duration-200 hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-gray-300"
+              >
+                {saveDonateSuccess ? "บันทึกแล้ว!" : isSavingDonate ? "กำลังบันทึก..." : "บันทึก"}
+              </button>
+            </div>
           </div>
         </div>
       )}

@@ -76,6 +76,67 @@ function UserAvatar({
   );
 }
 
+/** Admin editor for a user's donation PromptPay number. */
+function DonatePromptPayRow({
+  userId,
+  initial,
+}: {
+  userId: string;
+  initial: string | null;
+}) {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+  const [value, setValue] = useState(initial ?? "");
+  const [saved, setSaved] = useState(false);
+
+  const mutation = useMutation(
+    trpc.users.setDonatePromptPay.mutationOptions({
+      onSuccess: () => {
+        setSaved(true);
+        setTimeout(() => setSaved(false), 1500);
+        queryClient.invalidateQueries({ queryKey: trpc.users.list.queryKey() });
+      },
+    })
+  );
+
+  return (
+    <tr className="bg-gray-50">
+      <td colSpan={6} className="px-0 py-0">
+        <div className="ml-8 mr-4 mt-3 rounded-xl border border-gray-200 bg-white p-4">
+          <label className="mb-1 block text-xs font-medium text-gray-500">
+            พร้อมเพย์สำหรับรับโดเนท (เบอร์โทร 10 หลัก หรือเลขบัตรประชาชน 13 หลัก)
+          </label>
+          <div className="flex flex-wrap items-center gap-2">
+            <input
+              type="text"
+              inputMode="numeric"
+              value={value}
+              onChange={(e) => setValue(e.target.value)}
+              onClick={(e) => e.stopPropagation()}
+              placeholder="เว้นว่างเพื่อปิดการรับโดเนท"
+              className="min-w-[220px] flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-transparent focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                mutation.mutate({ userId, donatePromptPay: value });
+              }}
+              disabled={mutation.isPending}
+              className="rounded-lg bg-gray-900 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-700 disabled:opacity-40"
+            >
+              {saved ? "บันทึกแล้ว" : mutation.isPending ? "กำลังบันทึก..." : "บันทึก"}
+            </button>
+          </div>
+          {mutation.error && (
+            <p className="mt-2 text-sm text-red-600">{mutation.error.message}</p>
+          )}
+        </div>
+      </td>
+    </tr>
+  );
+}
+
 function UserSheetRows({ userId }: { userId: string }) {
   const trpc = useTRPC();
   const { data: sheets, isLoading } = useQuery(
@@ -196,8 +257,8 @@ export default function UserTable({
     }
   };
 
-  const toggleExpand = (userId: string, sheetCount: number) => {
-    if (sheetCount === 0) return;
+  // Every row expands: even a user with no sheets has a PromptPay field to edit.
+  const toggleExpand = (userId: string) => {
     setExpandedUserId((prev) => (prev === userId ? null : userId));
   };
 
@@ -237,13 +298,11 @@ export default function UserTable({
                 return (
                   <Fragment key={user.id}>
                     <tr
-                      className={`border-b border-gray-50 hover:bg-gray-50 ${sheetCount > 0 ? "cursor-pointer" : ""}`}
-                      onClick={() => toggleExpand(user.id, sheetCount)}
+                      className="border-b border-gray-50 hover:bg-gray-50 cursor-pointer"
+                      onClick={() => toggleExpand(user.id)}
                     >
                       <td className="pl-3 py-3 text-gray-400">
-                        {sheetCount > 0 ? (
-                          isExpanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />
-                        ) : null}
+                        {isExpanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
                       </td>
                       <td className="px-4 py-3 font-medium text-gray-800">
                         <div className="flex items-center gap-2.5">
@@ -292,7 +351,13 @@ export default function UserTable({
                         )}
                       </td>
                     </tr>
-                    {isExpanded && <UserSheetRows userId={user.id} />}
+                    {isExpanded && (
+                      <DonatePromptPayRow
+                        userId={user.id}
+                        initial={user.donatePromptPay ?? null}
+                      />
+                    )}
+                    {isExpanded && sheetCount > 0 && <UserSheetRows userId={user.id} />}
                   </Fragment>
                 );
               })}

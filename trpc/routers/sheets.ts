@@ -42,6 +42,7 @@ const SHEET_LIST_SELECT = {
       socialDiscord: true,
       socialX: true,
       mainContact: true,
+      donatePromptPay: true,
     },
   },
 } as const;

@@ -8,9 +8,12 @@ import { getSubjectCoverSrc } from "./subjectCoverUtils";
 export default function SubjectCover({
   subject,
   className = "h-28",
+  fit = "cover",
 }: {
   subject: string;
   className?: string;
+  /** "contain" shows the whole cover without cropping (detail page). */
+  fit?: "cover" | "contain";
 }) {
   const src = getSubjectCoverSrc(subject);
   const [failed, setFailed] = useState(false);
@@ -37,7 +40,7 @@ export default function SubjectCover({
         src={src}
         alt={subject}
         fill
-        className="object-cover"
+        className={fit === "contain" ? "object-contain" : "object-cover"}
         sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 33vw"
         onError={() => setFailed(true)}
       />
