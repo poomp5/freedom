@@ -7,21 +7,15 @@ import {
   ArrowRight,
   Calendar,
   FileText,
+  Lock,
   Sparkles,
   Star,
   Upload,
-  User,
 } from "lucide-react";
 import { useTRPC } from "@/trpc/client";
-
-const SUBJECT_ACCENTS = [
-  "bg-blue-50 text-blue-700 border-blue-100",
-  "bg-emerald-50 text-emerald-700 border-emerald-100",
-  "bg-amber-50 text-amber-700 border-amber-100",
-  "bg-pink-50 text-pink-700 border-pink-100",
-  "bg-violet-50 text-violet-700 border-violet-100",
-  "bg-cyan-50 text-cyan-700 border-cyan-100",
-];
+import Avatar from "@/app/components/Avatar";
+import SubjectCover from "@/app/sheets/SubjectCover";
+import { getSubjectBadgeClass } from "@/app/sheets/subjectCoverUtils";
 
 export default function CommunityUpdates() {
   const trpc = useTRPC();
@@ -98,80 +92,92 @@ export default function CommunityUpdates() {
           </div>
         ) : (
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {latestSheets.map((sheet, index) => {
-              const accent = SUBJECT_ACCENTS[index % SUBJECT_ACCENTS.length];
+            {latestSheets.map((sheet) => {
+              const isPaid = !sheet.isFree && sheet.price;
+              const u = sheet.uploader;
               return (
-                <Link
+                <div
                   key={sheet.id}
-                  href="/sheets"
-                  className="group flex min-h-40 flex-col rounded-2xl border border-gray-100 bg-white p-5 shadow-sm transition-all hover:-translate-y-0.5 hover:border-blue-200 hover:shadow-md"
+                  className="group relative flex flex-col overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm transition-all duration-200 hover:border-blue-200 hover:shadow-md"
                 >
-                  <div className="mb-4 flex items-start justify-between gap-3">
-                    <div className="flex min-w-0 items-start gap-3">
-                      <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl bg-gray-900 text-white">
-                        <FileText className="h-5 w-5" />
-                      </div>
-                      <div className="min-w-0">
-                        <h3 className="line-clamp-1 font-semibold text-gray-900 transition-colors group-hover:text-blue-700">
-                          {sheet.title}
-                        </h3>
-                        <div className="mt-1 flex flex-wrap gap-1.5">
-                          <span className="rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-700">
-                            {sheet.level}
-                          </span>
-                          <span
-                            className={`rounded-full border px-2 py-0.5 text-xs font-medium ${accent}`}
-                          >
-                            {sheet.subject}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                    {!sheet.isFree && sheet.price ? (
-                      <span className="rounded-full bg-amber-50 px-2 py-1 text-xs font-semibold text-amber-700">
-                        ฿{sheet.price}
-                      </span>
-                    ) : (
-                      <span className="rounded-full bg-emerald-50 px-2 py-1 text-xs font-semibold text-emerald-700">
-                        ฟรี
-                      </span>
-                    )}
+                  <div className="relative">
+                    <SubjectCover subject={sheet.subject} />
+                    <span
+                      className={`absolute right-2 top-2 inline-flex items-center gap-1 rounded-full bg-white/90 px-2 py-0.5 text-xs font-medium shadow-sm ${
+                        isPaid ? "text-amber-700" : "text-emerald-700"
+                      }`}
+                    >
+                      {isPaid ? (
+                        <>
+                          <Lock className="h-3 w-3" />฿{sheet.price}
+                        </>
+                      ) : (
+                        "ฟรี"
+                      )}
+                    </span>
                   </div>
 
-                  {sheet.description ? (
-                    <p className="line-clamp-2 text-sm text-gray-500">
-                      {sheet.description}
-                    </p>
-                  ) : (
-                    <p className="text-sm text-gray-400">
-                      {sheet.examType} {sheet.term}
-                    </p>
-                  )}
+                  <div className="flex flex-1 flex-col p-4">
+                    <div
+                      className={`mb-1.5 inline-flex items-center gap-1 self-start rounded-full px-2 py-0.5 text-xs font-medium ${getSubjectBadgeClass(
+                        sheet.subject
+                      )}`}
+                    >
+                      <FileText className="h-3 w-3" />
+                      {sheet.subject}
+                    </div>
 
-                  <div className="mt-auto flex items-center justify-between border-t border-gray-50 pt-4 text-xs text-gray-400">
-                    <div className="flex min-w-0 items-center gap-1.5">
-                      <User className="h-3.5 w-3.5 flex-shrink-0" />
-                      <span className="truncate">
-                        {sheet.uploader.username
-                          ? `@${sheet.uploader.username}`
-                          : sheet.uploader.name}
+                    <h3 className="truncate font-semibold text-gray-800 transition-colors group-hover:text-blue-600">
+                      {/* Overlay link makes the whole card clickable. */}
+                      <Link
+                        href={`/sheets/${sheet.id}`}
+                        className="before:absolute before:inset-0 before:content-['']"
+                      >
+                        {sheet.title}
+                      </Link>
+                    </h3>
+                    <p className="mt-1 text-xs text-gray-400">
+                      {sheet.level} · {sheet.examType} {sheet.term}
+                    </p>
+
+                    {sheet.description && (
+                      <p className="mt-2 line-clamp-2 text-sm text-gray-500">
+                        {sheet.description}
+                      </p>
+                    )}
+
+                    <div className="mt-2 flex items-center gap-1 text-sm text-gray-500">
+                      <Star className="h-3.5 w-3.5 fill-yellow-400 text-yellow-400" />
+                      {sheet.averageRating.toFixed(1)}
+                      <span className="text-xs text-gray-400">
+                        ({sheet.totalRatings} รีวิว)
                       </span>
                     </div>
-                    <div className="flex items-center gap-3">
-                      <span className="inline-flex items-center gap-1">
-                        <Star className="h-3.5 w-3.5 fill-yellow-400 text-yellow-400" />
-                        {sheet.averageRating.toFixed(1)}
-                      </span>
-                      <span className="inline-flex items-center gap-1">
+
+                    <div className="mt-auto flex items-center justify-between border-t border-gray-50 pt-3 text-xs text-gray-400">
+                      <div className="flex min-w-0 items-center gap-1.5">
+                        <Avatar src={u.image} name={u.name} seed={u.id} size={16} />
+                        {u.username ? (
+                          <Link
+                            href={`/u/${u.username}`}
+                            className="relative z-10 truncate hover:text-blue-600 hover:underline"
+                          >
+                            @{u.username}
+                          </Link>
+                        ) : (
+                          <span className="truncate">{u.name}</span>
+                        )}
+                      </div>
+                      <div className="flex flex-shrink-0 items-center gap-1">
                         <Calendar className="h-3.5 w-3.5" />
                         {new Date(sheet.createdAt).toLocaleDateString("th-TH", {
                           day: "numeric",
                           month: "short",
                         })}
-                      </span>
+                      </div>
                     </div>
                   </div>
-                </Link>
+                </div>
               );
             })}
           </div>

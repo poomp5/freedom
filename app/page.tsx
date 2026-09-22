@@ -6,18 +6,9 @@ import Navbar from "./components/Navbar";
 import Countdown from "./components/Countdown";
 import HomeSheetSection from "./components/HomeSheetSection";
 import CommunityUpdates from "./components/CommunityUpdates";
-import { basePath } from "./components/config";
 import { HydrateClient, prefetch, trpc } from "@/trpc/server";
 import styles from "./page.module.css";
 
-const levels = [
-  { grade: 1, title: "เริ่มต้นบทใหม่", text: "ค่อย ๆ ปูพื้นฐาน ไปด้วยกัน" },
-  { grade: 2, title: "ต่อยอดความเข้าใจ", text: "ทบทวนให้แม่น พร้อมบทเรียนใหม่" },
-  { grade: 3, title: "พร้อมก้าวต่อไป", text: "เก็บเนื้อหา ม.ต้น ให้ครบก่อนสอบ" },
-  { grade: 4, title: "เปิดโลก ม.ปลาย", text: "วิชาใหม่แค่ไหน ก็เริ่มเข้าใจได้" },
-  { grade: 5, title: "เก็บทุกบทสำคัญ", text: "เติมความมั่นใจ ทีละวิชา" },
-  { grade: 6, title: "เข้าใกล้เป้าหมาย", text: "ทบทวนครั้งสำคัญ ก่อนก้าวต่อไป" },
-];
 const faqs = [
   ["เริ่มหาชีทสรุปได้จากตรงไหน?", "เลือกระดับชั้น ม.1–ม.6 ของคุณ แล้วเลือกเทอมและการสอบที่ต้องการ หรือเข้าไปที่ชีทจากชุมชนเพื่อค้นหาตามวิชาได้เลย"],
   ["ชีทสรุปอ่านฟรีไหม?", "ชีทในคลังสรุปของ Freedom เปิดให้ดาวน์โหลดฟรี ส่วนชีทจากชุมชนมีทั้งแบบฟรีและมีค่าใช้จ่าย โดยจะแสดงราคาไว้บนแต่ละชีท"],
@@ -44,7 +35,7 @@ export default async function Home() {
                   {["ครบทั้ง ม.ต้น และ ม.ปลาย", "เลือกอ่านได้ทุกที่"].map(text => <span key={text}><Check size={15} />{text}</span>)}
                 </div>
                 <div className={styles.actions}>
-                  <a href="#levels" className={styles.primary}>เริ่มหาชีทสรุป <ArrowDown size={18} /></a>
+                  <a href="#community" className={styles.primary}>เริ่มหาชีทสรุป <ArrowDown size={18} /></a>
                   <Link href="/sheets" className={styles.secondary}>สำรวจชีทจากชุมชน <ArrowUpRight size={18} /></Link>
                 </div>
               </div>
@@ -74,32 +65,16 @@ export default async function Home() {
             </div>
           </div>
 
-          <section id="levels" className={`${styles.container} ${styles.section}`}>
-            <div className={styles.sectionHead}>
-              <div><span className={styles.kicker}>เริ่มจากห้องเรียนของคุณ</span><h2>วันนี้ อยากทบทวนอะไร?</h2><p>เลือกระดับชั้น แล้วไปเจอชีทที่ใช่กัน</p></div>
-              <Link href="/select" className={styles.textLink}>ดูชีทสรุปทั้งหมด <ArrowUpRight size={18} /></Link>
-            </div>
-            <div className={styles.levelGrid}>
-              {levels.map(({ grade, title, text }) => (
-                <Link href={`/m${grade}/${basePath}`} key={grade} className={styles.levelCard}>
-                  <div className={styles.cardTop}><span>0{grade}</span><ArrowUpRight size={20} /></div>
-                  <span className={styles.grade}>ม.{grade}</span>
-                  <div className={styles.cardFooter}>เปิดชีทสรุป <ArrowRight size={16} /></div>
-                </Link>
-              ))}
-            </div>
-          </section>
-
           <section className={styles.communityIntro}>
             <div className={styles.container}>
-              <div className={styles.sectionHead}><div><span className={styles.kicker}>ความรู้ดีขึ้น เมื่อเราแบ่งปัน</span><h2>อ่านเองก็ได้ แบ่งปันยิ่งดี</h2><p>เป็นทั้งคนเรียนรู้ และคนที่ช่วยให้เพื่อนเข้าใจมากขึ้น</p></div><Users size={42} strokeWidth={1.3} /></div>
+              <div className={styles.sectionHead}><div><span className={styles.kicker}>ชุมชนของเรา</span><h2>มาอ่าน หรือมาแบ่งปันก็ได้</h2><p>เลือกได้เลยว่าอยากหาชีทไปอ่าน หรืออยากส่งต่อชีทของคุณให้เพื่อน</p></div><Users size={42} strokeWidth={1.3} /></div>
               <div className={styles.pathGrid}>
                 <Link href="/sheets" className={styles.readerCard}><BookOpen size={28} /><span className={styles.pathLabel}>FOR THE LEARNERS</span><h3>เจอสรุปที่เข้าใจ<br />ในสไตล์ของคุณ</h3><p>ค้นพบมุมมองใหม่ ๆ จากชีทที่เพื่อนและพี่ ๆ ตั้งใจสรุปไว้</p><span className={styles.textLink}>สำรวจชีทจากชุมชน <ArrowRight size={18} /></span></Link>
                 <Link href="/dashboard/publisher/sheets" className={styles.creatorCard}><Upload size={28} /><span className={styles.pathLabel}>FOR THE SHARERS</span><h3>สรุปที่คุณตั้งใจ<br />อาจช่วยใครได้อีกหลายคน</h3><p>ส่งต่อสิ่งที่รู้ แบ่งปันชีทของคุณให้ชุมชน Freedom</p><span className={styles.textLink}>เริ่มแบ่งปันชีท <ArrowRight size={18} /></span></Link>
               </div>
             </div>
           </section>
-          <CommunityUpdates />
+          <div id="community"><CommunityUpdates /></div>
           <section className={`${styles.container} ${styles.exam}`}>
             <div><span className={styles.kicker}>ทีละบท ทีละนิด ก็พร้อมได้</span><h2>นับถอยหลังสู่วันสอบ</h2><p>วางแผนอ่านวันนี้ ให้วันสอบมั่นใจกว่าเดิม</p></div>
             <div className={styles.countdown}><Countdown /></div>

@@ -36,12 +36,46 @@ function hashString(str: string) {
   return Math.abs(hash);
 }
 
+/**
+ * Reduce a subject to the one the cover map knows about.
+ *
+ * The static catalog still carries qualifiers the database no longer has
+ * ("ประวัติศาสตร์ (One Page)", "คณิตศาสตร์ พื้นฐาน (2567)", "สไลด์ประวัติศาสตร์ (จีน)"),
+ * so match on an exact name first, then on the name with its trailing
+ * parenthetical stripped, then on the leading word.
+ */
+function normalizeSubject(subject: string): string | null {
+  const s = subject.trim().replace(/\s+/g, " ");
+  if (SUBJECT_COVER_SLUGS[s]) return s;
+
+  const stripped = s.replace(/\s*\([^)]*\)\s*$/, "").trim();
+  if (SUBJECT_COVER_SLUGS[stripped]) return stripped;
+
+  // "สไลด์ประวัติศาสตร์ (จีน)" -> "ประวัติศาสตร์"
+  if (stripped.startsWith("สไลด์")) {
+    const base = stripped.replace(/^สไลด์/, "").trim();
+    if (SUBJECT_COVER_SLUGS[base]) return base;
+  }
+
+  // "คณิตศาสตร์ พื้นฐาน (2567)" -> "คณิตศาสตร์"
+  const firstWord = stripped.split(" ")[0];
+  if (SUBJECT_COVER_SLUGS[firstWord]) return firstWord;
+
+  // "ภาษาอังกฤษเพิ่มเติม" -> "ภาษาอังกฤษ"
+  const prefixMatch = Object.keys(SUBJECT_COVER_SLUGS).find((k) =>
+    stripped.startsWith(k)
+  );
+  return prefixMatch ?? null;
+}
+
 export function getSubjectCoverSrc(subject: string): string | null {
-  const slug = SUBJECT_COVER_SLUGS[subject];
-  if (!slug) return null;
-  return `/subject-cover/${slug}.png`;
+  const key = normalizeSubject(subject);
+  if (!key) return null;
+  return `/subject-cover/${SUBJECT_COVER_SLUGS[key]}.png`;
 }
 
 export function getSubjectBadgeClass(subject: string) {
-  return BADGE_PALETTE[hashString(subject) % BADGE_PALETTE.length];
+  // Colour by the normalized subject so variants share one colour.
+  const key = normalizeSubject(subject) ?? subject;
+  return BADGE_PALETTE[hashString(key) % BADGE_PALETTE.length];
 }

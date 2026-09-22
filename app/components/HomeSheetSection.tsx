@@ -3,22 +3,13 @@
 import { useSession } from "@/lib/auth-client";
 import { useMemo } from "react";
 import Link from "next/link";
+import { ArrowRight, FileText } from "lucide-react";
 import HomeSheetCard from "@/app/components/HomeSheetCard";
-import PaginationFooter from "@/app/components/PaginationFooter";
 import { allSheets } from "@/app/components/searchData";
 import { basePath } from "@/app/components/config";
 
 const GRADE_MAP: Record<number, string> = {
   1: "ม.1", 2: "ม.2", 3: "ม.3", 4: "ม.4", 5: "ม.5", 6: "ม.6",
-};
-
-const LEVEL_COLORS: Record<string, string> = {
-  "ม.1": "from-rose-500 to-pink-500",
-  "ม.2": "from-orange-500 to-amber-500",
-  "ม.3": "from-emerald-500 to-teal-500",
-  "ม.4": "from-cyan-500 to-blue-500",
-  "ม.5": "from-violet-500 to-purple-500",
-  "ม.6": "from-fuchsia-500 to-pink-500",
 };
 
 export default function HomeSheetSection() {
@@ -45,93 +36,77 @@ export default function HomeSheetSection() {
 
   const levelNum = gradeLevel ?? 3;
   const mPrefix = `m${levelNum}`;
-  const gradientClass = levelLabel ? LEVEL_COLORS[levelLabel] : LEVEL_COLORS["ม.3"];
 
   if (isPending) {
     return (
-      <section className="py-12 bg-gradient-to-b from-white to-blue-50/50">
-        <div className="px-4 mx-auto max-w-screen-xl md:mb-[4vh] mb-[12vh]">
-          <div className="h-48 bg-gray-100 rounded-2xl animate-pulse" />
+      <section className="bg-white py-12 lg:py-16">
+        <div className="mx-auto max-w-screen-xl px-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className="h-40 animate-pulse rounded-2xl border border-gray-100 bg-gray-50" />
+            ))}
+          </div>
         </div>
       </section>
     );
   }
 
   return (
-    <section className="py-12 bg-gradient-to-b from-white to-blue-50/50">
-      <div className="px-4 mx-auto max-w-screen-xl md:mb-[4vh] mb-[12vh]">
-        <div className="mb-6 flex items-center justify-between flex-wrap gap-2">
+    <section className="bg-white py-12 lg:py-16">
+      <div className="mx-auto max-w-screen-xl px-4">
+        <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <div className="flex items-center gap-2 mb-1">
-              <h2 className="text-2xl font-bold text-gray-800">ชีทสรุป {targetLevel}</h2>
-              {levelLabel && (
-                <span className={`px-2.5 py-0.5 rounded-full text-white text-xs font-medium bg-gradient-to-r ${gradientClass}`}>
-                  ชั้นของคุณ
-                </span>
-              )}
+            <div className="mb-2 inline-flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">
+              <FileText className="h-3.5 w-3.5" />
+              {targetLevel}
             </div>
-            <p className="text-gray-500 text-sm">
-              {!session && !isPending
-                ? "เข้าสู่ระบบเพื่อปรับแต่งหน้าหลักของคุณ"
-                : "เลือกชีทที่ต้องการแล้วกดโหลดได้เลย"}
+            <h2 className="text-2xl font-bold text-gray-900 sm:text-3xl">
+              ชีทสรุป {targetLevel}
+            </h2>
+            <p className="mt-1 max-w-2xl text-sm text-gray-500">
+              {session
+                ? "เลือกชีทที่ต้องการแล้วกดโหลดได้เลย"
+                : "เข้าสู่ระบบเพื่อให้หน้านี้แสดงชีทตรงกับชั้นของคุณ"}
             </p>
           </div>
-          <div className="flex items-center gap-2">
-            {!session && !isPending && (
+
+          <div className="flex flex-wrap gap-2">
+            {!session && (
               <Link
                 href="/signin"
-                className="text-sm px-4 py-1.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                className="inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-700 transition-colors hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700"
               >
                 เข้าสู่ระบบ
               </Link>
             )}
             <Link
               href={`/${mPrefix}/${basePath}`}
-              className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+              className="inline-flex items-center gap-2 rounded-xl bg-gray-900 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-700"
             >
-              ดูทั้งหมด →
+              ดูชีททั้งหมด
+              <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
         </div>
 
         {sheets.length === 0 ? (
-          <div className="w-full overflow-hidden rounded-2xl shadow-lg border border-blue-100 bg-white">
-            <div className="py-12 text-center text-gray-400 text-sm">ไม่พบชีทในหมวดนี้</div>
-            <PaginationFooter
-              leftArrow={{ label: "เทอม 1", href: `/${mPrefix}/${basePath.endsWith("1") ? basePath : basePath.replace("2", "1")}` }}
-              rightArrow={{ label: "เทอม 2", href: `/${mPrefix}/${basePath.endsWith("2") ? basePath : basePath.replace("1", "2")}` }}
-              links={[
-                { label: "กลางภาค", href: `/${mPrefix}/${pathTerm === "เทอม 1" ? "midterm1" : "midterm2"}`, isActive: pathExamType === "กลางภาค" },
-                { label: "ปลายภาค", href: `/${mPrefix}/${pathTerm === "เทอม 1" ? "final1" : "final2"}`, isActive: pathExamType === "ปลายภาค" },
-              ]}
-            />
+          <div className="rounded-2xl border border-dashed border-gray-200 bg-gray-50 px-4 py-10 text-center">
+            <FileText className="mx-auto mb-3 h-10 w-10 text-gray-300" />
+            <p className="text-sm font-medium text-gray-500">ไม่พบชีทในหมวดนี้</p>
           </div>
         ) : (
-          <div>
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {sheets.map((sheet, i) => (
-                <HomeSheetCard
-                  key={i}
-                  subject={sheet.subject}
-                  filename={sheet.filename}
-                  icon={sheet.icon}
-                  level={targetLevel}
-                  term={sheet.term}
-                  examType={sheet.examType}
-                  by={sheet.by}
-                />
-              ))}
-            </div>
-            <div className="mt-4 overflow-hidden rounded-2xl border border-blue-100 bg-white shadow-sm">
-              <PaginationFooter
-                leftArrow={{ label: "เทอม 1", href: `/${mPrefix}/${basePath.endsWith("1") ? basePath : basePath.replace("2", "1")}` }}
-                rightArrow={{ label: "เทอม 2", href: `/${mPrefix}/${basePath.endsWith("2") ? basePath : basePath.replace("1", "2")}` }}
-                links={[
-                  { label: "กลางภาค", href: `/${mPrefix}/${pathTerm === "เทอม 1" ? "midterm1" : "midterm2"}`, isActive: pathExamType === "กลางภาค" },
-                  { label: "ปลายภาค", href: `/${mPrefix}/${pathTerm === "เทอม 1" ? "final1" : "final2"}`, isActive: pathExamType === "ปลายภาค" },
-                ]}
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {sheets.map((sheet, i) => (
+              <HomeSheetCard
+                key={i}
+                subject={sheet.subject}
+                filename={sheet.filename}
+                level={targetLevel}
+                term={sheet.term}
+                examType={sheet.examType}
+                by={sheet.by}
               />
-            </div>
+            ))}
           </div>
         )}
       </div>
