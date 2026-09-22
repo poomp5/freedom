@@ -18,7 +18,7 @@ export const metadata = {
   title: "FREEDOM | NEXT GEN",
   description: "รวมชีทสรุปทุกวิชา ม.1-ม.6 โรงเรียนอัสสัมชัญธนบุรี",
   icons: {
-    icon: "/assets/img/poomicon.png",
+    icon: "/assets/img/icon.png",
   },
   openGraph: {
     title: "FREEDOM | NEXT GEN",

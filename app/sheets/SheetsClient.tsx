@@ -1,15 +1,13 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback, useEffect } from "react";
 import Link from "next/link";
-import Image from "next/image";
-import { FileText, Calendar, Lock, SlidersHorizontal, Search, X, ChevronRight } from "lucide-react";
-import StarRating from "@/app/components/StarRating";
+import { FileText, SlidersHorizontal, Search, X, ChevronRight } from "lucide-react";
 import Navbar from "@/app/components/Navbar";
 import Bottombar from "@/app/components/Bottombar";
 import PurchaseModal from "@/app/components/PurchaseModal";
-import { getSubjectTheme } from "./subjectTheme";
-import { getSocialLinks, getContactHref } from "./socialIcons";
+import SheetCard, { type SheetListItem } from "./SheetCard";
+import { SHEETS_LIST_STALE_TIME } from "./queryOptions";
 import { useSuspenseQuery, useQueryClient } from "@tanstack/react-query";
 import { useTRPC } from "@/trpc/client";
 
@@ -26,7 +24,6 @@ function toggleInSet(set: Set<string>, value: string) {
 
 export default function SheetsClient({
   isLoggedIn,
-  userId,
 }: {
   isLoggedIn: boolean;
   userId: string | null;
@@ -34,6 +31,26 @@ export default function SheetsClient({
   const trpc = useTRPC();
   const queryClient = useQueryClient();
   const { data: sheets } = useSuspenseQuery(trpc.sheets.list.queryOptions({}));
+
+  // #region agent log
+  useEffect(() => {
+    fetch("http://127.0.0.1:7282/ingest/1a575717-14f9-41b2-8db3-8c3597fa5908", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Debug-Session-Id": "878a11",
+      },
+      body: JSON.stringify({
+        sessionId: "878a11",
+        location: "app/sheets/SheetsClient.tsx",
+        message: "sheets client hydrated",
+        data: { sheetCount: sheets.length },
+        timestamp: Date.now(),
+        hypothesisId: "B",
+      }),
+    }).catch(() => {});
+  }, [sheets.length]);
+  // #endregion
 
   const [searchQuery, setSearchQuery] = useState("");
   const [levelFilters, setLevelFilters] = useState<Set<string>>(new Set());
@@ -46,8 +63,6 @@ export default function SheetsClient({
     title: string;
     price: number;
   } | null>(null);
-
-  // Track purchased sheet IDs client-side for immediate UI update
   const [purchasedIds, setPurchasedIds] = useState<Set<string>>(new Set());
 
   const subjects = useMemo(() => {
@@ -79,6 +94,26 @@ export default function SheetsClient({
     setTermFilters(new Set());
     setSubjectFilters(new Set());
   };
+
+  const handleOpenSheet = useCallback(
+    (sheet: SheetListItem) => {
+      const isPaid = !sheet.isFree && sheet.price;
+      const alreadyPurchased = purchasedIds.has(sheet.id);
+
+      if (!isPaid || alreadyPurchased) {
+        window.open(sheet.pdfUrl, "_blank", "noopener,noreferrer");
+      } else if (isLoggedIn) {
+        setPurchaseSheet({
+          id: sheet.id,
+          title: sheet.title,
+          price: sheet.price!,
+        });
+      } else {
+        window.location.href = "/auth/login";
+      }
+    },
+    [isLoggedIn, purchasedIds]
+  );
 
   const filterPanel = (
     <div className="space-y-6">
@@ -171,7 +206,6 @@ export default function SheetsClient({
       <Navbar />
       <div className="min-h-screen bg-gray-50 pb-24 md:pb-8">
         <div className="max-w-screen-xl mx-auto px-4 py-6">
-          {/* Breadcrumb */}
           <div className="flex items-center gap-1.5 text-sm text-gray-400 mb-3">
             <Link href="/" className="hover:text-blue-600">หน้าแรก</Link>
             <ChevronRight className="w-3.5 h-3.5" />
@@ -183,7 +217,6 @@ export default function SheetsClient({
             ชีทสรุปจากผู้จัดทำในชุมชน Freedom
           </p>
 
-          {/* Search + mobile filter toggle */}
           <div className="flex gap-2 mb-6">
             <button
               onClick={() => setShowMobileFilters(true)}
@@ -218,12 +251,10 @@ export default function SheetsClient({
           </div>
 
           <div className="flex gap-6 items-start">
-            {/* Sidebar (desktop) */}
             <aside className="hidden lg:block w-64 flex-shrink-0 bg-white rounded-2xl border border-gray-100 shadow-sm p-5 sticky top-4">
               {filterPanel}
             </aside>
 
-            {/* Sheet grid */}
             <div className="flex-1 min-w-0">
               <p className="text-sm text-gray-400 mb-4">พบ {filtered.length} รายการ</p>
 
@@ -234,170 +265,15 @@ export default function SheetsClient({
                 </div>
               ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
-                  {filtered.map((sheet) => {
-                    const u = sheet.uploader;
-                    const userRating = userId
-                      ? sheet.ratings.find((r) => r.userId === userId)?.score ?? null
-                      : null;
-                    const socials = getSocialLinks(u);
-                    const contactHref = getContactHref(u, u.mainContact as string | null);
-                    const theme = getSubjectTheme(sheet.subject);
-
-                    const isPaid = !sheet.isFree && sheet.price;
-                    const alreadyPurchased = purchasedIds.has(sheet.id);
-
-                    const handleCardClick = () => {
-                      if (!isPaid || alreadyPurchased) {
-                        window.open(sheet.pdfUrl, "_blank", "noopener,noreferrer");
-                      } else if (isLoggedIn) {
-                        setPurchaseSheet({
-                          id: sheet.id,
-                          title: sheet.title,
-                          price: sheet.price!,
-                        });
-                      } else {
-                        window.location.href = "/auth/login";
-                      }
-                    };
-
-                    return (
-                      <div
-                        key={sheet.id}
-                        role="link"
-                        tabIndex={0}
-                        onClick={handleCardClick}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter" || e.key === " ") {
-                            e.preventDefault();
-                            handleCardClick();
-                          }
-                        }}
-                        className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md hover:border-blue-200 transition-all duration-200 flex flex-col group cursor-pointer overflow-hidden focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                      >
-                        {/* Banner */}
-                        <div className={`relative h-28 bg-gradient-to-br ${theme.gradient} flex items-center justify-center overflow-hidden`}>
-                          <FileText className="w-10 h-10 text-white/70" strokeWidth={1.5} />
-                          {isPaid && !alreadyPurchased && (
-                            <span className="absolute top-2 right-2 inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-white/90 text-amber-700">
-                              <Lock className="w-3 h-3" />
-                              ฿{sheet.price}
-                            </span>
-                          )}
-                          {isPaid && alreadyPurchased && (
-                            <span className="absolute top-2 right-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-white/90 text-green-700">
-                              ซื้อแล้ว
-                            </span>
-                          )}
-                          {!isPaid && (
-                            <span className="absolute top-2 right-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-white/90 text-emerald-700">
-                              ฟรี
-                            </span>
-                          )}
-                        </div>
-
-                        {/* Body */}
-                        <div className="p-4 flex flex-col flex-1">
-                          <div className={`inline-flex items-center gap-1 self-start px-2 py-0.5 rounded-full text-xs font-medium mb-1.5 ${theme.badge}`}>
-                            <FileText className="w-3 h-3" />
-                            {sheet.subject}
-                          </div>
-                          <h3 className="font-semibold text-gray-800 truncate group-hover:text-blue-600 transition-colors">
-                            {sheet.title}
-                          </h3>
-                          <p className="text-xs text-gray-400 mt-1">
-                            {sheet.level} · {sheet.examType} {sheet.term}
-                          </p>
-
-                          {sheet.description && (
-                            <p className="text-sm text-gray-500 mt-2 line-clamp-2">{sheet.description}</p>
-                          )}
-
-                          <div className="mt-3" onClick={(e) => e.stopPropagation()}>
-                            {isLoggedIn ? (
-                              <StarRating
-                                sheetId={sheet.id}
-                                currentRating={userRating}
-                                averageRating={sheet.averageRating}
-                                totalRatings={sheet.totalRatings}
-                              />
-                            ) : (
-                              <div className="flex items-center gap-1 text-sm text-gray-500">
-                                <span className="text-yellow-400">★</span>
-                                {sheet.averageRating.toFixed(1)} ({sheet.totalRatings} รีวิว)
-                              </div>
-                            )}
-                          </div>
-
-                          {/* Footer */}
-                          <div className="mt-auto pt-3 border-t border-gray-50 space-y-2">
-                            <div className="flex items-center justify-between">
-                              <div className="flex items-center gap-1.5 text-xs text-gray-400 min-w-0">
-                                {u.image ? (
-                                  <Image
-                                    src={u.image}
-                                    alt={u.name}
-                                    width={16}
-                                    height={16}
-                                    className="w-4 h-4 rounded-full object-cover flex-shrink-0"
-                                  />
-                                ) : (
-                                  <div className="w-4 h-4 rounded-full bg-blue-100 flex-shrink-0" />
-                                )}
-                                {u.username ? (
-                                  <Link
-                                    href={`/u/${u.username}`}
-                                    onClick={(e) => e.stopPropagation()}
-                                    className="truncate hover:text-blue-600 hover:underline"
-                                  >
-                                    @{u.username}
-                                  </Link>
-                                ) : (
-                                  <span className="truncate">{u.name}</span>
-                                )}
-                              </div>
-                              <div className="flex items-center gap-1 text-xs text-gray-400 flex-shrink-0">
-                                <Calendar className="w-3.5 h-3.5" />
-                                {new Date(sheet.createdAt).toLocaleDateString("th-TH", {
-                                  day: "numeric",
-                                  month: "short",
-                                })}
-                              </div>
-                            </div>
-
-                            {socials.length > 0 && (
-                              <div className="flex items-center gap-1.5" onClick={(e) => e.stopPropagation()}>
-                                {socials.map((s) => (
-                                  <a
-                                    key={s.label}
-                                    href={s.href}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    title={s.label}
-                                    className="text-gray-400 hover:text-gray-600 transition-colors"
-                                    onClick={(e) => e.stopPropagation()}
-                                  >
-                                    {s.icon}
-                                  </a>
-                                ))}
-                              </div>
-                            )}
-
-                            {contactHref && (
-                              <a
-                                href={contactHref}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                onClick={(e) => e.stopPropagation()}
-                                className="block w-full text-center text-xs font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-lg py-1.5 transition-colors"
-                              >
-                                ติดต่อเจ้าของชีท
-                              </a>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
+                  {filtered.map((sheet) => (
+                    <SheetCard
+                      key={sheet.id}
+                      sheet={sheet}
+                      isLoggedIn={isLoggedIn}
+                      alreadyPurchased={purchasedIds.has(sheet.id)}
+                      onOpen={() => handleOpenSheet(sheet)}
+                    />
+                  ))}
                 </div>
               )}
             </div>
@@ -406,7 +282,6 @@ export default function SheetsClient({
       </div>
       <Bottombar />
 
-      {/* Mobile filter drawer */}
       {showMobileFilters && (
         <div className="fixed inset-0 z-50 lg:hidden flex">
           <div className="absolute inset-0 bg-black/40" onClick={() => setShowMobileFilters(false)} />
@@ -428,7 +303,6 @@ export default function SheetsClient({
         </div>
       )}
 
-      {/* Purchase Modal */}
       {purchaseSheet && (
         <PurchaseModal
           sheetId={purchaseSheet.id}

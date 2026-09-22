@@ -4,21 +4,8 @@ import { useState } from "react";
 import { X, Loader2 } from "lucide-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTRPC } from "@/trpc/client";
+import { SUBJECTS } from "@/lib/subjects";
 
-const SUBJECTS = [
-  "คณิตศาสตร์",
-  "วิทยาศาสตร์",
-  "ภาษาไทย",
-  "ภาษาอังกฤษ",
-  "สังคมศึกษา",
-  "สุขศึกษา",
-  "ศิลปะ",
-  "การงานอาชีพ",
-  "ฟิสิกส์",
-  "เคมี",
-  "ชีววิทยา",
-  "อื่นๆ",
-];
 const LEVELS = ["ม.1", "ม.2", "ม.3", "ม.4", "ม.5", "ม.6"];
 const EXAM_TYPES = ["กลางภาค", "ปลายภาค"];
 const TERMS = ["เทอม 1", "เทอม 2"];

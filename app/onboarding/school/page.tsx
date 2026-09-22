@@ -54,7 +54,7 @@ export default function SchoolOnboarding() {
       <div className="max-w-2xl mx-auto px-4 py-12">
         <div className="flex justify-center mb-8">
           <Image
-            src="/assets/img/freedom.svg"
+            src="/assets/img/logo-freedom.png"
             width={160}
             height={48}
             alt="Freedom Logo"

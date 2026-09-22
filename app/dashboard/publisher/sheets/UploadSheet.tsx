@@ -5,21 +5,7 @@ import { Upload, FileText, X, Loader2, CheckCircle, AlertTriangle } from "lucide
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useTRPC } from "@/trpc/client";
 import Link from "next/link";
-
-const SUBJECTS = [
-  "คณิตศาสตร์",
-  "วิทยาศาสตร์",
-  "ภาษาไทย",
-  "ภาษาอังกฤษ",
-  "สังคมศึกษา",
-  "สุขศึกษา",
-  "ศิลปะ",
-  "การงานอาชีพ",
-  "ฟิสิกส์",
-  "เคมี",
-  "ชีววิทยา",
-  "อื่นๆ",
-];
+import { SUBJECTS } from "@/lib/subjects";
 
 const LEVELS = ["ม.1", "ม.2", "ม.3", "ม.4", "ม.5", "ม.6"] as const;
 const EXAM_TYPES = ["กลางภาค", "ปลายภาค"];
@@ -33,7 +19,6 @@ export default function UploadSheet({ onUploaded }: { onUploaded: () => void }) 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [subject, setSubject] = useState("");
-  const [customSubject, setCustomSubject] = useState("");
   const [level, setLevel] = useState<Level | "">("");
   const [examType, setExamType] = useState("");
   const [term, setTerm] = useState("");
@@ -117,8 +102,7 @@ export default function UploadSheet({ onUploaded }: { onUploaded: () => void }) 
     e.preventDefault();
     setError("");
 
-    const finalSubject = subject === "อื่นๆ" ? customSubject.trim() : subject;
-    if (!title || !finalSubject || !level || !examType || !term) {
+    if (!title || !subject || !level || !examType || !term) {
       setError("กรุณากรอกข้อมูลให้ครบ");
       return;
     }
@@ -144,7 +128,7 @@ export default function UploadSheet({ onUploaded }: { onUploaded: () => void }) 
       const { uploadUrl, publicUrl, key } = await presignMutation.mutateAsync({
         fileName: file.name,
         level,
-        subject: finalSubject,
+        subject,
         contentType: "application/pdf" as const,
         fileSize: compressedBlob.size,
       });
@@ -165,7 +149,7 @@ export default function UploadSheet({ onUploaded }: { onUploaded: () => void }) 
       await createSheetMutation.mutateAsync({
         title,
         description,
-        subject: finalSubject,
+        subject,
         level,
         examType,
         term,
@@ -180,7 +164,6 @@ export default function UploadSheet({ onUploaded }: { onUploaded: () => void }) 
         setTitle("");
         setDescription("");
         setSubject("");
-        setCustomSubject("");
         setLevel("");
         setExamType("");
         setTerm("");
@@ -239,7 +222,7 @@ export default function UploadSheet({ onUploaded }: { onUploaded: () => void }) 
             </label>
             <select
               value={subject}
-              onChange={(e) => { setSubject(e.target.value); setCustomSubject(""); }}
+              onChange={(e) => setSubject(e.target.value)}
               className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
               <option value="">เลือกวิชา</option>
@@ -247,15 +230,6 @@ export default function UploadSheet({ onUploaded }: { onUploaded: () => void }) 
                 <option key={s} value={s}>{s}</option>
               ))}
             </select>
-            {subject === "อื่นๆ" && (
-              <input
-                type="text"
-                value={customSubject}
-                onChange={(e) => setCustomSubject(e.target.value)}
-                className="mt-1.5 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="ระบุชื่อวิชา"
-              />
-            )}
           </div>
 
           <div>

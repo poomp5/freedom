@@ -61,6 +61,108 @@ export const usersRouter = createTRPCRouter({
     });
   }),
 
+  /**
+   * Re-fetch a user's profile picture from Google.
+   *
+   * Some accounts have a null `image` (they signed in before the picture was
+   * persisted). Google's userinfo endpoint needs a valid access token; stored
+   * ones are short-lived, so refresh first when we have a refresh token.
+   * Accounts created before `accessType: "offline"` was enabled have no refresh
+   * token at all -- those users have to sign in again, which we report clearly
+   * instead of failing silently.
+   */
+  refreshGoogleImage: adminProcedure
+    .input(z.object({ userId: z.string() }))
+    .mutation(async ({ input }) => {
+      const account = await prisma.account.findFirst({
+        where: { userId: input.userId, providerId: "google" },
+      });
+
+      if (!account) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "ผู้ใช้นี้ไม่ได้เชื่อมต่อบัญชี Google",
+        });
+      }
+
+      let accessToken = account.accessToken;
+      const expired =
+        !account.accessTokenExpiresAt ||
+        account.accessTokenExpiresAt.getTime() <= Date.now();
+
+      if (expired) {
+        if (!account.refreshToken) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message:
+              "โทเค็นของ Google หมดอายุแล้ว และไม่มี refresh token — ผู้ใช้ต้องเข้าสู่ระบบด้วย Google อีกครั้ง",
+          });
+        }
+
+        const res = await fetch("https://oauth2.googleapis.com/token", {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body: new URLSearchParams({
+            client_id: process.env.GOOGLE_CLIENT_ID as string,
+            client_secret: process.env.GOOGLE_CLIENT_SECRET as string,
+            refresh_token: account.refreshToken,
+            grant_type: "refresh_token",
+          }),
+        });
+
+        if (!res.ok) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "ต่ออายุโทเค็นของ Google ไม่สำเร็จ ผู้ใช้อาจต้องเข้าสู่ระบบใหม่",
+          });
+        }
+
+        const refreshed = (await res.json()) as {
+          access_token: string;
+          expires_in?: number;
+        };
+        accessToken = refreshed.access_token;
+
+        await prisma.account.update({
+          where: { id: account.id },
+          data: {
+            accessToken: refreshed.access_token,
+            accessTokenExpiresAt: refreshed.expires_in
+              ? new Date(Date.now() + refreshed.expires_in * 1000)
+              : null,
+          },
+        });
+      }
+
+      const profileRes = await fetch(
+        "https://www.googleapis.com/oauth2/v3/userinfo",
+        { headers: { Authorization: `Bearer ${accessToken}` } }
+      );
+
+      if (!profileRes.ok) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "ดึงข้อมูลโปรไฟล์จาก Google ไม่สำเร็จ",
+        });
+      }
+
+      const profile = (await profileRes.json()) as { picture?: string };
+      if (!profile.picture) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "บัญชี Google นี้ไม่มีรูปโปรไฟล์",
+        });
+      }
+
+      const updated = await prisma.user.update({
+        where: { id: input.userId },
+        data: { image: profile.picture },
+        select: { id: true, image: true },
+      });
+
+      return updated;
+    }),
+
   getUserSheets: adminProcedure
     .input(z.object({ userId: z.string() }))
     .query(async ({ input }) => {

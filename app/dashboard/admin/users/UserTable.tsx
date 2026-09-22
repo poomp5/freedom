@@ -1,7 +1,8 @@
 "use client";
 
 import { Fragment, useState } from "react";
-import { Search, ChevronDown, ChevronRight, Star, FileText } from "lucide-react";
+import Avatar from "@/app/components/Avatar";
+import { Search, ChevronDown, ChevronRight, Star, FileText, RefreshCw } from "lucide-react";
 import { useSuspenseQuery, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTRPC } from "@/trpc/client";
 
@@ -22,6 +23,58 @@ const ROLE_COLORS: Record<string, string> = {
   suspended: "bg-red-100 text-red-700",
   pending_publisher: "bg-orange-100 text-orange-700",
 };
+
+/** Avatar with an admin-only button that re-pulls the picture from Google. */
+function UserAvatar({
+  userId,
+  name,
+  image,
+}: {
+  userId: string;
+  name: string;
+  image: string | null;
+}) {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+  const [error, setError] = useState<string | null>(null);
+
+  const refreshMutation = useMutation(
+    trpc.users.refreshGoogleImage.mutationOptions({
+      onSuccess: () => {
+        setError(null);
+        queryClient.invalidateQueries({ queryKey: trpc.users.list.queryKey() });
+      },
+      onError: (err) => setError(err.message),
+    })
+  );
+
+  return (
+    <div className="flex items-center gap-2">
+      <Avatar src={image} name={name} seed={userId} size={32} />
+
+      <button
+        type="button"
+        title={error ?? "ดึงรูปโปรไฟล์จาก Google"}
+        onClick={(e) => {
+          e.stopPropagation();
+          setError(null);
+          refreshMutation.mutate({ userId });
+        }}
+        disabled={refreshMutation.isPending}
+        className={`shrink-0 rounded-full p-1 transition-colors disabled:opacity-50 ${
+          error
+            ? "text-red-500 hover:bg-red-50"
+            : "text-gray-400 hover:text-blue-600 hover:bg-blue-50"
+        }`}
+      >
+        <RefreshCw
+          size={13}
+          className={refreshMutation.isPending ? "animate-spin" : ""}
+        />
+      </button>
+    </div>
+  );
+}
 
 function UserSheetRows({ userId }: { userId: string }) {
   const trpc = useTRPC();
@@ -192,7 +245,16 @@ export default function UserTable({
                           isExpanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />
                         ) : null}
                       </td>
-                      <td className="px-4 py-3 font-medium text-gray-800">{user.name}</td>
+                      <td className="px-4 py-3 font-medium text-gray-800">
+                        <div className="flex items-center gap-2.5">
+                          <UserAvatar
+                            userId={user.id}
+                            name={user.name}
+                            image={user.image}
+                          />
+                          <span>{user.name}</span>
+                        </div>
+                      </td>
                       <td className="px-4 py-3 text-gray-500">{user.email}</td>
                       <td className="px-4 py-3 text-gray-600">
                         {sheetCount > 0 ? (

@@ -143,6 +143,8 @@ model Sheet {
   uploadedBy  String
   isFree      Boolean  @default(true)
   price       Int?     // Price in THB (null = free)
+  pageCount   Int?     // Number of pages in the PDF (null = unknown)
+  academicYear Int?    // Thai B.E. year the sheet covers, e.g. 2567
   uploader    User     @relation(fields: [uploadedBy], references: [id], onDelete: Cascade)
   ratings     Rating[]
   transactions Transaction[]
@@ -152,6 +154,7 @@ model Sheet {
 
   @@index([level, examType, term])
   @@index([uploadedBy])
+  @@index([createdAt(sort: Desc)])
 }
 
 model Rating {

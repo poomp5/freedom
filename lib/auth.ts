@@ -13,6 +13,10 @@ export const auth = betterAuth({
     google: {
       clientId: process.env.GOOGLE_CLIENT_ID as string,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+      // Ask for a refresh token so the profile picture can be re-fetched from
+      // Google later (admin "ดึงรูป" action) without the user signing in again.
+      accessType: "offline",
+      prompt: "consent",
     },
   },
   user: {

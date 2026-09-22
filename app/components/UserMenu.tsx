@@ -1,11 +1,11 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { signOut, useSession } from "@/lib/auth-client";
 import { User, LayoutDashboard, BadgePlus, Clock3, LogOut } from "lucide-react";
 import PublisherRequestModal from "./PublisherRequestModal";
+import Avatar from "./Avatar";
 
 export default function UserMenu() {
   const { data: session, isPending } = useSession();
@@ -61,19 +61,12 @@ export default function UserMenu() {
           onClick={() => setIsOpen(!isOpen)}
           className="flex items-center gap-2 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
         >
-          {session.user.image ? (
-            <Image
-              src={session.user.image}
-              alt={session.user.name}
-              width={32}
-              height={32}
-              className="w-8 h-8 rounded-full"
-            />
-          ) : (
-            <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white text-sm font-medium">
-              {session.user.name?.charAt(0)?.toUpperCase()}
-            </div>
-          )}
+          <Avatar
+            src={session.user.image}
+            name={session.user.name}
+            seed={session.user.id}
+            size={32}
+          />
         </button>
 
         {isOpen && (

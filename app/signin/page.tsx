@@ -19,7 +19,7 @@ export default function SignInPage() {
           {/* Logo */}
           <div className="flex justify-center mb-6">
             <Image
-              src="/assets/img/freedom.svg"
+              src="/assets/img/logo-freedom.png"
               width={160}
               height={48}
               alt="Freedom Logo"

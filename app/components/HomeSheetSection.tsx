@@ -3,7 +3,7 @@
 import { useSession } from "@/lib/auth-client";
 import { useMemo } from "react";
 import Link from "next/link";
-import SheetRow from "@/app/components/SheetRow";
+import HomeSheetCard from "@/app/components/HomeSheetCard";
 import PaginationFooter from "@/app/components/PaginationFooter";
 import { allSheets } from "@/app/components/searchData";
 import { basePath } from "@/app/components/config";
@@ -107,41 +107,31 @@ export default function HomeSheetSection() {
             />
           </div>
         ) : (
-          <div className="w-full overflow-hidden rounded-2xl shadow-lg border border-blue-100 bg-white">
-            <div className="w-full overflow-x-auto">
-              <table className="w-full whitespace-no-wrap">
-                <thead>
-                  <tr className="text-xs font-semibold tracking-wide text-left text-blue-600 uppercase border-b border-blue-100 bg-gradient-to-r from-blue-50 to-cyan-50">
-                    <th className="px-4 py-4">ชื่อวิชา</th>
-                    <th className="px-4 py-4 whitespace-nowrap">รายละเอียด</th>
-                    <th className="px-4 py-4">ไฟล์</th>
-                    <th className="px-2 py-4">วันที่</th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-blue-50">
-                  {sheets.map((sheet, i) => (
-                    <SheetRow
-                      key={i}
-                      subject={sheet.subject}
-                      filename={sheet.filename}
-                      icon={sheet.icon}
-                      date={""}
-                      term={`${targetLevel} ${sheet.term}`}
-                      examType={sheet.examType === "กลางภาค" ? "สอบกลางภาค" : "สอบปลายภาค"}
-                      by={sheet.by ? { name: sheet.by, url: `https://instagram.com/${sheet.by}` } : undefined}
-                    />
-                  ))}
-                </tbody>
-              </table>
+          <div>
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {sheets.map((sheet, i) => (
+                <HomeSheetCard
+                  key={i}
+                  subject={sheet.subject}
+                  filename={sheet.filename}
+                  icon={sheet.icon}
+                  level={targetLevel}
+                  term={sheet.term}
+                  examType={sheet.examType}
+                  by={sheet.by}
+                />
+              ))}
             </div>
-            <PaginationFooter
-              leftArrow={{ label: "เทอม 1", href: `/${mPrefix}/${basePath.endsWith("1") ? basePath : basePath.replace("2", "1")}` }}
-              rightArrow={{ label: "เทอม 2", href: `/${mPrefix}/${basePath.endsWith("2") ? basePath : basePath.replace("1", "2")}` }}
-              links={[
-                { label: "กลางภาค", href: `/${mPrefix}/${pathTerm === "เทอม 1" ? "midterm1" : "midterm2"}`, isActive: pathExamType === "กลางภาค" },
-                { label: "ปลายภาค", href: `/${mPrefix}/${pathTerm === "เทอม 1" ? "final1" : "final2"}`, isActive: pathExamType === "ปลายภาค" },
-              ]}
-            />
+            <div className="mt-4 overflow-hidden rounded-2xl border border-blue-100 bg-white shadow-sm">
+              <PaginationFooter
+                leftArrow={{ label: "เทอม 1", href: `/${mPrefix}/${basePath.endsWith("1") ? basePath : basePath.replace("2", "1")}` }}
+                rightArrow={{ label: "เทอม 2", href: `/${mPrefix}/${basePath.endsWith("2") ? basePath : basePath.replace("1", "2")}` }}
+                links={[
+                  { label: "กลางภาค", href: `/${mPrefix}/${pathTerm === "เทอม 1" ? "midterm1" : "midterm2"}`, isActive: pathExamType === "กลางภาค" },
+                  { label: "ปลายภาค", href: `/${mPrefix}/${pathTerm === "เทอม 1" ? "final1" : "final2"}`, isActive: pathExamType === "ปลายภาค" },
+                ]}
+              />
+            </div>
           </div>
         )}
       </div>

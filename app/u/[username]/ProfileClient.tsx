@@ -1,7 +1,8 @@
 "use client";
 
-import Image from "next/image";
-import { FileText, ExternalLink, Lock, Calendar } from "lucide-react";
+import { FileText, ExternalLink, Lock, Calendar, Star, MessageSquare, GraduationCap } from "lucide-react";
+import Avatar from "@/app/components/Avatar";
+import SubjectCover from "@/app/sheets/SubjectCover";
 import Navbar from "@/app/components/Navbar";
 import Bottombar from "@/app/components/Bottombar";
 import { useSuspenseQuery } from "@tanstack/react-query";
@@ -90,77 +91,125 @@ export default function ProfileClient({ username }: { username: string }) {
     color: s.color,
   }));
 
+  // Profile-wide stats, averaged only over sheets that actually have ratings so
+  // unrated uploads do not drag the score down to zero.
+  const ratedSheets = sheets.filter((s) => s.totalRatings > 0);
+  const avgRating =
+    ratedSheets.length > 0
+      ? ratedSheets.reduce((sum, s) => sum + s.averageRating, 0) / ratedSheets.length
+      : 0;
+  const totalReviews = sheets.reduce((sum, s) => sum + s.totalRatings, 0);
+  const joinedYear = new Date(user.createdAt).toLocaleDateString("th-TH", {
+    month: "short",
+    year: "numeric",
+  });
+
+  const stats = [
+    { label: "ชีททั้งหมด", value: user._count.sheets, icon: FileText },
+    {
+      label: "คะแนนเฉลี่ย",
+      value: avgRating > 0 ? avgRating.toFixed(1) : "—",
+      icon: Star,
+    },
+    { label: "รีวิว", value: totalReviews, icon: MessageSquare },
+  ];
+
   return (
     <div>
       <Navbar />
       <Bottombar />
-      <main className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-cyan-50 pb-24 md:pb-8">
-        {/* Header */}
-        <div className="relative overflow-hidden p-12 px-4">
-          <div className="absolute inset-0 overflow-hidden pointer-events-none">
-            <div className="absolute -top-20 -right-20 w-64 h-64 bg-white/10 rounded-full blur-2xl" />
-            <div className="absolute bottom-0 -left-10 w-48 h-48 bg-cyan-300/20 rounded-full blur-2xl" />
+      <main className="min-h-screen bg-gray-50 pb-24 md:pb-12">
+        {/* ── Hero ── */}
+        <div className="relative overflow-hidden bg-gradient-to-br from-blue-600 via-blue-500 to-cyan-500">
+          <div className="absolute inset-0 pointer-events-none">
+            <div className="absolute -top-24 -right-16 w-72 h-72 bg-white/10 rounded-full blur-3xl" />
+            <div className="absolute -bottom-20 -left-10 w-64 h-64 bg-cyan-200/20 rounded-full blur-3xl" />
           </div>
-          <div className="relative flex flex-col items-center">
-            <div className="w-24 h-24 rounded-full ring-4 ring-white shadow-xl overflow-hidden bg-white">
-              {user.image ? (
-                <Image
-                  src={user.image}
-                  alt={user.name}
-                  width={96}
-                  height={96}
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center bg-blue-100">
-                  <svg className="w-12 h-12 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                  </svg>
+
+          <div className="relative max-w-screen-lg mx-auto px-4 pt-12 pb-20 md:pt-16 md:pb-24">
+            <div className="flex flex-col md:flex-row items-center md:items-end gap-5 md:gap-7 text-center md:text-left">
+              <div className="rounded-full ring-4 ring-white/80 shadow-xl overflow-hidden shrink-0">
+                <Avatar src={user.image} name={user.name} seed={user.id} size={112} />
+              </div>
+
+              <div className="flex-1 min-w-0 pb-1">
+                <h1 className="text-2xl md:text-3xl font-bold text-white drop-shadow-sm truncate">
+                  {user.name}
+                </h1>
+                {user.username && (
+                  <p className="text-blue-50/90 text-sm mt-1">@{user.username}</p>
+                )}
+
+                <div className="flex flex-wrap gap-2 mt-3 justify-center md:justify-start">
+                  {gradeLevelLabel && (
+                    <span className="px-2.5 py-1 bg-white/20 backdrop-blur-sm text-white text-xs font-medium rounded-full">
+                      {gradeLevelLabel}
+                    </span>
+                  )}
+                  {user.school && (
+                    <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-white/20 backdrop-blur-sm text-white text-xs rounded-full max-w-[240px]">
+                      <GraduationCap className="w-3.5 h-3.5 shrink-0" />
+                      <span className="truncate">{user.school.name}</span>
+                    </span>
+                  )}
+                  <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-white/20 backdrop-blur-sm text-white text-xs rounded-full">
+                    <Calendar className="w-3.5 h-3.5" />
+                    เข้าร่วม {joinedYear}
+                  </span>
+                </div>
+              </div>
+
+              {socials.length > 0 && (
+                <div className="flex items-center gap-2 shrink-0 pb-1">
+                  {socials.map((s) => (
+                    <a
+                      key={s.label}
+                      href={s.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      title={s.label}
+                      aria-label={s.label}
+                      className="w-9 h-9 rounded-full flex items-center justify-center bg-white/20 backdrop-blur-sm text-white hover:bg-white hover:text-blue-600 transition-colors"
+                    >
+                      {s.icon}
+                    </a>
+                  ))}
                 </div>
               )}
             </div>
-            <h1 className="text-2xl font-bold text-gray-700 mt-4">{user.name}</h1>
-            {user.username && <p className="text-blue-500 text-sm mt-0.5">@{user.username}</p>}
-
-            {(gradeLevelLabel || user.school) && (
-              <div className="flex flex-wrap gap-2 mt-3 justify-center">
-                {gradeLevelLabel && (
-                  <span className="px-3 py-1 bg-blue-100 text-blue-700 text-xs font-medium rounded-full">{gradeLevelLabel}</span>
-                )}
-                {user.school && (
-                  <span className="px-3 py-1 bg-gray-100 text-gray-600 text-xs rounded-full truncate max-w-[200px]">{user.school.name}</span>
-                )}
-              </div>
-            )}
-
-            <p className="text-sm text-gray-400 mt-3">อัปโหลดชีทแล้ว {user._count.sheets} ชิ้น</p>
-
-            {socials.length > 0 && (
-              <div className="flex items-center gap-2 mt-4">
-                {socials.map((s) => (
-                  <a
-                    key={s.label}
-                    href={s.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    title={s.label}
-                    className={`w-9 h-9 rounded-full flex items-center justify-center transition-colors ${s.color}`}
-                  >
-                    {s.icon}
-                  </a>
-                ))}
-              </div>
-            )}
           </div>
         </div>
 
-        {/* Sheets */}
-        <div className="max-w-screen-xl mx-auto px-4">
-          <h2 className="text-lg font-bold text-gray-800 mb-4">ชีทที่อัปโหลด</h2>
+        {/* ── Stats (overlapping the hero) ── */}
+        <div className="max-w-screen-lg mx-auto px-4 -mt-12 relative z-10">
+          <div className="grid grid-cols-3 gap-3 md:gap-4">
+            {stats.map((stat) => (
+              <div
+                key={stat.label}
+                className="bg-white rounded-2xl border border-gray-100 shadow-sm px-3 py-4 md:px-5 md:py-5 text-center"
+              >
+                <stat.icon className="w-4 h-4 md:w-5 md:h-5 text-blue-500 mx-auto mb-1.5" />
+                <div className="text-xl md:text-2xl font-bold text-gray-800 leading-none">
+                  {stat.value}
+                </div>
+                <div className="text-[11px] md:text-xs text-gray-400 mt-1.5">{stat.label}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* ── Sheets ── */}
+        <div className="max-w-screen-lg mx-auto px-4 mt-10">
+          <div className="flex items-baseline justify-between mb-4">
+            <h2 className="text-lg font-bold text-gray-800">ชีทที่อัปโหลด</h2>
+            {sheets.length > 0 && (
+              <span className="text-sm text-gray-400">{sheets.length} ชิ้น</span>
+            )}
+          </div>
 
           {sheets.length === 0 ? (
-            <div className="text-center py-16">
-              <FileText className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+            <div className="bg-white rounded-2xl border border-gray-100 text-center py-16">
+              <FileText className="w-12 h-12 text-gray-200 mx-auto mb-3" strokeWidth={1.5} />
               <p className="text-gray-400">ยังไม่มีชีทที่อัปโหลด</p>
             </div>
           ) : (
@@ -173,55 +222,70 @@ export default function ProfileClient({ username }: { username: string }) {
                     href={sheet.pdfUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md hover:border-blue-200 transition-all duration-200 p-5 flex flex-col group"
+                    className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg hover:border-blue-200 hover:-translate-y-0.5 transition-all duration-200 flex flex-col group overflow-hidden"
                   >
-                    <div className="flex items-start justify-between mb-2">
-                      <div className="flex-1 min-w-0">
-                        <h3 className="font-semibold text-gray-800 truncate group-hover:text-blue-600 transition-colors">
-                          {sheet.title}
-                        </h3>
-                        <div className="flex flex-wrap gap-1.5 mt-1.5">
-                          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700">
-                            {sheet.level}
-                          </span>
-                          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-purple-50 text-purple-700">
-                            {sheet.subject}
-                          </span>
-                          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-50 text-green-700">
-                            {sheet.examType} {sheet.term}
-                          </span>
-                          {isPaid ? (
-                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-amber-50 text-amber-700">
-                              <Lock className="w-3 h-3" />
-                              ฿{sheet.price}
-                            </span>
-                          ) : (
-                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700">
-                              ฟรี
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                      <ExternalLink className="w-4 h-4 text-gray-300 group-hover:text-blue-400 flex-shrink-0 ml-2 transition-colors" />
+                    <div className="relative">
+                      <SubjectCover subject={sheet.subject} className="h-28" />
+                      <span
+                        className={`absolute top-2 right-2 inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium shadow-sm ${
+                          isPaid ? "bg-amber-500 text-white" : "bg-emerald-500 text-white"
+                        }`}
+                      >
+                        {isPaid ? (
+                          <>
+                            <Lock className="w-3 h-3" />฿{sheet.price}
+                          </>
+                        ) : (
+                          "ฟรี"
+                        )}
+                      </span>
                     </div>
 
-                    {sheet.description && (
-                      <p className="text-sm text-gray-500 mt-1 line-clamp-2">{sheet.description}</p>
-                    )}
-
-                    <div className="mt-auto pt-3 flex items-center justify-between border-t border-gray-50">
-                      <div className="flex items-center gap-1 text-sm text-gray-500">
-                        <span className="text-yellow-400">★</span>
-                        {sheet.averageRating.toFixed(1)} ({sheet.totalRatings} รีวิว)
+                    <div className="p-4 flex flex-col flex-1">
+                      <div className="flex items-start justify-between gap-2">
+                        <h3 className="font-semibold text-gray-800 line-clamp-2 leading-snug group-hover:text-blue-600 transition-colors">
+                          {sheet.title}
+                        </h3>
+                        <ExternalLink className="w-4 h-4 text-gray-300 group-hover:text-blue-400 shrink-0 mt-0.5 transition-colors" />
                       </div>
-                      <div className="flex items-center gap-1.5 text-xs text-gray-400">
-                        <Calendar className="w-3.5 h-3.5" />
-                        <span>
-                          {new Date(sheet.createdAt).toLocaleDateString("th-TH", {
-                            day: "numeric",
-                            month: "short",
-                          })}
+
+                      <div className="flex flex-wrap gap-1.5 mt-2">
+                        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-blue-50 text-blue-700">
+                          {sheet.level}
                         </span>
+                        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-purple-50 text-purple-700">
+                          {sheet.subject}
+                        </span>
+                        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-gray-100 text-gray-600">
+                          {sheet.examType} {sheet.term}
+                        </span>
+                      </div>
+
+                      {sheet.description && (
+                        <p className="text-sm text-gray-500 mt-2 line-clamp-2">
+                          {sheet.description}
+                        </p>
+                      )}
+
+                      <div className="mt-auto pt-3 flex items-center justify-between border-t border-gray-50">
+                        {sheet.totalRatings > 0 ? (
+                          <div className="flex items-center gap-1 text-sm text-gray-600">
+                            <Star className="w-3.5 h-3.5 fill-yellow-400 text-yellow-400" />
+                            <span className="font-medium">{sheet.averageRating.toFixed(1)}</span>
+                            <span className="text-gray-400 text-xs">({sheet.totalRatings})</span>
+                          </div>
+                        ) : (
+                          <span className="text-xs text-gray-300">ยังไม่มีรีวิว</span>
+                        )}
+                        <div className="flex items-center gap-1.5 text-xs text-gray-400">
+                          <Calendar className="w-3.5 h-3.5" />
+                          <span>
+                            {new Date(sheet.createdAt).toLocaleDateString("th-TH", {
+                              day: "numeric",
+                              month: "short",
+                            })}
+                          </span>
+                        </div>
                       </div>
                     </div>
                   </a>

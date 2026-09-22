@@ -19,7 +19,7 @@ export default function Navbar() {
             <nav className="bg-white border-gray-200 sticky top-0 z-50 shadow-sm">
                 <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
                     <Link href="/" className="flex items-center space-x-3">
-                        <Image src="/assets/img/freedom.svg" className="h-12 w-full" width={0} height={0} alt="Freedom Logo" />
+                        <Image src="/assets/img/logo-freedom.png" className="h-12 w-full" width={500} height={500} alt="Freedom Logo" />
                     </Link>
                     <div className="flex items-center md:order-2 space-x-2">
                         {/* Search Button */}
