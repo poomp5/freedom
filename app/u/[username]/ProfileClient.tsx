@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { FileText, ExternalLink, Lock, Calendar, Star, MessageSquare, GraduationCap } from "lucide-react";
 import Avatar from "@/app/components/Avatar";
 import SubjectCover from "@/app/sheets/SubjectCover";
@@ -120,11 +121,17 @@ export default function ProfileClient({ username }: { username: string }) {
       <Bottombar />
       <main className="min-h-screen bg-gray-50 pb-24 md:pb-12">
         {/* ── Hero ── */}
-        <div className="relative overflow-hidden bg-gradient-to-br from-blue-600 via-blue-500 to-cyan-500">
-          <div className="absolute inset-0 pointer-events-none">
-            <div className="absolute -top-24 -right-16 w-72 h-72 bg-white/10 rounded-full blur-3xl" />
-            <div className="absolute -bottom-20 -left-10 w-64 h-64 bg-cyan-200/20 rounded-full blur-3xl" />
-          </div>
+        <div className="relative overflow-hidden bg-blue-600">
+          <Image
+            src="/assets/img/profile-banner.png"
+            alt=""
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover"
+          />
+          {/* Darken the banner so the white name/badges stay readable on it. */}
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-900/70 via-blue-800/55 to-cyan-700/50 pointer-events-none" />
 
           <div className="relative max-w-screen-lg mx-auto px-4 pt-12 pb-20 md:pt-16 md:pb-24">
             <div className="flex flex-col md:flex-row items-center md:items-end gap-5 md:gap-7 text-center md:text-left">

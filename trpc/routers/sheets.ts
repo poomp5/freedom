@@ -27,6 +27,8 @@ const SHEET_LIST_SELECT = {
   pdfUrl: true,
   isFree: true,
   price: true,
+  pageCount: true,
+  academicYear: true,
   createdAt: true,
   uploader: {
     select: {
@@ -122,6 +124,63 @@ export const sheetsRouter = createTRPCRouter({
 
     return attachRatingStats(sheets, ctx.userId);
   }),
+
+  /** Full detail for one sheet — powers the sheet detail ("product") page. */
+  getById: baseProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async ({ input, ctx }) => {
+      const sheet = await prisma.sheet.findUnique({
+        where: { id: input.id },
+        select: { ...SHEET_LIST_SELECT, pdfKey: true },
+      });
+
+      if (!sheet) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "ไม่พบชีทนี้" });
+      }
+
+      const [withStats] = await attachRatingStats([sheet], ctx.userId);
+
+      // A paid sheet's pdfUrl is only handed out to the buyer, the uploader or
+      // an admin -- otherwise the detail page would leak the file for free.
+      const isPaid = !sheet.isFree && sheet.price;
+      let hasAccess = !isPaid;
+
+      if (isPaid && ctx.userId) {
+        if (ctx.userId === sheet.uploader.id) {
+          hasAccess = true;
+        } else {
+          const access = await prisma.sheetAccess.findFirst({
+            where: { userId: ctx.userId, sheetId: sheet.id },
+            select: { id: true },
+          });
+          hasAccess = !!access;
+        }
+      }
+
+      // Other sheets by the same uploader, for the "more from this publisher" rail.
+      const moreBySameUploader = await prisma.sheet.findMany({
+        where: { uploadedBy: sheet.uploader.id, id: { not: sheet.id } },
+        select: {
+          id: true,
+          title: true,
+          subject: true,
+          level: true,
+          examType: true,
+          term: true,
+          isFree: true,
+          price: true,
+        },
+        orderBy: { createdAt: "desc" },
+        take: 4,
+      });
+
+      return {
+        ...withStats,
+        pdfUrl: hasAccess ? sheet.pdfUrl : null,
+        hasAccess,
+        moreBySameUploader,
+      };
+    }),
 
   list: baseProcedure
     .input(

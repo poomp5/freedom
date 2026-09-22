@@ -2,6 +2,7 @@
 
 import { useState, useMemo, useCallback, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { FileText, SlidersHorizontal, Search, X, ChevronRight } from "lucide-react";
 import Navbar from "@/app/components/Navbar";
 import Bottombar from "@/app/components/Bottombar";
@@ -29,6 +30,7 @@ export default function SheetsClient({
   userId: string | null;
 }) {
   const trpc = useTRPC();
+  const router = useRouter();
   const queryClient = useQueryClient();
   const { data: sheets } = useSuspenseQuery(trpc.sheets.list.queryOptions({}));
 
@@ -95,24 +97,12 @@ export default function SheetsClient({
     setSubjectFilters(new Set());
   };
 
+  // Cards open the sheet's detail page; buying/opening the PDF happens there.
   const handleOpenSheet = useCallback(
     (sheet: SheetListItem) => {
-      const isPaid = !sheet.isFree && sheet.price;
-      const alreadyPurchased = purchasedIds.has(sheet.id);
-
-      if (!isPaid || alreadyPurchased) {
-        window.open(sheet.pdfUrl, "_blank", "noopener,noreferrer");
-      } else if (isLoggedIn) {
-        setPurchaseSheet({
-          id: sheet.id,
-          title: sheet.title,
-          price: sheet.price!,
-        });
-      } else {
-        window.location.href = "/auth/login";
-      }
+      router.push(`/sheets/${sheet.id}`);
     },
-    [isLoggedIn, purchasedIds]
+    [router]
   );
 
   const filterPanel = (

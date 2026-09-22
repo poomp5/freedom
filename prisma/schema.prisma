@@ -51,6 +51,10 @@ model User {
   promptPayNumber   String?
   paymentMethod     String? // "bank" | "promptpay"
 
+  // Donation PromptPay (phone or national ID) shown on the user's sheet pages.
+  // Kept separate from promptPayNumber, which is the paid-sheet payout account.
+  donatePromptPay   String?
+
   sessions          Session[]
   accounts          Account[]
   publisherRequests PublisherRequest[]
@@ -58,6 +62,7 @@ model User {
   ratings           Rating[]
   transactions      Transaction[]
   sheetAccess       SheetAccess[]
+  comments          Comment[]
 }
 
 model PublisherRequest {
@@ -149,6 +154,7 @@ model Sheet {
   ratings     Rating[]
   transactions Transaction[]
   sheetAccess  SheetAccess[]
+  comments    Comment[]
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -169,6 +175,20 @@ model Rating {
 
   @@unique([userId, sheetId])
   @@index([sheetId])
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  body      String
+  userId    String
+  sheetId   String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sheet     Sheet    @relation(fields: [sheetId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([sheetId, createdAt(sort: Desc)])
+  @@index([userId])
 }
 
 // ─── Payment & Transactions ───
