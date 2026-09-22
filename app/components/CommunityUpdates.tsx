@@ -29,7 +29,7 @@ export default function CommunityUpdates() {
         (a, b) =>
           new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
       )
-      .slice(0, 6);
+      .slice(0, 8);
   }, [sheets]);
 
   return (
@@ -68,8 +68,8 @@ export default function CommunityUpdates() {
         </div>
 
         {isLoading ? (
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {Array.from({ length: 6 }).map((_, index) => (
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {Array.from({ length: 8 }).map((_, index) => (
               <div
                 key={index}
                 className="h-40 rounded-2xl border border-gray-100 bg-gray-50 animate-pulse"
@@ -91,7 +91,7 @@ export default function CommunityUpdates() {
             </Link>
           </div>
         ) : (
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {latestSheets.map((sheet) => {
               const isPaid = !sheet.isFree && sheet.price;
               const u = sheet.uploader;
