@@ -143,3 +143,5 @@
 {"sessionId":"878a11","location":"app/sheets/SheetsClient.tsx","message":"sheets client hydrated","data":{"sheetCount":166},"timestamp":1790100670470,"hypothesisId":"B"}
 {"sessionId":"878a11","runId":"post-fix","location":"trpc/routers/sheets.ts:list","message":"sheets.list query completed","data":{"sheetCount":166,"findManyMs":1127,"ratingsMs":319,"durationMs":1446},"timestamp":1790100705573,"hypothesisId":"C"}
 {"sessionId":"878a11","runId":"post-fix","location":"trpc/routers/sheets.ts:list","message":"sheets.list query completed","data":{"sheetCount":166,"findManyMs":1107,"ratingsMs":286,"durationMs":1393},"timestamp":1790102114144,"hypothesisId":"C"}
+{"sessionId":"878a11","runId":"post-fix","location":"trpc/routers/sheets.ts:list","message":"sheets.list query completed","data":{"sheetCount":166,"findManyMs":3464,"ratingsMs":301,"durationMs":3767},"timestamp":1790121380977,"hypothesisId":"C"}
+{"sessionId":"878a11","runId":"post-fix","location":"trpc/routers/sheets.ts:list","message":"sheets.list query completed","data":{"sheetCount":166,"findManyMs":2336,"ratingsMs":290,"durationMs":2627},"timestamp":1790122637516,"hypothesisId":"C"}
