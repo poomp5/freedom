@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(bun add:*)",
+      "Bash(bunx prisma init:*)",
+      "Bash(bunx prisma generate:*)",
+      "Bash(tail:*)",
+      "mcp__ide__getDiagnostics"
+    ]
+  }
+}

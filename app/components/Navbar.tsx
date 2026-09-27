@@ -4,6 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import { basePath } from "./config";
 import SearchModal from "./SearchModal";
+import UserMenu from "./UserMenu";
 
 export default function Navbar() {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -15,10 +16,10 @@ export default function Navbar() {
 
     return (
         <>
-            <nav className="bg-white border-gray-200 relative z-50">
+            <nav className="bg-white border-gray-200 sticky top-0 z-50 shadow-sm">
                 <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
                     <Link href="/" className="flex items-center space-x-3">
-                        <Image src="/assets/img/freedom.svg" className="h-12 w-full" width={0} height={0} alt="Freedom Logo" />
+                        <Image src="/assets/img/logo-freedom.png" className="h-12 w-full" width={500} height={500} alt="Freedom Logo" />
                     </Link>
                     <div className="flex items-center md:order-2 space-x-2">
                         {/* Search Button */}
@@ -31,6 +32,8 @@ export default function Navbar() {
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                             </svg>
                         </button>
+                        {/* User Menu */}
+                        <UserMenu />
                     </div>
                     <div className="hidden w-full md:block md:w-auto md:order-1" id="navbar-dropdown">
                         <ul className="flex flex-col font-medium p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:space-x-8 md:flex-row md:mt-0 md:border-0 md:bg-white">
@@ -94,6 +97,10 @@ export default function Navbar() {
                                         <Link href="/select" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">ทั้งหมด</Link>
                                     </div>
                                 </div>
+                            </li>
+                            <li>
+                                <Link href="/sheets"
+                                    className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0">ชีทจากชุมชน</Link>
                             </li>
                             <li>
                                 <Link href="/freedom"

@@ -1,0 +1,244 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─── Enums ───
+
+enum Role {
+  user
+  admin
+  publisher
+  suspended
+  pending_publisher
+}
+
+// ─── Better Auth Tables ───
+
+model User {
+  id            String    @id
+  name          String
+  email         String    @unique
+  emailVerified Boolean   @default(false)
+  image         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Freedom-specific fields
+  schoolId   String?
+  gradeLevel Int?
+  role       Role      @default(user)
+  school     School?   @relation(fields: [schoolId], references: [id])
+
+  // Custom username
+  username       String? @unique
+
+  // Social media links
+  socialIg       String?
+  socialFacebook String?
+  socialLine     String?
+  socialDiscord  String?
+  socialX        String?
+  mainContact    String? // "ig" | "facebook" | "line" | "discord" | "x"
+
+  // Publisher bank account info
+  bankProvider      String?
+  bankAccountNumber String?
+  bankAccountName   String?
+  promptPayNumber   String?
+  paymentMethod     String? // "bank" | "promptpay"
+
+  // Donation PromptPay (phone or national ID) shown on the user's sheet pages.
+  // Kept separate from promptPayNumber, which is the paid-sheet payout account.
+  donatePromptPay   String?
+
+  sessions          Session[]
+  accounts          Account[]
+  publisherRequests PublisherRequest[]
+  sheets            Sheet[]
+  ratings           Rating[]
+  transactions      Transaction[]
+  sheetAccess       SheetAccess[]
+  comments          Comment[]
+}
+
+model PublisherRequest {
+  id          String   @id @default(cuid())
+  userId      String
+  firstName   String
+  lastName    String
+  dateOfBirth DateTime
+  tel         String
+  status      String   @default("pending") // pending, approved, rejected
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([status])
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+}
+
+model Verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+// ─── Freedom-specific Tables ───
+
+model School {
+  id         String  @id @default(cuid())
+  name       String
+  province   String
+  district   String
+  schoolType String
+
+  users User[]
+
+  @@index([name])
+}
+
+// ─── Sheet Upload & Rating ───
+
+model Sheet {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  subject     String
+  level       String
+  examType    String
+  term        String
+  pdfUrl      String
+  pdfKey      String
+  uploadedBy  String
+  isFree      Boolean  @default(true)
+  price       Int?     // Price in THB (null = free)
+  pageCount   Int?     // Number of pages in the PDF (null = unknown)
+  academicYear Int?    // Thai B.E. year the sheet covers, e.g. 2567
+  uploader    User     @relation(fields: [uploadedBy], references: [id], onDelete: Cascade)
+  ratings     Rating[]
+  transactions Transaction[]
+  sheetAccess  SheetAccess[]
+  comments    Comment[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([level, examType, term])
+  @@index([uploadedBy])
+  @@index([createdAt(sort: Desc)])
+}
+
+model Rating {
+  id        String   @id @default(cuid())
+  score     Int
+  userId    String
+  sheetId   String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sheet     Sheet    @relation(fields: [sheetId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, sheetId])
+  @@index([sheetId])
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  body      String
+  userId    String
+  sheetId   String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sheet     Sheet    @relation(fields: [sheetId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([sheetId, createdAt(sort: Desc)])
+  @@index([userId])
+}
+
+// ─── Payment & Transactions ───
+
+model Transaction {
+  id                   String    @id @default(cuid())
+  buyerId              String
+  sheetId              String
+  amount               Int       // Total paid in THB
+  commission           Int       // Platform commission (10%)
+  publisherAmount      Int       // Publisher receives (90%)
+  slipImageUrl         String?
+  slipImageKey         String?
+  qrPayload            String?
+  status               String    @default("pending") // pending, verified, rejected, failed
+  slipVerificationData Json?
+  verifiedAt           DateTime?
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+
+  buyer       User          @relation(fields: [buyerId], references: [id], onDelete: Cascade)
+  sheet       Sheet         @relation(fields: [sheetId], references: [id], onDelete: Cascade)
+  sheetAccess SheetAccess?
+
+  @@index([buyerId])
+  @@index([sheetId])
+  @@index([status])
+}
+
+model SheetAccess {
+  id            String      @id @default(cuid())
+  userId        String
+  sheetId       String
+  transactionId String      @unique
+  grantedAt     DateTime    @default(now())
+
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sheet       Sheet       @relation(fields: [sheetId], references: [id], onDelete: Cascade)
+  transaction Transaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, sheetId])
+  @@index([userId])
+  @@index([sheetId])
+}
+
+// ─── Site Settings ───
+
+model CountdownSetting {
+  id        String   @id @default("default")
+  targetAt  DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

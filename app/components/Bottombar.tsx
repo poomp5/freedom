@@ -1,9 +1,14 @@
+"use client";
+
 import Link from "next/link";
+import { useSession } from "@/lib/auth-client";
 
 export default function Bottombar() {
+    const { data: session } = useSession();
     return (
       <div className="mt-6 block md:hidden fixed bottom-0 left-0 z-50 w-full h-16 bg-white border-t border-gray-200">
         <div className="relative grid h-full grid-cols-5 mx-auto">
+          {/* หน้าหลัก */}
           <Link href="/" className="w-full">
             <button
               type="button"
@@ -23,53 +28,36 @@ export default function Bottombar() {
               </span>
             </button>
           </Link>
-          <Link href="https://www.instagram.com/act.freedom" className="w-full">
+
+          {/* ชีทชุมชน */}
+          <Link href="/sheets" className="w-full">
             <button
               type="button"
               className="w-full h-full inline-flex flex-col items-center justify-center hover:bg-gray-50 group px-1"
             >
               <svg
                 className="w-6 h-6 mb-1 text-gray-500 group-hover:text-blue-600"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
                 fill="none"
-                xmlns="http://www.w3.org/2000/svg"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
               >
-                <rect
-                  x="2"
-                  y="2"
-                  width="20"
-                  height="20"
-                  rx="5"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                />
-                <circle
-                  cx="12"
-                  cy="12"
-                  r="4"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                />
-                <circle cx="17" cy="7" r="1.5" fill="currentColor" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
               </svg>
-
               <span className="text-xs text-gray-500 group-hover:text-blue-600">
-                ติดต่อ
+                ชีทชุมชน
               </span>
             </button>
           </Link>
+
+          {/* ปุ่มกลาง — ชีทรวม */}
           <Link href="/select" className="w-full">
             <button
               type="button"
               className="absolute left-1/2 -translate-x-1/2 -translate-y-3 w-16 h-16 inline-flex flex-col items-center justify-center bg-blue-600 hover:bg-blue-800 group rounded-full shadow-lg"
             >
               <svg
-                className="h-full w-full p-3 mb-1 text-white hover:text-white"
+                className="h-full w-full p-3 text-white"
                 xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
@@ -86,6 +74,8 @@ export default function Bottombar() {
               </svg>
             </button>
           </Link>
+
+          {/* ยันต์ */}
           <Link href="/freedom" className="w-full">
             <button
               type="button"
@@ -93,24 +83,15 @@ export default function Bottombar() {
             >
               <svg
                 className="w-6 h-6 mb-1 text-gray-500 group-hover:text-blue-600"
-                width="24"
-                height="24"
                 viewBox="0 0 600 600"
                 fill="none"
                 stroke="currentColor"
-                strokeWidth="20"
+                strokeWidth="30"
                 strokeLinecap="round"
-                xmlns="http://www.w3.org/2000/svg"
               >
                 <rect x="50" y="50" width="500" height="500" />
                 <rect x="120" y="120" width="360" height="360" />
-                <rect
-                  x="200"
-                  y="200"
-                  width="200"
-                  height="200"
-                  transform="rotate(45 300 300)"
-                />
+                <rect x="200" y="200" width="200" height="200" transform="rotate(45 300 300)" />
                 <line x1="200" y1="200" x2="400" y2="400" />
                 <line x1="400" y1="200" x2="200" y2="400" />
                 <path d="M240 120 H360" />
@@ -126,38 +107,47 @@ export default function Bottombar() {
                 <line x1="50" y1="300" x2="80" y2="300" />
                 <line x1="520" y1="300" x2="550" y2="300" />
               </svg>
-
               <span className="text-xs text-gray-500 group-hover:text-blue-600">
                 ยันต์
               </span>
             </button>
           </Link>
-          <Link href="donate" className="w-full">
+
+          {/* โปรไฟล์ */}
+          <Link href={session ? "/profile" : "/signin"} className="w-full">
             <button
               type="button"
               className="w-full h-full inline-flex flex-col items-center justify-center hover:bg-gray-50 group px-1"
             >
-              <svg
-                className="w-6 h-6 mb-1 text-gray-500 group-hover:text-blue-600"
-                aria-hidden="true"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M12 14a3 3 0 0 1 3-3h4a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2h-4a3 3 0 0 1-3-3Zm3-1a1 1 0 1 0 0 2h4v-2h-4Z"
-                  clipRule="evenodd"
-                />
-                <path
-                  fillRule="evenodd"
-                  d="M12.293 3.293a1 1 0 0 1 1.414 0L16.414 6h-2.828l-1.293-1.293a1 1 0 0 1 0-1.414ZM12.414 6 9.707 3.293a1 1 0 0 0-1.414 0L5.586 6h6.828ZM4.586 7l-.056.055A2 2 0 0 0 3 9v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2h-4a5 5 0 0 1 0-10h4a2 2 0 0 0-1.53-1.945L17.414 7H4.586Z"
-                  clipRule="evenodd"
-                />
-              </svg>
-              <span className="text-xs text-gray-500 group-hover:text-blue-600">
-                โดเนท
-              </span>
+              {session ? (
+                <>
+                  <svg
+                    className="w-6 h-6 mb-1 text-gray-500 group-hover:text-blue-600"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  </svg>
+                  <span className="text-xs text-gray-500 group-hover:text-blue-600">
+                    โปรไฟล์
+                  </span>
+                </>
+              ) : (
+                <>
+                  <svg
+                    className="w-6 h-6 mb-1 text-gray-500 group-hover:text-blue-600"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+                  </svg>
+                  <span className="text-xs text-gray-500 group-hover:text-blue-600">
+                    เข้าสู่ระบบ
+                  </span>
+                </>
+              )}
             </button>
           </Link>
         </div>
