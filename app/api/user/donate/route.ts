@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { headers } from "next/headers";
+import { invalidateDonors } from "@/lib/donors";
 
 export const dynamic = "force-dynamic";
 
@@ -48,6 +49,8 @@ export async function POST(request: NextRequest) {
     where: { id: session.user.id },
     data: { donatePromptPay },
   });
+  // /donate lists only accounts with a number set.
+  invalidateDonors();
 
   return NextResponse.json({ success: true, donatePromptPay });
 }

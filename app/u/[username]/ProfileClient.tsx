@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import Image from "next/image";
 import { FileText, ExternalLink, Lock, Calendar, Star, MessageSquare, GraduationCap } from "lucide-react";
 import Avatar from "@/app/components/Avatar";
@@ -224,11 +225,9 @@ export default function ProfileClient({ username }: { username: string }) {
               {sheets.map((sheet) => {
                 const isPaid = !sheet.isFree && sheet.price;
                 return (
-                  <a
+                  <Link
                     key={sheet.id}
-                    href={sheet.pdfUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                    href={`/sheets/${sheet.id}`}
                     className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg hover:border-blue-200 hover:-translate-y-0.5 transition-all duration-200 flex flex-col group overflow-hidden"
                   >
                     <div className="relative">
@@ -295,7 +294,7 @@ export default function ProfileClient({ username }: { username: string }) {
                         </div>
                       </div>
                     </div>
-                  </a>
+                  </Link>
                 );
               })}
             </div>

@@ -5,6 +5,7 @@ import "server-only"; // <-- ensure this file cannot be imported from the client
 import { createTRPCContext } from "./init";
 import { makeQueryClient } from "./query-client";
 import { appRouter } from "./routers/_app";
+import { getPublicSheetList } from "@/lib/sheets-cache";
 // IMPORTANT: Create a stable getter for the query client that
 //            will return the same client during the same request.
 export const getQueryClient = cache(makeQueryClient);
@@ -28,6 +29,16 @@ export async function prefetch(
     await queryClient.prefetchQuery(queryOptions);
   }
 }
+/**
+ * Seed `sheets.list({})` from the data cache without building a tRPC context.
+ * Unlike `prefetch`, this never reads request headers, so pages that use it
+ * can stay statically rendered (ISR).
+ */
+export async function prefetchPublicSheetList() {
+  const sheets = await getPublicSheetList();
+  getQueryClient().setQueryData(trpc.sheets.list.queryKey({}), sheets);
+}
+
 export function HydrateClient(props: { children: React.ReactNode }) {
   const queryClient = getQueryClient();
   return (

@@ -2,6 +2,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import { Kanit } from "next/font/google";
 import { TRPCReactProvider } from "@/trpc/client";
+import AnalyticsTracker from "./components/AnalyticsTracker";
 
 const kanit = Kanit({
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
@@ -48,6 +49,7 @@ export default function RootLayout({
     <html lang="th">
       <body className={`${kanit.className} ${geistMono.variable} antialiased`}>
         <TRPCReactProvider>{children}</TRPCReactProvider>
+        <AnalyticsTracker />
       </body>
     </html>
   );

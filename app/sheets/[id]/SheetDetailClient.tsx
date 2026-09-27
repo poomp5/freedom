@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useSuspenseQuery } from "@tanstack/react-query";
+import { trackEvent } from "@/lib/analytics-client";
 import {
   ArrowLeft,
   Calendar,
@@ -39,13 +40,20 @@ export default function SheetDetailClient({ id }: { id: string }) {
   const [showDonate, setShowDonate] = useState(false);
 
   const u = sheet.uploader;
+  // Users without a username are still reachable by id.
+  const profileHref = `/u/${u.username ?? u.id}`;
   const socials = getSocialLinks(u);
   const contactHref = getContactHref(u, u.mainContact);
   const isPaid = !sheet.isFree && sheet.price;
   const isLoggedIn = !!session;
 
+  useEffect(() => {
+    trackEvent({ type: "sheet_view", sheetId: id });
+  }, [id]);
+
   const handlePrimaryAction = () => {
     if (sheet.hasAccess && sheet.pdfUrl) {
+      trackEvent({ type: "download", sheetId: sheet.id });
       window.open(sheet.pdfUrl, "_blank", "noopener,noreferrer");
     } else if (!isLoggedIn) {
       router.push("/signin");
@@ -253,20 +261,17 @@ export default function SheetDetailClient({ id }: { id: string }) {
               <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
                 <p className="mb-3 text-xs font-medium text-gray-400">ชีทจาก</p>
 
-                <div className="flex items-center gap-3">
+                <Link href={profileHref} className="group flex items-center gap-3">
                   <Avatar src={u.image} name={u.name} seed={u.id} size={44} />
                   <div className="min-w-0 flex-1">
-                    <p className="truncate font-semibold text-gray-800">{u.name}</p>
-                    {u.username && (
-                      <Link
-                        href={`/u/${u.username}`}
-                        className="text-xs text-blue-600 hover:underline"
-                      >
-                        @{u.username}
-                      </Link>
-                    )}
+                    <p className="truncate font-semibold text-gray-800 group-hover:text-blue-600">
+                      {u.name}
+                    </p>
+                    <p className="text-xs text-blue-600 group-hover:underline">
+                      {u.username ? `@${u.username}` : "ดูโปรไฟล์"}
+                    </p>
                   </div>
-                </div>
+                </Link>
 
                 {socials.length > 0 && (
                   <div className="mt-3 flex items-center gap-2">
@@ -308,14 +313,12 @@ export default function SheetDetailClient({ id }: { id: string }) {
                   </button>
                 )}
 
-                {u.username && (
-                  <Link
-                    href={`/u/${u.username}`}
-                    className="mt-2 block w-full rounded-xl border border-gray-200 py-2 text-center text-xs font-medium text-gray-600 transition-colors hover:bg-gray-50"
-                  >
-                    ดูชีททั้งหมดของคนนี้
-                  </Link>
-                )}
+                <Link
+                  href={profileHref}
+                  className="mt-2 block w-full rounded-xl border border-gray-200 py-2 text-center text-xs font-medium text-gray-600 transition-colors hover:bg-gray-50"
+                >
+                  ดูโปรไฟล์และชีททั้งหมดของคนนี้
+                </Link>
               </div>
             </aside>
           </div>

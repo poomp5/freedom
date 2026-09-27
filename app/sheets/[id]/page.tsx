@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { caller, prefetch, trpc, HydrateClient } from "@/trpc/server";
+import { getQueryClient, trpc, HydrateClient } from "@/trpc/server";
 import SheetDetailClient from "./SheetDetailClient";
 
 export default async function SheetDetailPage({
@@ -9,13 +9,12 @@ export default async function SheetDetailPage({
 }) {
   const { id } = await params;
 
+  // One fetch both checks existence and seeds the client cache.
   try {
-    await caller.sheets.getById({ id });
+    await getQueryClient().fetchQuery(trpc.sheets.getById.queryOptions({ id }));
   } catch {
     notFound();
   }
-
-  await prefetch(trpc.sheets.getById.queryOptions({ id }));
 
   return (
     <HydrateClient>

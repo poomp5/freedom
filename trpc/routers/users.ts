@@ -51,6 +51,7 @@ export const usersRouter = createTRPCRouter({
       select: {
         id: true,
         name: true,
+        username: true,
         email: true,
         role: true,
         image: true,
@@ -200,10 +201,12 @@ export const usersRouter = createTRPCRouter({
     }),
 
   getPublicProfile: baseProcedure
+    // `username` may also be a user id, so people without a username still
+    // have a profile page (linked from /sheets/[id]).
     .input(z.object({ username: z.string() }))
     .query(async ({ input }) => {
-      const user = await prisma.user.findUnique({
-        where: { username: input.username },
+      const user = await prisma.user.findFirst({
+        where: { OR: [{ username: input.username }, { id: input.username }] },
         select: {
           id: true,
           name: true,
@@ -251,7 +254,6 @@ export const usersRouter = createTRPCRouter({
           level: sheet.level,
           examType: sheet.examType,
           term: sheet.term,
-          pdfUrl: sheet.pdfUrl,
           isFree: sheet.isFree,
           price: sheet.price,
           averageRating,

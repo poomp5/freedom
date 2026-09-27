@@ -22,7 +22,12 @@ export default async function DashboardLayout({
 
   return (
     <div className="min-h-screen bg-gray-50 flex">
-      <DashboardSidebar role={role} userName={session!.user.name} />
+      <DashboardSidebar
+        role={role}
+        userName={session!.user.name}
+        userImage={session!.user.image ?? null}
+        userId={session!.user.id}
+      />
       <main className="flex-1 min-h-screen pt-16 lg:pt-0">{children}</main>
     </div>
   );

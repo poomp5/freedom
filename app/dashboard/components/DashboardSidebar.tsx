@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { signOut } from "@/lib/auth-client";
 import { useTRPC } from "@/trpc/client";
+import Avatar from "@/app/components/Avatar";
 import {
   Home,
   Users,
@@ -25,6 +26,8 @@ import {
 interface SidebarProps {
   role: string;
   userName: string;
+  userImage: string | null;
+  userId: string;
 }
 
 interface MenuItem {
@@ -33,7 +36,7 @@ interface MenuItem {
   icon: React.ReactNode;
 }
 
-export default function DashboardSidebar({ role, userName }: SidebarProps) {
+export default function DashboardSidebar({ role, userName, userImage, userId }: SidebarProps) {
   const trpc = useTRPC();
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
@@ -176,14 +179,18 @@ export default function DashboardSidebar({ role, userName }: SidebarProps) {
       </div>
 
       {/* User info */}
-      {!compact && (
-        <div className="px-4 py-3 border-b border-gray-100">
-          <p className="text-sm font-medium text-gray-800 truncate">
-            {userName}
-          </p>
-          <p className="text-xs text-gray-500 capitalize">{role}</p>
-        </div>
-      )}
+      <div
+        className={`border-b border-gray-100 flex items-center gap-3 ${compact ? "justify-center py-3" : "px-4 py-3"}`}
+        title={compact ? userName : undefined}
+      >
+        <Avatar src={userImage} name={userName} seed={userId} size={compact ? 32 : 40} />
+        {!compact && (
+          <div className="min-w-0">
+            <p className="text-sm font-medium text-gray-800 truncate">{userName}</p>
+            <p className="text-xs text-gray-500 capitalize">{role}</p>
+          </div>
+        )}
+      </div>
 
       {/* Navigation */}
       <nav className="flex-1 p-3 space-y-3">

@@ -2,17 +2,11 @@
 import Link from "next/link";
 import { useState } from "react";
 import Image from "next/image";
-import { basePath } from "./config";
 import SearchModal from "./SearchModal";
 import UserMenu from "./UserMenu";
 
 export default function Navbar() {
-    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [isSearchOpen, setIsSearchOpen] = useState(false);
-
-    const toggleDropdown = () => {
-        setIsDropdownOpen(!isDropdownOpen);
-    };
 
     return (
         <>
@@ -46,61 +40,9 @@ export default function Navbar() {
                                 <Link href="https://www.instagram.com/act.freedom"
                                     className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0">ติดต่อ</Link>
                             </li>
-                            <li className="relative">
-                                <button
-                                    onClick={toggleDropdown}
-                                    className="flex items-center justify-between w-full py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 md:w-auto"
-                                    aria-expanded={isDropdownOpen}
-                                >
-                                    ชีทสรุป
-                                    <svg
-                                        className={`w-2.5 h-2.5 ms-2.5 transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''}`}
-                                        aria-hidden="true"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        fill="none"
-                                        viewBox="0 0 10 6"
-                                    >
-                                        <path
-                                            stroke="currentColor"
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            strokeWidth="2"
-                                            d="m1 1 4 4 4-4"
-                                        />
-                                    </svg>
-                                </button>
-                                <div
-                                    className={`absolute z-10 font-normal bg-white divide-y divide-gray-100 rounded-lg shadow w-44 ${isDropdownOpen ? 'block' : 'hidden'
-                                        }`}
-                                >
-                                    <ul className="py-2 text-sm text-gray-700">
-                                        <li>
-                                            <Link href={`/m1/${basePath}`} className="block px-4 py-2 hover:bg-gray-100">ม.1</Link>
-                                        </li>
-                                        <li>
-                                            <Link href={`/m2/${basePath}`} className="block px-4 py-2 hover:bg-gray-100">ม.2</Link>
-                                        </li>
-                                        <li>
-                                            <Link href={`/m3/${basePath}`} className="block px-4 py-2 hover:bg-gray-100">ม.3</Link>
-                                        </li>
-                                        <li>
-                                            <Link href={`/m4/${basePath}`} className="block px-4 py-2 hover:bg-gray-100">ม.4</Link>
-                                        </li>
-                                        <li>
-                                            <Link href={`/m5/${basePath}`} className="block px-4 py-2 hover:bg-gray-100">ม.5</Link>
-                                        </li>
-                                        <li>
-                                            <Link href={`/m6/${basePath}`} className="block px-4 py-2 hover:bg-gray-100">ม.6</Link>
-                                        </li>
-                                    </ul>
-                                    <div className="py-1">
-                                        <Link href="/select" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">ทั้งหมด</Link>
-                                    </div>
-                                </div>
-                            </li>
                             <li>
                                 <Link href="/sheets"
-                                    className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0">ชีทจากชุมชน</Link>
+                                    className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0">ชีทสรุป</Link>
                             </li>
                             <li>
                                 <Link href="/freedom"

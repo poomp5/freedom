@@ -29,8 +29,8 @@ export default function Bottombar() {
             </button>
           </Link>
 
-          {/* ชีทชุมชน */}
-          <Link href="/sheets" className="w-full">
+          {/* โดเนท */}
+          <Link href="/donate" className="w-full">
             <button
               type="button"
               className="w-full h-full inline-flex flex-col items-center justify-center hover:bg-gray-50 group px-1"
@@ -41,18 +41,19 @@ export default function Bottombar() {
                 stroke="currentColor"
                 viewBox="0 0 24 24"
               >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
               </svg>
               <span className="text-xs text-gray-500 group-hover:text-blue-600">
-                ชีทชุมชน
+                โดเนท
               </span>
             </button>
           </Link>
 
-          {/* ปุ่มกลาง — ชีทรวม */}
-          <Link href="/select" className="w-full">
+          {/* ปุ่มกลาง — ชีทสรุป */}
+          <Link href="/sheets" className="w-full">
             <button
               type="button"
+              aria-label="ชีทสรุป"
               className="absolute left-1/2 -translate-x-1/2 -translate-y-3 w-16 h-16 inline-flex flex-col items-center justify-center bg-blue-600 hover:bg-blue-800 group rounded-full shadow-lg"
             >
               <svg

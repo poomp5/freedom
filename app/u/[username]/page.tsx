@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { caller, prefetch, trpc, HydrateClient } from "@/trpc/server";
+import { getQueryClient, trpc, HydrateClient } from "@/trpc/server";
 import ProfileClient from "./ProfileClient";
 
 export default async function PublicProfilePage({
@@ -9,13 +9,12 @@ export default async function PublicProfilePage({
 }) {
   const { username } = await params;
 
+  // One fetch both checks existence and seeds the client cache.
   try {
-    await caller.users.getPublicProfile({ username });
+    await getQueryClient().fetchQuery(trpc.users.getPublicProfile.queryOptions({ username }));
   } catch {
     notFound();
   }
-
-  await prefetch(trpc.users.getPublicProfile.queryOptions({ username }));
 
   return (
     <HydrateClient>

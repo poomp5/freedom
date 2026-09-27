@@ -10,6 +10,7 @@ import {
 import { prisma } from "@/lib/prisma";
 import { deleteFromR2 } from "@/lib/r2";
 import { SUBJECTS } from "@/lib/subjects";
+import { getPublicSheetList, invalidateSheetList } from "@/lib/sheets-cache";
 
 const VALID_SUBJECTS = SUBJECTS as readonly string[];
 const VALID_LEVELS = ["ม.1", "ม.2", "ม.3", "ม.4", "ม.5", "ม.6"];
@@ -183,6 +184,7 @@ export const sheetsRouter = createTRPCRouter({
       };
     }),
 
+  /** Public catalog, served from the Next.js data cache (see lib/sheets-cache). */
   list: baseProcedure
     .input(
       z
@@ -194,55 +196,29 @@ export const sheetsRouter = createTRPCRouter({
         })
         .optional()
     )
-    .query(async ({ input, ctx }) => {
-      // #region agent log
-      const queryStart = Date.now();
-      // #endregion
-
-      const where: Record<string, string> = {};
-      if (input?.level) where.level = input.level;
-      if (input?.examType) where.examType = input.examType;
-      if (input?.term) where.term = input.term;
-      if (input?.subject) where.subject = input.subject;
-
-      const findManyStart = Date.now();
-      const sheets = await prisma.sheet.findMany({
-        where,
-        select: SHEET_LIST_SELECT,
-        orderBy: { createdAt: "desc" },
-      });
-      const findManyMs = Date.now() - findManyStart;
-
-      const ratingsStart = Date.now();
-      const result = await attachRatingStats(sheets, ctx.userId);
-      const ratingsMs = Date.now() - ratingsStart;
-
-      // #region agent log
-      fetch("http://127.0.0.1:7282/ingest/1a575717-14f9-41b2-8db3-8c3597fa5908", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "X-Debug-Session-Id": "878a11",
-        },
-        body: JSON.stringify({
-          sessionId: "878a11",
-          runId: "post-fix",
-          location: "trpc/routers/sheets.ts:list",
-          message: "sheets.list query completed",
-          data: {
-            sheetCount: result.length,
-            findManyMs,
-            ratingsMs,
-            durationMs: Date.now() - queryStart,
-          },
-          timestamp: Date.now(),
-          hypothesisId: "C",
-        }),
-      }).catch(() => {});
-      // #endregion
-
-      return result;
+    .query(async ({ input }) => {
+      const sheets = await getPublicSheetList();
+      if (!input) return sheets;
+      return sheets.filter(
+        (s) =>
+          (!input.level || s.level === input.level) &&
+          (!input.examType || s.examType === input.examType) &&
+          (!input.term || s.term === input.term) &&
+          (!input.subject || s.subject === input.subject)
+      );
     }),
+
+  /** The viewer's own ratings, keyed by sheet id — kept out of the shared list cache. */
+  myRatings: protectedProcedure.query(async ({ ctx }) => {
+    const ratings = await prisma.rating.findMany({
+      where: { userId: ctx.auth.user.id },
+      select: { sheetId: true, score: true },
+    });
+    return Object.fromEntries(ratings.map((r) => [r.sheetId, r.score])) as Record<
+      string,
+      number
+    >;
+  }),
 
   mySheets: protectedProcedure.query(async ({ ctx }) => {
     const sheets = await prisma.sheet.findMany({
@@ -333,6 +309,7 @@ export const sheetsRouter = createTRPCRouter({
         },
       });
 
+      invalidateSheetList();
       return sheet;
     }),
 
@@ -353,6 +330,7 @@ export const sheetsRouter = createTRPCRouter({
 
       await deleteFromR2(sheet.pdfKey);
       await prisma.sheet.delete({ where: { id: input.id } });
+      invalidateSheetList();
 
       return { success: true };
     }),
@@ -451,6 +429,7 @@ export const sheetsRouter = createTRPCRouter({
         data,
       });
 
+      invalidateSheetList();
       return updated;
     }),
 
@@ -498,6 +477,7 @@ export const sheetsRouter = createTRPCRouter({
             ) / 10
           : 0;
 
+      invalidateSheetList(false);
       return { averageRating, totalRatings };
     }),
 });

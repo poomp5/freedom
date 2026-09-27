@@ -1,8 +1,8 @@
 "use client";
 
-import { Fragment, useState } from "react";
+import { Fragment, useMemo, useState } from "react";
 import Avatar from "@/app/components/Avatar";
-import { Search, ChevronDown, ChevronRight, Star, FileText, RefreshCw } from "lucide-react";
+import { Search, ChevronDown, ChevronRight, ChevronsUpDown, ArrowUp, ArrowDown, Star, FileText, RefreshCw } from "lucide-react";
 import { useSuspenseQuery, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTRPC } from "@/trpc/client";
 
@@ -23,6 +23,54 @@ const ROLE_COLORS: Record<string, string> = {
   suspended: "bg-red-100 text-red-700",
   pending_publisher: "bg-orange-100 text-orange-700",
 };
+
+type SortKey = "name" | "email" | "sheets" | "role" | "createdAt";
+type SortDir = "asc" | "desc";
+
+/** Numbers and dates read best biggest/newest first; text reads best A→Z. */
+const DEFAULT_DIR: Record<SortKey, SortDir> = {
+  name: "asc",
+  email: "asc",
+  sheets: "desc",
+  role: "asc",
+  createdAt: "desc",
+};
+
+const COLUMN_COUNT = 7;
+
+function SortHeader({
+  label,
+  column,
+  sortKey,
+  sortDir,
+  onSort,
+}: {
+  label: string;
+  column: SortKey;
+  sortKey: SortKey;
+  sortDir: SortDir;
+  onSort: (column: SortKey) => void;
+}) {
+  const active = sortKey === column;
+  const Icon = !active ? ChevronsUpDown : sortDir === "asc" ? ArrowUp : ArrowDown;
+  return (
+    <th
+      className="px-4 py-3 text-left font-medium text-gray-500"
+      aria-sort={active ? (sortDir === "asc" ? "ascending" : "descending") : "none"}
+    >
+      <button
+        type="button"
+        onClick={() => onSort(column)}
+        className={`inline-flex items-center gap-1 rounded-md transition-colors hover:text-gray-900 ${
+          active ? "text-gray-900" : ""
+        }`}
+      >
+        {label}
+        <Icon size={14} className={active ? "text-blue-600" : "text-gray-300"} />
+      </button>
+    </th>
+  );
+}
 
 /** Avatar with an admin-only button that re-pulls the picture from Google. */
 function UserAvatar({
@@ -101,7 +149,7 @@ function DonatePromptPayRow({
 
   return (
     <tr className="bg-gray-50">
-      <td colSpan={6} className="px-0 py-0">
+      <td colSpan={COLUMN_COUNT} className="px-0 py-0">
         <div className="ml-8 mr-4 mt-3 rounded-xl border border-gray-200 bg-white p-4">
           <label className="mb-1 block text-xs font-medium text-gray-500">
             พร้อมเพย์สำหรับรับโดเนท (เบอร์โทร 10 หลัก หรือเลขบัตรประชาชน 13 หลัก)
@@ -146,7 +194,7 @@ function UserSheetRows({ userId }: { userId: string }) {
   if (isLoading) {
     return (
       <tr>
-        <td colSpan={6} className="px-8 py-4 bg-gray-50 text-center text-gray-400 text-sm">
+        <td colSpan={COLUMN_COUNT} className="px-8 py-4 bg-gray-50 text-center text-gray-400 text-sm">
           กำลังโหลด...
         </td>
       </tr>
@@ -156,7 +204,7 @@ function UserSheetRows({ userId }: { userId: string }) {
   if (!sheets || sheets.length === 0) {
     return (
       <tr>
-        <td colSpan={6} className="px-8 py-4 bg-gray-50 text-center text-gray-400 text-sm">
+        <td colSpan={COLUMN_COUNT} className="px-8 py-4 bg-gray-50 text-center text-gray-400 text-sm">
           ไม่มีชีท
         </td>
       </tr>
@@ -166,7 +214,7 @@ function UserSheetRows({ userId }: { userId: string }) {
   return (
     <>
       <tr className="bg-gray-50">
-        <td colSpan={6} className="px-0 py-0">
+        <td colSpan={COLUMN_COUNT} className="px-0 py-0">
           <div className="ml-8 mr-4 my-3 rounded-xl border border-gray-200 overflow-hidden bg-white">
             <table className="w-full text-sm">
               <thead>
@@ -238,11 +286,64 @@ export default function UserTable({
     })
   );
 
-  const filtered = users.filter(
-    (u) =>
-      u.name.toLowerCase().includes(search.toLowerCase()) ||
-      u.email.toLowerCase().includes(search.toLowerCase())
-  );
+  const [roleFilter, setRoleFilter] = useState<string>("all");
+  const [sortKey, setSortKey] = useState<SortKey>("createdAt");
+  const [sortDir, setSortDir] = useState<SortDir>("desc");
+
+  const handleSort = (column: SortKey) => {
+    if (column === sortKey) {
+      setSortDir((d) => (d === "asc" ? "desc" : "asc"));
+    } else {
+      setSortKey(column);
+      setSortDir(DEFAULT_DIR[column]);
+    }
+  };
+
+  const roleCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    for (const u of users) counts[u.role ?? "user"] = (counts[u.role ?? "user"] ?? 0) + 1;
+    return counts;
+  }, [users]);
+
+  const filtered = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    const rows = users.filter((u) => {
+      if (roleFilter !== "all" && (u.role ?? "user") !== roleFilter) return false;
+      if (!q) return true;
+      return (
+        u.name.toLowerCase().includes(q) ||
+        u.email.toLowerCase().includes(q) ||
+        (u.username ?? "").toLowerCase().includes(q)
+      );
+    });
+
+    const value = (u: (typeof users)[number]): string | number => {
+      switch (sortKey) {
+        case "name":
+          return u.name.toLowerCase();
+        case "email":
+          return u.email.toLowerCase();
+        case "sheets":
+          return u._count?.sheets ?? 0;
+        case "role":
+          return ROLE_LABELS[u.role ?? "user"] ?? u.role ?? "";
+        case "createdAt":
+          return new Date(u.createdAt).getTime();
+      }
+    };
+
+    const dir = sortDir === "asc" ? 1 : -1;
+    return [...rows].sort((a, b) => {
+      const va = value(a);
+      const vb = value(b);
+      const cmp =
+        typeof va === "number" && typeof vb === "number"
+          ? va - vb
+          : String(va).localeCompare(String(vb), "th");
+      // Ties fall back to newest first so the order is stable.
+      return cmp * dir || new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+    });
+  }, [users, search, roleFilter, sortKey, sortDir]);
 
   const handleRoleChange = async (userId: string, newRole: string) => {
     if (userId === currentUserId) return;
@@ -271,11 +372,35 @@ export default function UserTable({
         />
         <input
           type="text"
-          placeholder="ค้นหาชื่อหรืออีเมล..."
+          placeholder="ค้นหาชื่อ, @username หรืออีเมล..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
         />
+      </div>
+
+      <div className="mb-4 flex flex-wrap items-center gap-2">
+        {["all", ...ROLES].map((r) => {
+          const count = r === "all" ? users.length : roleCounts[r] ?? 0;
+          const active = roleFilter === r;
+          return (
+            <button
+              key={r}
+              type="button"
+              aria-pressed={active}
+              onClick={() => setRoleFilter(r)}
+              className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition-colors ${
+                active
+                  ? "border-blue-600 bg-blue-600 text-white"
+                  : "border-gray-200 bg-white text-gray-600 hover:border-blue-200 hover:text-blue-700"
+              }`}
+            >
+              {r === "all" ? "ทั้งหมด" : ROLE_LABELS[r]}
+              <span className={`tabular-nums ${active ? "text-blue-100" : "text-gray-400"}`}>{count}</span>
+            </button>
+          );
+        })}
+        <span className="ml-auto text-xs text-gray-400">แสดง {filtered.length} คน</span>
       </div>
 
       <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
@@ -284,10 +409,11 @@ export default function UserTable({
             <thead>
               <tr className="border-b border-gray-100">
                 <th className="w-8"></th>
-                <th className="text-left px-4 py-3 font-medium text-gray-500">ชื่อ</th>
-                <th className="text-left px-4 py-3 font-medium text-gray-500">อีเมล</th>
-                <th className="text-left px-4 py-3 font-medium text-gray-500">ชีท</th>
-                <th className="text-left px-4 py-3 font-medium text-gray-500">บทบาท</th>
+                <SortHeader label="ชื่อ" column="name" sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />
+                <SortHeader label="อีเมล" column="email" sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />
+                <SortHeader label="ชีท" column="sheets" sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />
+                <SortHeader label="บทบาท" column="role" sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />
+                <SortHeader label="สมัครเมื่อ" column="createdAt" sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />
                 <th className="text-left px-4 py-3 font-medium text-gray-500">เปลี่ยนบทบาท</th>
               </tr>
             </thead>
@@ -311,7 +437,12 @@ export default function UserTable({
                             name={user.name}
                             image={user.image}
                           />
-                          <span>{user.name}</span>
+                          <div className="min-w-0">
+                            <p>{user.name}</p>
+                            {user.username && (
+                              <p className="text-xs font-normal text-gray-400">@{user.username}</p>
+                            )}
+                          </div>
                         </div>
                       </td>
                       <td className="px-4 py-3 text-gray-500">{user.email}</td>
@@ -331,6 +462,13 @@ export default function UserTable({
                         >
                           {ROLE_LABELS[user.role ?? "user"] || user.role}
                         </span>
+                      </td>
+                      <td className="px-4 py-3 whitespace-nowrap text-xs text-gray-500">
+                        {new Date(user.createdAt).toLocaleDateString("th-TH", {
+                          day: "numeric",
+                          month: "short",
+                          year: "2-digit",
+                        })}
                       </td>
                       <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
                         {user.id === currentUserId ? (
@@ -363,7 +501,7 @@ export default function UserTable({
               })}
               {filtered.length === 0 && (
                 <tr>
-                  <td colSpan={6} className="px-4 py-8 text-center text-gray-400">
+                  <td colSpan={COLUMN_COUNT} className="px-4 py-8 text-center text-gray-400">
                     ไม่พบผู้ใช้
                   </td>
                 </tr>

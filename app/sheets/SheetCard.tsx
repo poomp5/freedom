@@ -17,7 +17,6 @@ export type SheetListItem = {
   level: string;
   examType: string;
   term: string;
-  pdfUrl: string;
   isFree: boolean;
   price: number | null;
   uploader: {
@@ -34,21 +33,22 @@ export type SheetListItem = {
   };
   averageRating: number;
   totalRatings: number;
-  userRating: number | null;
   createdAt: Date;
 };
 
 type SheetCardProps = {
   sheet: SheetListItem;
   isLoggedIn: boolean;
-  alreadyPurchased: boolean;
+  userRating: number | null;
+  alreadyPurchased?: boolean;
   onOpen: () => void;
 };
 
 function SheetCard({
   sheet,
   isLoggedIn,
-  alreadyPurchased,
+  userRating,
+  alreadyPurchased = false,
   onOpen,
 }: SheetCardProps) {
   const u = sheet.uploader;
@@ -113,8 +113,10 @@ function SheetCard({
         <div className="mt-3" onClick={(e) => e.stopPropagation()}>
           {isLoggedIn ? (
             <StarRating
+              // Remount once the viewer's ratings arrive (fetched after the list).
+              key={userRating ?? "none"}
               sheetId={sheet.id}
-              currentRating={sheet.userRating}
+              currentRating={userRating}
               averageRating={sheet.averageRating}
               totalRatings={sheet.totalRatings}
             />
@@ -130,17 +132,13 @@ function SheetCard({
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-1.5 text-xs text-gray-400 min-w-0">
               <Avatar src={u.image} name={u.name} seed={u.id} size={16} />
-              {u.username ? (
-                <Link
-                  href={`/u/${u.username}`}
-                  onClick={(e) => e.stopPropagation()}
-                  className="truncate hover:text-blue-600 hover:underline"
-                >
-                  @{u.username}
-                </Link>
-              ) : (
-                <span className="truncate">{u.name}</span>
-              )}
+              <Link
+                href={`/u/${u.username ?? u.id}`}
+                onClick={(e) => e.stopPropagation()}
+                className="truncate hover:text-blue-600 hover:underline"
+              >
+                {u.username ? `@${u.username}` : u.name}
+              </Link>
             </div>
             <div className="flex items-center gap-1 text-xs text-gray-400 flex-shrink-0">
               <Calendar className="w-3.5 h-3.5" />

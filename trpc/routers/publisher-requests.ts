@@ -5,7 +5,9 @@ import {
   protectedProcedure,
   adminProcedure,
 } from "../init";
+import { after } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { notifyDiscord } from "@/lib/discord";
 
 export const publisherRequestsRouter = createTRPCRouter({
   create: protectedProcedure
@@ -51,6 +53,24 @@ export const publisherRequestsRouter = createTRPCRouter({
           data: { role: "pending_publisher" },
         }),
       ]);
+
+      // Ping admins on Discord after the response is sent.
+      const user = ctx.auth.user;
+      after(() =>
+        notifyDiscord({
+          title: "📝 คำขอเป็นผู้เผยแพร่ใหม่",
+          color: 0xf59e0b,
+          url: process.env.BETTER_AUTH_URL
+            ? `${process.env.BETTER_AUTH_URL}/dashboard/admin/requests`
+            : undefined,
+          fields: [
+            { name: "ชื่อ-นามสกุล", value: `${input.firstName} ${input.lastName}`, inline: true },
+            { name: "เบอร์โทร", value: input.tel, inline: true },
+            { name: "วันเกิด", value: input.dateOfBirth, inline: true },
+            { name: "บัญชี", value: `${user.name} (${user.email})` },
+          ],
+        })
+      );
 
       return { success: true };
     }),

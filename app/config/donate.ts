@@ -1,46 +1,35 @@
-export const donors = {
-  poomp5: {
-    username: "poomp5",
-    name: "poomp5",
-    accountName: "ปุญญพัฒน์ กูลมนุญ",
-    bank: "Kbank",
-    phone: "0994376414",
-    logo: "/assets/img/donatelogo.png",
-    avatar: "/assets/img/avatar/poomp5.jpg",
-    color: "purple",
-    role: "เว็บไซต์ / โพสต์ไอจี",
-  },
-  dewar: {
-    username: "dewar",
-    name: "d3w4r_zz",
-    accountName: "ดนัยณัฐ ตันติเฉลิมสิน",
-    bank: "Kbank",
-    phone: "0902857914",
-    logo: "/assets/img/donatelogo.png",
-    avatar: "/assets/img/avatar/dewar.jpg",
-    color: "blue",
-    role: "ทำชีทสรุป ม.1-5",
-  },
+/**
+ * Legacy donation recipients from before donations moved to user profiles.
+ *
+ * /donate now lists only accounts that set a PromptPay number in their
+ * profile (see lib/donors.ts). These entries stay so old links like
+ * /donate/blevrsq keep working.
+ *
+ * `userId` links an entry to its owner's account (matched by PromptPay
+ * number). When that account has donations turned on, /donate/<username>
+ * redirects to it instead of showing the data below.
+ */
+type LegacyDonor = {
+  username: string;
+  name: string;
+  accountName: string;
+  bank: string;
+  phone: string;
+  avatar: string;
+  role: string;
+  /** Owner's account id, when one exists. */
+  userId?: string;
+};
+
+export const legacyDonors: Record<string, LegacyDonor> = {
   blevrsq: {
     username: "blevrsq",
     name: "blevrsq",
     accountName: "รัศมิ์ลภัส รติสุขพิมล",
     bank: "Kbank",
     phone: "0641566647",
-    logo: "/assets/img/donatelogo.png",
     avatar: "/assets/img/avatar/blevrsq.jpg",
-    color: "pink",
     role: "ทำชีทสรุป ม.2-3",
-  },
-  antnut8778: {
-    username: "antnut8778",
-    name: "antnut8778",
-    accountName: "สลิลลา เกียรติเกษมกุล",
-    bank: "Kbank",
-    phone: "0633635642",
-    logo: "/assets/img/donatelogo.png",
-    avatar: "/assets/img/avatar/antnut8778.jpg",
-    color: "green",
-    role: "ทำชีทสรุป ม.3",
+    // No account on the site; their sheets are under the "Freedom" account.
   },
 };

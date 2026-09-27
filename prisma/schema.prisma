@@ -234,6 +234,22 @@ model SheetAccess {
   @@index([sheetId])
 }
 
+// ─── Analytics ───
+
+// One row per tracked event. Uploads are not logged here; they are read from
+// Sheet.createdAt.
+model AnalyticsEvent {
+  id        String   @id @default(cuid())
+  type      String   // "page_view" | "sheet_view" | "download"
+  path      String?
+  sheetId   String?
+  visitorId String?  // anonymous per-browser id, for unique visitor counts
+  createdAt DateTime @default(now())
+
+  @@index([type, createdAt])
+  @@index([sheetId, type, createdAt])
+}
+
 // ─── Site Settings ───
 
 model CountdownSetting {

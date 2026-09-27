@@ -1,8 +1,13 @@
 "use client";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { searchSheets, SheetData } from "./searchData";
+import { useQuery } from "@tanstack/react-query";
+import { useTRPC } from "@/trpc/client";
+import SubjectCover from "@/app/sheets/SubjectCover";
+import { SHEETS_LIST_STALE_TIME } from "@/app/sheets/queryOptions";
+
+const MAX_RESULTS = 30;
 
 interface SearchModalProps {
   isOpen: boolean;
@@ -10,8 +15,13 @@ interface SearchModalProps {
 }
 
 export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
+  const trpc = useTRPC();
   const [query, setQuery] = useState("");
-  const [results, setResults] = useState<SheetData[]>([]);
+  // Same cached list as /sheets; only fetched once the modal is opened.
+  const { data: sheets = [] } = useQuery({
+    ...trpc.sheets.list.queryOptions({}, { staleTime: SHEETS_LIST_STALE_TIME, refetchOnWindowFocus: false }),
+    enabled: isOpen,
+  });
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -28,9 +38,18 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
     return () => window.removeEventListener("keydown", handleEscape);
   }, [onClose]);
 
-  useEffect(() => {
-    setResults(searchSheets(query));
-  }, [query]);
+  const results = useMemo(() => {
+    const terms = query.trim().toLowerCase().split(/\s+/).filter(Boolean);
+    if (terms.length === 0) return [];
+    return sheets
+      .filter((s) => {
+        const hay = `${s.title} ${s.subject} ${s.level} ${s.examType} ${s.term} ${s.uploader.name} ${
+          s.uploader.username ?? ""
+        }`.toLowerCase();
+        return terms.every((t) => hay.includes(t));
+      })
+      .slice(0, MAX_RESULTS);
+  }, [sheets, query]);
 
   if (!isOpen) return null;
 
@@ -98,30 +117,25 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
 
             {results.length > 0 && (
               <ul className="py-2">
-                {results.map((sheet, i) => (
-                  <li key={i}>
+                {results.map((sheet) => (
+                  <li key={sheet.id}>
                     <Link
-                      href={sheet.filename}
-                      target="_blank"
+                      href={`/sheets/${sheet.id}`}
                       onClick={onClose}
                       className="flex items-center px-4 py-3 hover:bg-blue-50 transition-colors"
                     >
-                      <div className="flex-shrink-0 w-10 h-10 bg-gray-50 rounded-lg flex items-center justify-center">
-                        <Image
-                          src={sheet.icon}
-                          alt={sheet.subject}
-                          width={24}
-                          height={24}
-                          className="w-6 h-6"
-                        />
+                      <div className="flex-shrink-0 w-10 h-10 overflow-hidden rounded-lg">
+                        <SubjectCover subject={sheet.subject} className="h-10" />
                       </div>
-                      <div className="ml-3 flex-1">
-                        <div className="text-sm font-medium text-gray-800">
-                          {sheet.subject}
+                      <div className="ml-3 min-w-0 flex-1">
+                        <div className="truncate text-sm font-medium text-gray-800">
+                          {sheet.title}
                         </div>
-                        <div className="text-xs text-gray-500">
-                          {sheet.level} • {sheet.term} • {sheet.examType}
-                          {sheet.by && <span className="text-blue-500"> • @{sheet.by}</span>}
+                        <div className="truncate text-xs text-gray-500">
+                          {sheet.subject} • {sheet.level} • {sheet.examType} {sheet.term}
+                          {sheet.uploader.username && (
+                            <span className="text-blue-500"> • @{sheet.uploader.username}</span>
+                          )}
                         </div>
                       </div>
                       <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -173,7 +187,17 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
           {/* Footer */}
           <div className="px-4 py-3 bg-gray-50 border-t border-gray-100 text-xs text-gray-400 flex justify-between">
             <span>กด ESC เพื่อปิด</span>
-            <span>{results.length} ผลลัพธ์</span>
+            {query.trim() ? (
+              <Link
+                href={`/sheets?q=${encodeURIComponent(query.trim())}`}
+                onClick={onClose}
+                className="text-blue-600 hover:underline"
+              >
+                ดูทั้งหมดในหน้าชีทสรุป →
+              </Link>
+            ) : (
+              <span>{results.length} ผลลัพธ์</span>
+            )}
           </div>
         </div>
       </div>

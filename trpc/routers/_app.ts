@@ -8,6 +8,8 @@ import { uploadRouter } from "./upload";
 import { paymentsRouter } from "./payments";
 import { settingsRouter } from "./settings";
 import { commentsRouter } from "./comments";
+import { contactRouter } from "./contact";
+import { analyticsRouter } from "./analytics";
 
 export const appRouter = createTRPCRouter({
   sheets: sheetsRouter,
@@ -19,6 +21,8 @@ export const appRouter = createTRPCRouter({
   payments: paymentsRouter,
   settings: settingsRouter,
   comments: commentsRouter,
+  contact: contactRouter,
+  analytics: analyticsRouter,
 });
 
 export type AppRouter = typeof appRouter;

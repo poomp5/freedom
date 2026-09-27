@@ -1,26 +1,20 @@
-import { prefetch, trpc, HydrateClient } from "@/trpc/server";
-import { headers } from "next/headers";
-import { auth } from "@/lib/auth";
+import { HydrateClient, prefetchPublicSheetList } from "@/trpc/server";
 import SheetsClient from "./SheetsClient";
-import { SHEETS_LIST_STALE_TIME } from "./queryOptions";
+
+export const metadata = {
+  title: "ชีทสรุป | FREEDOM",
+};
+
+// The catalog is the same for everyone, so the page is prerendered and
+// refreshed in the background; uploads/edits also revalidate the data cache.
+export const revalidate = 300;
 
 export default async function SheetsPage() {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-
-  await prefetch(
-    trpc.sheets.list.queryOptions(
-      {},
-      { staleTime: SHEETS_LIST_STALE_TIME, refetchOnWindowFocus: false }
-    )
-  );
-
-  const userId = session?.user?.id ?? null;
+  await prefetchPublicSheetList();
 
   return (
     <HydrateClient>
-      <SheetsClient isLoggedIn={!!session} userId={userId} />
+      <SheetsClient />
     </HydrateClient>
   );
 }
