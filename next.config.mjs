@@ -22,6 +22,10 @@ const nextConfig = {
   async redirects() {
     return [
       { source: "/select", destination: "/sheets", permanent: true },
+      // Donate links from before donations moved to user profiles.
+      { source: "/donate/blevrsq", destination: "/donate/baeiixq", permanent: true },
+      { source: "/donate/dewar", destination: "/donate/BabyFrog", permanent: true },
+      { source: "/donate/antnut8778", destination: "/donate/7FWXZ9rt2bu7upU4biAaGAa6rOUDJLMO", permanent: true },
       ...legacySheetRedirects,
     ];
   },

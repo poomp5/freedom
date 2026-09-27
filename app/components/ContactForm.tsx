@@ -1,17 +1,129 @@
 "use client";
 
-import { useState } from "react";
-import { useMutation } from "@tanstack/react-query";
-import { CheckCircle2, Loader2, School, Send } from "lucide-react";
+import { useEffect, useId, useState } from "react";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { CheckCircle2, Loader2, MapPin, School, Send } from "lucide-react";
 import { useTRPC } from "@/trpc/client";
 
 const inputClass =
   "w-full rounded-lg border border-[#cbdff7] bg-white px-3.5 py-2.5 text-sm text-[#172b4d] placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/30";
 
+type SchoolOption = { id: string; name: string; province: string; district: string };
+
+/**
+ * School name with suggestions from the School table (all MOE schools).
+ * Free text is still accepted for schools that are not in the list.
+ */
+function SchoolCombobox({
+  value,
+  onChange,
+}: {
+  value: string;
+  onChange: (name: string, school: SchoolOption | null) => void;
+}) {
+  const trpc = useTRPC();
+  const listId = useId();
+  const [debounced, setDebounced] = useState("");
+  const [open, setOpen] = useState(false);
+  const [active, setActive] = useState(-1);
+
+  useEffect(() => {
+    const id = window.setTimeout(() => setDebounced(value.trim()), 250);
+    return () => window.clearTimeout(id);
+  }, [value]);
+
+  const { data: results = [], isFetching } = useQuery({
+    ...trpc.schools.search.queryOptions({ q: debounced }),
+    enabled: debounced.length >= 2,
+    staleTime: 5 * 60 * 1000,
+  });
+  const showList = open && debounced.length >= 2 && results.length > 0;
+
+  const pick = (school: SchoolOption) => {
+    onChange(school.name, school);
+    setOpen(false);
+    setActive(-1);
+  };
+
+  return (
+    <div className="relative">
+      <input
+        id="contact-school"
+        role="combobox"
+        aria-expanded={showList}
+        aria-controls={listId}
+        aria-autocomplete="list"
+        aria-activedescendant={showList && active >= 0 ? `${listId}-${active}` : undefined}
+        autoComplete="off"
+        value={value}
+        onChange={(e) => {
+          onChange(e.target.value, null);
+          setOpen(true);
+          setActive(-1);
+        }}
+        onFocus={() => setOpen(true)}
+        onBlur={() => setOpen(false)}
+        onKeyDown={(e) => {
+          if (!showList) return;
+          if (e.key === "ArrowDown") {
+            e.preventDefault();
+            setActive((i) => Math.min(i + 1, results.length - 1));
+          } else if (e.key === "ArrowUp") {
+            e.preventDefault();
+            setActive((i) => Math.max(i - 1, 0));
+          } else if (e.key === "Enter" && active >= 0) {
+            e.preventDefault();
+            pick(results[active]);
+          } else if (e.key === "Escape") {
+            setOpen(false);
+          }
+        }}
+        placeholder="พิมพ์ชื่อโรงเรียน เช่น อัสสัมชัญธนบุรี"
+        className={`${inputClass} pr-9`}
+        maxLength={200}
+        required
+      />
+      {isFetching && (
+        <Loader2 className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 animate-spin text-gray-400" aria-hidden="true" />
+      )}
+      {showList && (
+        <ul
+          id={listId}
+          role="listbox"
+          className="absolute z-20 mt-1 max-h-64 w-full overflow-auto rounded-lg border border-[#cbdff7] bg-white py-1 shadow-lg"
+        >
+          {results.map((school, i) => (
+            <li
+              key={school.id}
+              id={`${listId}-${i}`}
+              role="option"
+              aria-selected={i === active}
+              // mousedown fires before the input's blur closes the list.
+              onMouseDown={(e) => {
+                e.preventDefault();
+                pick(school);
+              }}
+              onMouseEnter={() => setActive(i)}
+              className={`cursor-pointer px-3.5 py-2 ${i === active ? "bg-blue-50" : ""}`}
+            >
+              <p className="text-sm text-[#172b4d]">{school.name}</p>
+              <p className="flex items-center gap-1 text-xs text-gray-400">
+                <MapPin className="h-3 w-3" aria-hidden="true" />
+                {school.district} · {school.province}
+              </p>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
+
 /** Home page form for schools that want to run their own Freedom. */
 export default function ContactForm() {
   const trpc = useTRPC();
   const [form, setForm] = useState({ schoolName: "", email: "", contactName: "", message: "", website: "" });
+  const [school, setSchool] = useState<SchoolOption | null>(null);
   const [error, setError] = useState("");
   const mutation = useMutation(trpc.contact.requestPlatform.mutationOptions());
 
@@ -27,6 +139,7 @@ export default function ContactForm() {
     try {
       await mutation.mutateAsync({
         schoolName: form.schoolName,
+        schoolId: school?.id,
         email: form.email,
         contactName: form.contactName || undefined,
         message: form.message || undefined,
@@ -64,14 +177,26 @@ export default function ContactForm() {
               <label htmlFor="contact-school" className="mb-1.5 block text-sm font-medium">
                 ชื่อโรงเรียน <span className="text-red-500">*</span>
               </label>
-              <input id="contact-school" value={form.schoolName} onChange={set("schoolName")} placeholder="เช่น โรงเรียนอัสสัมชัญธนบุรี" className={inputClass} maxLength={200} required />
+              <SchoolCombobox
+                value={form.schoolName}
+                onChange={(name, picked) => {
+                  setForm((f) => ({ ...f, schoolName: name }));
+                  setSchool(picked);
+                }}
+              />
+              {school && (
+                <p className="mt-1.5 flex items-center gap-1 text-xs text-[#52769c]">
+                  <MapPin className="h-3 w-3" aria-hidden="true" />
+                  {school.district} · {school.province}
+                </p>
+              )}
             </div>
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
                 <label htmlFor="contact-email" className="mb-1.5 block text-sm font-medium">
                   อีเมลติดต่อกลับ <span className="text-red-500">*</span>
                 </label>
-                <input id="contact-email" type="email" value={form.email} onChange={set("email")} placeholder="you@example.com" className={inputClass} maxLength={200} required />
+                <input id="contact-email" type="email" value={form.email} onChange={set("email")} placeholder="contact@pranakorn.co.th" className={inputClass} maxLength={200} required />
               </div>
               <div>
                 <label htmlFor="contact-name" className="mb-1.5 block text-sm font-medium">ชื่อผู้ติดต่อ</label>

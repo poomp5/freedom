@@ -36,15 +36,9 @@ export default function DonateClient({ donor }: { donor: DonorPage }) {
             <Heart className="h-5 w-5 text-pink-500" />
             โดเนทให้ {donor.name}
           </h1>
-          {donor.accountName && <p className="mt-1 text-sm text-gray-500">พร้อมเพย์: {donor.accountName}</p>}
-          {donor.role && (
-            <span className="mt-2 rounded-full bg-pink-50 px-3 py-1 text-xs font-medium text-pink-600">{donor.role}</span>
-          )}
-          {donor.profileHref && (
-            <Link href={donor.profileHref} className="mt-2 text-sm text-blue-600 hover:underline">
-              {donor.username ? `@${donor.username}` : "ดูโปรไฟล์"}
-            </Link>
-          )}
+          <Link href={donor.profileHref} className="mt-2 text-sm text-blue-600 hover:underline">
+            {donor.username ? `@${donor.username}` : "ดูโปรไฟล์"}
+          </Link>
         </div>
 
         {!confirmed ? (

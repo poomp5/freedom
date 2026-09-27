@@ -11,7 +11,7 @@ import { SHEETS_LIST_STALE_TIME } from "@/app/sheets/queryOptions";
 
 const LEVELS = ["ม.1", "ม.2", "ม.3", "ม.4", "ม.5", "ม.6"];
 const DEFAULT_LEVEL = "ม.6";
-const MAX_CARDS = 6;
+const MAX_CARDS = 8;
 
 /** Sheets for one grade, pulled from the same cached list as /sheets. */
 export default function HomeSheetSection() {
@@ -88,7 +88,7 @@ export default function HomeSheetSection() {
         </div>
 
         {isLoading ? (
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {Array.from({ length: MAX_CARDS }).map((_, i) => (
               <div key={i} className="h-40 animate-pulse rounded-2xl border border-gray-100 bg-gray-50" />
             ))}
@@ -99,7 +99,7 @@ export default function HomeSheetSection() {
             <p className="text-sm font-medium text-gray-500">ยังไม่มีชีทสรุป {level}</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {levelSheets.slice(0, MAX_CARDS).map((sheet) => (
               <CommunitySheetCard key={sheet.id} sheet={sheet} />
             ))}

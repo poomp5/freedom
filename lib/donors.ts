@@ -1,14 +1,12 @@
 import "server-only";
 import { unstable_cache, revalidateTag } from "next/cache";
 import { prisma } from "@/lib/prisma";
-import { legacyDonors } from "@/app/config/donate";
 
 /**
  * Donation recipients.
  *
  * /donate lists only accounts that set `donatePromptPay` in their profile.
- * `app/config/donate.ts` is kept as a fallback so old links such as
- * /donate/blevrsq (printed on legacy sheets) still resolve.
+ * Old hard-coded links (/donate/blevrsq ...) are redirected in next.config.mjs.
  */
 export const DONORS_CACHE_TAG = "donors";
 
@@ -47,16 +45,11 @@ export type DonorPage = {
   image: string | null;
   seed: string;
   promptPay: string;
-  /** Bank-account holder name; only known for legacy entries. */
-  accountName?: string;
-  role?: string;
-  profileHref?: string;
+  profileHref: string;
 };
 
-export type DonorLookup = { donor: DonorPage } | { redirectTo: string } | null;
-
-/** Resolve /donate/[slug]: an account (by username or id) first, then the legacy list. */
-export async function findDonor(slug: string): Promise<DonorLookup> {
+/** Resolve /donate/[slug] to an account (by username or id) with donations turned on. */
+export async function findDonor(slug: string): Promise<DonorPage | null> {
   const user = await prisma.user.findFirst({
     where: {
       OR: [{ username: slug }, { id: slug }],
@@ -65,41 +58,15 @@ export async function findDonor(slug: string): Promise<DonorLookup> {
     },
     select: { id: true, name: true, username: true, image: true, donatePromptPay: true },
   });
-  if (user) {
-    return {
-      donor: {
-        name: user.name,
-        username: user.username,
-        image: user.image,
-        seed: user.id,
-        promptPay: user.donatePromptPay!,
-        profileHref: `/u/${user.username ?? user.id}`,
-      },
-    };
-  }
-
-  const legacy = legacyDonors[slug as keyof typeof legacyDonors];
-  if (!legacy) return null;
-
-  // A legacy entry whose owner now has an account with donations on → send them there.
-  if (legacy.userId) {
-    const owner = await prisma.user.findFirst({
-      where: { id: legacy.userId, donatePromptPay: { not: null } },
-      select: { id: true, username: true },
-    });
-    if (owner) return { redirectTo: `/donate/${encodeURIComponent(owner.username ?? owner.id)}` };
-  }
+  if (!user) return null;
 
   return {
-    donor: {
-      name: legacy.name,
-      username: legacy.username,
-      image: legacy.avatar,
-      seed: legacy.username,
-      promptPay: legacy.phone,
-      accountName: legacy.accountName,
-      role: legacy.role,
-    },
+    name: user.name,
+    username: user.username,
+    image: user.image,
+    seed: user.id,
+    promptPay: user.donatePromptPay!,
+    profileHref: `/u/${user.username ?? user.id}`,
   };
 }
 

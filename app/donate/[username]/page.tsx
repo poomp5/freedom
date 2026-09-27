@@ -1,4 +1,4 @@
-import { notFound, redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 import Bottombar from "@/app/components/Bottombar";
 import Navbar from "@/app/components/Navbar";
 import { findDonor } from "@/lib/donors";
@@ -9,17 +9,15 @@ export const dynamic = "force-dynamic";
 
 export default async function DonatePage({ params }: { params: Promise<{ username: string }> }) {
   const { username } = await params;
-  const result = await findDonor(decodeURIComponent(username));
-
-  if (!result) notFound();
-  if ("redirectTo" in result) redirect(result.redirectTo);
+  const donor = await findDonor(decodeURIComponent(username));
+  if (!donor) notFound();
 
   return (
     <div>
       <Navbar />
       <Bottombar />
       <main className="min-h-screen bg-gradient-to-br from-pink-50 via-white to-blue-50 px-4 py-10 pb-24 md:pb-12">
-        <DonateClient donor={result.donor} />
+        <DonateClient donor={donor} />
       </main>
     </div>
   );
